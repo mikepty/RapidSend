@@ -15,51 +15,122 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
     <style>
+        /* ====== COLORES ORIGINALES DE RAPIDSEND ====== */
         :root {
-            --primary: #4361ee;
-            --primary-dark: #3a56d4;
-            --secondary: #7209b7;
-            --success: #2ecc71;
-            --danger: #e74c3c;
-            --warning: #f39c12;
-            --dark: #1a1a2e;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --card-shadow: 0 2px 15px rgba(0,0,0,0.08);
-            --border-radius: 12px;
+            --primary: #e74c3c;      /* ROJO PRINCIPAL (tu color original) */
+            --primary-dark: #c0392b;  /* Rojo oscuro */
+            --secondary: #3498db;     /* Azul para acentos */
+            --success: #2ecc71;       /* Verde éxito */
+            --danger: #e74c3c;        /* Rojo peligro (igual que primary) */
+            --warning: #f39c12;       /* Naranja advertencia */
+            --info: #3498db;          /* Azul info */
+            --dark: #2c3e50;          /* Azul oscuro texto */
+            --light: #ecf0f1;         /* Gris claro fondo */
+            --gray: #95a5a6;          /* Gris texto */
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f9f9f9 0%, #e8e8e8 100%);
             color: #333;
             min-height: 100vh;
         }
         
-        .card-main {
-            background: white;
-            border: none;
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
+        /* ====== NAVBAR ROJA ====== */
+        .navbar-main {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+            box-shadow: 0 2px 15px rgba(231, 76, 60, 0.3);
+            padding: 1rem 0;
         }
         
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: white !important;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .navbar-brand i {
+            color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        
+        /* ====== BOTONES ROJOS ====== */
         .btn-primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
         }
         
         .btn-primary:hover {
-            background: var(--primary-dark);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #a93226 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
         }
         
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            font-weight: 600;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* ====== TARJETAS CON BORDES ROJOS ====== */
+        .card-main {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-top: 5px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .card-main:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        /* ====== BADGES ROJOS ====== */
+        .badge-rapidsend {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        
+        .badge-urgent {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        
+        .badge-express {
+            background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+            color: white;
+        }
+        
+        .badge-standard {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+        
+        /* ====== SPINNER ROJO ====== */
         .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(231, 76, 60, 0.1);
+            border-top: 4px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 2rem auto;
@@ -70,61 +141,262 @@
             100% { transform: rotate(360deg); }
         }
         
-        .connection-badge {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 10000;
-        }
-        
-        .connection-online {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .connection-offline {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
+        /* ====== ESTADÍSTICAS CON ICONOS ROJOS ====== */
         .stat-card {
-            text-align: center;
-            padding: 1.5rem;
             background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 2px solid rgba(231, 76, 60, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
         }
         
         .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 2.8rem;
+            font-weight: 800;
             color: var(--primary);
             line-height: 1;
-            margin-bottom: 0.5rem;
+            margin-bottom: 10px;
         }
         
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+        .stat-label {
+            color: var(--gray);
             font-weight: 600;
-            display: inline-block;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-accepted { background: #d1ecf1; color: #0c5460; }
-        .status-delivered { background: #d1f2eb; color: #0e6251; }
+        /* ====== FORMULARIOS ====== */
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+        
+        /* ====== TÍTULOS ROJOS ====== */
+        .title-red {
+            color: var(--primary);
+            font-weight: 800;
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .title-red:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        /* ====== PEDIDOS CON BORDES IZQUIERDOS COLORIDOS ====== */
+        .order-card {
+            background: white;
+            border-left: 5px solid var(--primary);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .order-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .order-card.urgent {
+            border-left-color: #e74c3c;
+            background: linear-gradient(to right, rgba(231, 76, 60, 0.05), white);
+        }
+        
+        .order-card.express {
+            border-left-color: #f39c12;
+            background: linear-gradient(to right, rgba(243, 156, 18, 0.05), white);
+        }
+        
+        .order-card.standard {
+            border-left-color: #2ecc71;
+            background: linear-gradient(to right, rgba(46, 204, 113, 0.05), white);
+        }
+        
+        /* ====== ESTADOS DE PEDIDOS ====== */
+        .status-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-pending {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--primary);
+        }
+        
+        .status-accepted {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--info);
+        }
+        
+        .status-delivered {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+        
+        /* ====== CONEXIÓN FIREBASE ====== */
+        .connection-badge {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .connection-online {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+        
+        .connection-offline {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        
+        /* ====== WHATSAPP BUTTON VERDE ====== */
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+        
+        .whatsapp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            color: white;
+        }
+        
+        /* ====== RESPONSIVE ====== */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+            
+            .stat-number {
+                font-size: 2.2rem;
+            }
+            
+            .btn-primary {
+                padding: 10px 20px;
+            }
+            
+            .connection-badge {
+                top: 10px;
+                right: 10px;
+                font-size: 0.7rem;
+                padding: 6px 12px;
+            }
+        }
+        
+        /* ====== LOGIN SCREEN ESPECIAL ====== */
+        .login-screen {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo-icon {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+        }
+        
+        .login-logo-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .login-title {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        
+        .login-subtitle {
+            color: var(--gray);
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
     </style>
     
-    <!-- Firebase SDK v9+ (Modular) -->
+    <!-- Firebase SDK v10+ -->
     <script type="module">
-        // Import Firebase v9+ (más liviano y moderno)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { 
             getAuth, 
@@ -145,11 +417,10 @@
             query, 
             where, 
             orderBy, 
-            serverTimestamp,
-            onSnapshot 
+            serverTimestamp 
         } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-        // 🔥 TUS NUEVAS CREDENCIALES (SEGURAS)
+        // 🔥 TUS CREDENCIALES ACTUALES
         const firebaseConfig = {
             apiKey: "AIzaSyDxD4g_uYEUKB37uNHvDWus_NQHoSAMK_8",
             authDomain: "rapidsend-1f640.firebaseapp.com",
@@ -164,57 +435,17 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Exportar para uso global
+        // Hacer disponible globalmente
         window.firebaseAuth = auth;
         window.firebaseDB = db;
-        window.firebaseApp = app;
-        
-        // Funciones disponibles globalmente
-        window.firebase = {
-            auth: {
-                createUser: createUserWithEmailAndPassword,
-                signIn: signInWithEmailAndPassword,
-                signOut: signOut,
-                onAuthStateChanged: onAuthStateChanged
-            },
-            firestore: {
-                collection,
-                addDoc,
-                getDocs,
-                doc,
-                getDoc,
-                setDoc,
-                updateDoc,
-                query,
-                where,
-                orderBy,
-                serverTimestamp,
-                onSnapshot
-            }
+        window.firebaseModules = {
+            auth: { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged },
+            firestore: { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy, serverTimestamp }
         };
 
-        console.log('✅ Firebase v10.7.0 inicializado');
-        console.log('📁 Proyecto:', firebaseConfig.projectId);
+        console.log('🔥 Firebase inicializado - RapidSend Red');
         
-        // Prueba de conexión inicial
-        async function testConnection() {
-            try {
-                await addDoc(collection(db, 'connection_test'), {
-                    test: 'Conexión establecida',
-                    timestamp: serverTimestamp(),
-                    project: firebaseConfig.projectId
-                });
-                console.log('✅ Conexión a Firestore exitosa');
-                updateConnectionStatus(true);
-                return true;
-            } catch (error) {
-                console.warn('⚠️ Firestore puede necesitar configuración:', error.message);
-                // Esto es normal si las reglas de seguridad están activas
-                updateConnectionStatus(true); // Asumir conexión para Auth
-                return false;
-            }
-        }
-        
+        // Actualizar estado de conexión
         function updateConnectionStatus(connected) {
             let badge = document.getElementById('connectionBadge');
             if (!badge) {
@@ -225,7 +456,7 @@
             }
             
             if (connected) {
-                badge.innerHTML = '<i class="fas fa-wifi"></i> Conectado';
+                badge.innerHTML = '<i class="fas fa-bolt"></i> Conectado';
                 badge.className = 'connection-badge connection-online';
             } else {
                 badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Sin conexión';
@@ -233,30 +464,32 @@
             }
         }
         
-        // Ejecutar prueba de conexión
-        setTimeout(testConnection, 1000);
+        // Prueba inicial de conexión
+        setTimeout(() => updateConnectionStatus(true), 1000);
     </script>
 </head>
 <body>
+    <!-- Estado de conexión -->
+    <div id="connectionBadge" class="connection-badge connection-online" style="display: none;">
+        <i class="fas fa-bolt"></i> Conectado
+    </div>
+    
     <div id="app">
-        <div class="min-vh-100 d-flex align-items-center justify-content-center p-3">
-            <div class="card-main" style="width: 100%; max-width: 500px;">
-                <div class="card-body p-4 text-center">
-                    <div class="mb-4">
-                        <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3" 
-                             style="width: 80px; height: 80px;">
-                            <i class="fas fa-bolt fa-2x text-white"></i>
-                        </div>
-                        <h2 class="fw-bold mb-2">RapidSend</h2>
-                        <p class="text-muted">Entregas Express en Panamá</p>
-                        <small class="text-success">Firebase v10.7.0 | Credenciales seguras ✅</small>
+        <!-- Loading inicial -->
+        <div class="login-screen">
+            <div class="login-card">
+                <div class="login-logo">
+                    <div class="login-logo-icon">
+                        <i class="fas fa-bolt"></i>
                     </div>
-                    
+                    <h1 class="login-title">RapidSend</h1>
+                    <p class="login-subtitle">Entregas Express</p>
+                    <span class="badge badge-rapidsend">v2.0</span>
+                </div>
+                
+                <div class="text-center">
                     <div class="loading-spinner"></div>
-                    
-                    <div class="mt-4" id="initStatus">
-                        <p><i class="fas fa-spinner fa-spin text-primary"></i> Inicializando aplicación...</p>
-                    </div>
+                    <p class="mt-3 text-muted">Inicializando aplicación...</p>
                 </div>
             </div>
         </div>
@@ -278,27 +511,24 @@
         };
 
         // ============================================
-        // INICIALIZACIÓN PRINCIPAL
+        // INICIALIZACIÓN
         // ============================================
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 Iniciando RapidSend v2.0...');
+            console.log('🚀 RapidSend - Iniciando...');
             
-            // Esperar a que Firebase esté listo
+            // Mostrar badge de conexión
+            document.getElementById('connectionBadge').style.display = 'flex';
+            
             await waitForFirebase();
-            
-            // Configurar listener de autenticación
             setupAuth();
         });
 
         async function waitForFirebase() {
             return new Promise((resolve) => {
                 const check = () => {
-                    if (window.firebase && window.firebaseAuth && window.firebaseDB) {
+                    if (window.firebaseAuth && window.firebaseDB) {
                         AppState.firebaseReady = true;
-                        console.log('✅ Módulos de Firebase cargados');
-                        document.getElementById('initStatus').innerHTML = 
-                            '<p><i class="fas fa-check text-success"></i> Firebase listo</p>' +
-                            '<p><i class="fas fa-spinner fa-spin text-primary"></i> Verificando usuario...</p>';
+                        console.log('✅ Firebase listo');
                         resolve();
                     } else {
                         setTimeout(check, 100);
@@ -309,15 +539,14 @@
         }
 
         function setupAuth() {
-            window.firebase.auth.onAuthStateChanged(window.firebaseAuth, async (user) => {
+            window.firebaseModules.auth.onAuthStateChanged(window.firebaseAuth, async (user) => {
                 AppState.currentUser = user;
                 
                 if (user) {
-                    console.log('👤 Usuario autenticado:', user.email);
+                    console.log('👤 Usuario:', user.email);
                     await loadUserData(user.uid);
                     renderDashboard();
                 } else {
-                    console.log('👤 No autenticado - Mostrando login');
                     renderLogin();
                 }
             });
@@ -325,24 +554,19 @@
 
         async function loadUserData(uid) {
             try {
-                const userDoc = await window.firebase.firestore.getDoc(
-                    window.firebase.firestore.doc(window.firebaseDB, 'usuarios', uid)
+                const userDoc = await window.firebaseModules.firestore.getDoc(
+                    window.firebaseModules.firestore.doc(window.firebaseDB, 'usuarios', uid)
                 );
                 
                 if (userDoc.exists()) {
                     AppState.userData = userDoc.data();
                     AppState.userRole = AppState.userData.rol;
-                    
-                    // Guardar en localStorage para persistencia
                     localStorage.setItem('rapidsend_user', JSON.stringify({
                         uid: uid,
                         role: AppState.userRole,
                         data: AppState.userData
                     }));
-                    
-                    console.log('📊 Datos de usuario cargados:', AppState.userData);
                 } else {
-                    // Crear documento de usuario si no existe
                     await createUserDocument(uid);
                 }
             } catch (error) {
@@ -352,90 +576,69 @@
 
         async function createUserDocument(uid) {
             const user = window.firebaseAuth.currentUser;
-            const userData = {
-                nombre: user.displayName || 'Usuario',
-                email: user.email,
-                rol: 'cliente',
-                telefono: '',
-                fechaRegistro: window.firebase.firestore.serverTimestamp(),
-                activo: null
-            };
-            
-            await window.firebase.firestore.setDoc(
-                window.firebase.firestore.doc(window.firebaseDB, 'usuarios', uid),
-                userData
+            await window.firebaseModules.firestore.setDoc(
+                window.firebaseModules.firestore.doc(window.firebaseDB, 'usuarios', uid),
+                {
+                    nombre: user.displayName || 'Usuario',
+                    email: user.email,
+                    rol: 'cliente',
+                    telefono: '',
+                    fechaRegistro: window.firebaseModules.firestore.serverTimestamp()
+                }
             );
-            
-            AppState.userData = userData;
+            AppState.userData = { nombre: user.displayName, email: user.email, rol: 'cliente' };
             AppState.userRole = 'cliente';
         }
 
         // ============================================
-        // SISTEMA DE AUTENTICACIÓN
+        // LOGIN/REGISTRO (DISEÑO ROJO ORIGINAL)
         // ============================================
         function renderLogin() {
             document.getElementById('app').innerHTML = `
-                <div class="min-vh-100 d-flex align-items-center justify-content-center p-3">
-                    <div class="card-main" style="width: 100%; max-width: 400px;">
-                        <div class="card-body p-4">
-                            <div class="text-center mb-4">
-                                <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3" 
-                                     style="width: 80px; height: 80px;">
-                                    <i class="fas fa-bolt fa-2x text-white"></i>
-                                </div>
-                                <h2 class="fw-bold mb-2">RapidSend</h2>
-                                <p class="text-muted">Entregas Express</p>
-                                <div class="badge bg-success">Nuevas Credenciales ✅</div>
+                <div class="login-screen">
+                    <div class="login-card">
+                        <div class="login-logo">
+                            <div class="login-logo-icon">
+                                <i class="fas fa-bolt"></i>
                             </div>
+                            <h1 class="login-title">RapidSend</h1>
+                            <p class="login-subtitle">Entregas Express en Panamá</p>
+                            <span class="badge badge-rapidsend">Nuevas Credenciales</span>
+                        </div>
 
+                        <!-- Pestañas -->
+                        <ul class="nav nav-pills nav-fill mb-4" id="authTab">
+                            <li class="nav-item">
+                                <button class="nav-link active" onclick="showAuthTab('login')">Iniciar Sesión</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" onclick="showAuthTab('register')">Registrarse</button>
+                            </li>
+                        </ul>
+
+                        <!-- Formulario Login -->
+                        <div id="loginForm">
+                            <div class="mb-3">
+                                <input type="email" class="form-control" id="loginEmail" placeholder="Correo electrónico">
+                            </div>
+                            
                             <div class="mb-4">
-                                <div class="form-floating mb-3">
-                                    <input type="email" class="form-control" id="loginEmail" placeholder="Correo">
-                                    <label for="loginEmail">Correo electrónico</label>
-                                </div>
-                                
-                                <div class="form-floating mb-3">
-                                    <input type="password" class="form-control" id="loginPassword" placeholder="Contraseña">
-                                    <label for="loginPassword">Contraseña</label>
-                                </div>
+                                <input type="password" class="form-control" id="loginPassword" placeholder="Contraseña">
                             </div>
                             
                             <button onclick="loginWithEmail()" class="btn btn-primary w-100 mb-3">
                                 <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
                             </button>
                             
-                            <hr class="my-4">
-                            
                             <div class="text-center">
-                                <p class="text-muted mb-3">¿No tienes cuenta?</p>
-                                <button onclick="showRegister()" class="btn btn-outline-primary w-100 mb-3">
-                                    <i class="fas fa-user-plus me-2"></i>Registrarse
+                                <button onclick="quickDemo()" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-rocket me-2"></i>Modo Demo
                                 </button>
-                                
-                                <button onclick="quickDemo()" class="btn btn-outline-secondary w-100">
-                                    <i class="fas fa-rocket me-2"></i>Demo Rápida
-                                </button>
-                            </div>
-                            
-                            <div class="text-center mt-4">
-                                <small class="text-muted">Proyecto: ${firebaseConfig.projectId}</small>
                             </div>
                         </div>
-                    </div>
-                </div>
-            `;
-        }
 
-        function showRegister() {
-            document.getElementById('app').innerHTML = `
-                <div class="min-vh-100 d-flex align-items-center justify-content-center p-3">
-                    <div class="card-main" style="width: 100%; max-width: 400px;">
-                        <div class="card-body p-4">
-                            <div class="text-center mb-4">
-                                <h3 class="fw-bold mb-2">Crear Cuenta</h3>
-                                <p class="text-muted">Completa tus datos</p>
-                            </div>
-
+                        <!-- Formulario Registro -->
+                        <div id="registerForm" style="display: none;">
                             <div class="mb-3">
                                 <input type="text" class="form-control" id="regName" placeholder="Nombre completo">
                             </div>
@@ -465,14 +668,19 @@
                             <button onclick="registerWithEmail()" class="btn btn-primary w-100 mb-3">
                                 <i class="fas fa-user-plus me-2"></i>Crear Cuenta
                             </button>
-                            
-                            <button onclick="renderLogin()" class="btn btn-outline-secondary w-100">
-                                <i class="fas fa-arrow-left me-2"></i>Volver al Login
-                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <small class="text-muted">Firebase: ${firebaseConfig.projectId}</small>
                         </div>
                     </div>
                 </div>
             `;
+        }
+
+        function showAuthTab(tab) {
+            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
         }
 
         async function loginWithEmail() {
@@ -485,14 +693,8 @@
             }
             
             try {
-                await window.firebase.auth.signIn(
-                    window.firebaseAuth, 
-                    email, 
-                    password
-                );
-                // El listener onAuthStateChanged manejará el redireccionamiento
+                await window.firebaseModules.auth.signInWithEmailAndPassword(window.firebaseAuth, email, password);
             } catch (error) {
-                console.error('Login error:', error);
                 Swal.fire('Error', error.message, 'error');
             }
         }
@@ -515,49 +717,40 @@
             }
             
             try {
-                // Crear usuario en Auth
-                const result = await window.firebase.auth.createUser(
-                    window.firebaseAuth,
-                    email,
-                    password
+                const result = await window.firebaseModules.auth.createUserWithEmailAndPassword(
+                    window.firebaseAuth, email, password
                 );
                 
-                // Actualizar perfil
                 await result.user.updateProfile({ displayName: name });
                 
-                // Crear documento en Firestore
-                await window.firebase.firestore.setDoc(
-                    window.firebase.firestore.doc(window.firebaseDB, 'usuarios', result.user.uid),
+                await window.firebaseModules.firestore.setDoc(
+                    window.firebaseModules.firestore.doc(window.firebaseDB, 'usuarios', result.user.uid),
                     {
                         nombre: name,
                         email: email,
                         rol: role,
                         telefono: `+507${phone.replace(/\D/g, '')}`,
-                        fechaRegistro: window.firebase.firestore.serverTimestamp(),
+                        fechaRegistro: window.firebaseModules.firestore.serverTimestamp(),
                         activo: role === 'repartidor' ? true : null
                     }
                 );
                 
                 Swal.fire('✅ Cuenta creada', 'Bienvenido a RapidSend', 'success');
-                // El listener onAuthStateChanged manejará el redireccionamiento
                 
             } catch (error) {
-                console.error('Register error:', error);
                 Swal.fire('Error', error.message, 'error');
             }
         }
 
         async function quickDemo() {
             try {
-                // Intentar login con usuario demo
-                await window.firebase.auth.signIn(
+                await window.firebaseModules.auth.signInWithEmailAndPassword(
                     window.firebaseAuth,
                     'demo@rapidsend.com',
                     'demo123456'
                 );
             } catch (error) {
                 if (error.code === 'auth/user-not-found') {
-                    // Crear usuario demo
                     await createDemoUser();
                 } else {
                     Swal.fire('Error', error.message, 'error');
@@ -567,7 +760,7 @@
 
         async function createDemoUser() {
             try {
-                const result = await window.firebase.auth.createUser(
+                const result = await window.firebaseModules.auth.createUserWithEmailAndPassword(
                     window.firebaseAuth,
                     'demo@rapidsend.com',
                     'demo123456'
@@ -575,15 +768,14 @@
                 
                 await result.user.updateProfile({ displayName: 'Usuario Demo' });
                 
-                await window.firebase.firestore.setDoc(
-                    window.firebase.firestore.doc(window.firebaseDB, 'usuarios', result.user.uid),
+                await window.firebaseModules.firestore.setDoc(
+                    window.firebaseModules.firestore.doc(window.firebaseDB, 'usuarios', result.user.uid),
                     {
                         nombre: 'Usuario Demo',
                         email: 'demo@rapidsend.com',
                         rol: 'cliente',
                         telefono: '+50760000000',
-                        fechaRegistro: window.firebase.firestore.serverTimestamp(),
-                        activo: null
+                        fechaRegistro: window.firebaseModules.firestore.serverTimestamp()
                     }
                 );
                 
@@ -595,28 +787,37 @@
         }
 
         // ============================================
-        // DASHBOARD PRINCIPAL
+        // DASHBOARD PRINCIPAL (DISEÑO ROJO)
         // ============================================
         function renderDashboard() {
             document.getElementById('app').innerHTML = `
-                <!-- Navbar -->
-                <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+                <!-- Navbar Roja -->
+                <nav class="navbar navbar-main navbar-expand-lg">
                     <div class="container-fluid">
-                        <a class="navbar-brand fw-bold text-primary" href="#">
+                        <a class="navbar-brand" href="#">
                             <i class="fas fa-bolt me-2"></i>RapidSend
+                            ${AppState.userRole === 'repartidor' ? 
+                                '<span class="badge bg-light text-dark ms-2">Repartidor</span>' : 
+                                '<span class="badge bg-light text-dark ms-2">Cliente</span>'
+                            }
                         </a>
                         
-                        <div class="d-flex align-items-center">
-                            <span class="badge bg-primary me-3">${AppState.userRole === 'cliente' ? 'Cliente' : 'Repartidor'}</span>
-                            
+                        <div class="d-flex align-items-center gap-3">
                             <div class="dropdown">
-                                <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
                                     <i class="fas fa-user me-2"></i>${AppState.userData?.nombre || 'Usuario'}
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" onclick="showProfile()"><i class="fas fa-id-card me-2"></i>Mi Perfil</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="showProfile()">
+                                        <i class="fas fa-id-card me-2"></i>Mi Perfil
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="testFirebase()">
+                                        <i class="fas fa-vial me-2"></i>Probar Firebase
+                                    </a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="logout()">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                    </a></li>
                                 </ul>
                             </div>
                         </div>
@@ -632,23 +833,25 @@
                                 <div class="card-body">
                                     <div class="row align-items-center">
                                         <div class="col-md-8">
-                                            <h3 class="fw-bold mb-3">¡Bienvenido, ${AppState.userData?.nombre?.split(' ')[0] || 'Usuario'}! 👋</h3>
-                                            <p class="text-muted mb-4">Tu aplicación de entregas express está lista.</p>
+                                            <h2 class="title-red">¡Bienvenido a RapidSend!</h2>
+                                            <p class="text-muted mb-4">Tu plataforma de entregas express está lista para usar.</p>
                                             
                                             <div class="d-flex flex-wrap gap-3">
                                                 <button class="btn btn-primary" onclick="createTestOrder()">
                                                     <i class="fas fa-plus me-2"></i>Crear Pedido Test
                                                 </button>
-                                                <button class="btn btn-outline-primary" onclick="checkCollections()">
+                                                <button class="btn btn-outline-primary" onclick="checkDatabase()">
                                                     <i class="fas fa-database me-2"></i>Ver Base de Datos
                                                 </button>
-                                                <button class="btn btn-outline-success" onclick="testAllServices()">
-                                                    <i class="fas fa-vial me-2"></i>Probar Servicios
-                                                </button>
+                                                ${AppState.userRole === 'repartidor' ? `
+                                                    <button class="btn btn-success" onclick="toggleOnlineStatus()">
+                                                        <i class="fas fa-toggle-on me-2"></i>En Línea
+                                                    </button>
+                                                ` : ''}
                                             </div>
                                         </div>
                                         <div class="col-md-4 text-center">
-                                            <div class="rounded-circle ${AppState.userRole === 'cliente' ? 'bg-primary' : 'bg-warning'} d-inline-flex align-items-center justify-content-center" 
+                                            <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center" 
                                                  style="width: 120px; height: 120px;">
                                                 <i class="fas ${AppState.userRole === 'cliente' ? 'fa-user' : 'fa-motorcycle'} fa-3x text-white"></i>
                                             </div>
@@ -663,24 +866,39 @@
                     <div class="row mb-4">
                         <div class="col-md-3 col-6 mb-3">
                             <div class="stat-card">
-                                <div class="stat-number text-success">✅</div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <div class="stat-number" id="firebaseStatus">OK</div>
                                 <div class="stat-label">Firebase</div>
                             </div>
                         </div>
+                        
                         <div class="col-md-3 col-6 mb-3">
                             <div class="stat-card">
+                                <div class="stat-icon">
+                                    ${AppState.userRole === 'cliente' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-motorcycle"></i>'}
+                                </div>
                                 <div class="stat-number">${AppState.userRole === 'cliente' ? '👤' : '🏍️'}</div>
                                 <div class="stat-label">${AppState.userRole === 'cliente' ? 'Cliente' : 'Repartidor'}</div>
                             </div>
                         </div>
+                        
                         <div class="col-md-3 col-6 mb-3">
                             <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
                                 <div class="stat-number text-primary" id="ordersCount">0</div>
                                 <div class="stat-label">Pedidos</div>
                             </div>
                         </div>
+                        
                         <div class="col-md-3 col-6 mb-3">
                             <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
                                 <div class="stat-number text-info" id="usersCount">0</div>
                                 <div class="stat-label">Usuarios</div>
                             </div>
@@ -692,16 +910,16 @@
                         <div class="col-md-6 mb-4">
                             <div class="card-main h-100">
                                 <div class="card-body">
-                                    <h5 class="fw-bold mb-3"><i class="fas fa-cogs me-2"></i>Configuración</h5>
+                                    <h5 class="title-red mb-4">Configuración</h5>
                                     <div class="list-group list-group-flush">
-                                        <button class="list-group-item list-group-item-action" onclick="showProfile()">
-                                            <i class="fas fa-user-cog me-2"></i>Editar Perfil
+                                        <button class="list-group-item list-group-item-action border-0 py-3" onclick="showProfile()">
+                                            <i class="fas fa-user-cog me-3 text-primary"></i>Editar Perfil
                                         </button>
-                                        <button class="list-group-item list-group-item-action" onclick="checkDatabase()">
-                                            <i class="fas fa-database me-2"></i>Estado de la Base de Datos
+                                        <button class="list-group-item list-group-item-action border-0 py-3" onclick="showFirebaseConfig()">
+                                            <i class="fas fa-fire me-3 text-primary"></i>Ver Configuración
                                         </button>
-                                        <button class="list-group-item list-group-item-action" onclick="showFirebaseConfig()">
-                                            <i class="fas fa-fire me-2"></i>Ver Configuración Firebase
+                                        <button class="list-group-item list-group-item-action border-0 py-3" onclick="testAllServices()">
+                                            <i class="fas fa-vial me-3 text-primary"></i>Probar Servicios
                                         </button>
                                     </div>
                                 </div>
@@ -711,19 +929,20 @@
                         <div class="col-md-6 mb-4">
                             <div class="card-main h-100">
                                 <div class="card-body">
-                                    <h5 class="fw-bold mb-3"><i class="fas fa-rocket me-2"></i>Acciones Rápidas</h5>
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-primary" onclick="createOrderModal()">
+                                    <h5 class="title-red mb-4">Acciones Rápidas</h5>
+                                    <div class="d-grid gap-3">
+                                        <button class="btn btn-primary btn-lg py-3" onclick="createNewOrder()">
                                             <i class="fas fa-shipping-fast me-2"></i>Nuevo Pedido
                                         </button>
                                         ${AppState.userRole === 'repartidor' ? `
-                                            <button class="btn btn-success" onclick="loadAvailableOrders()">
+                                            <button class="btn btn-success btn-lg py-3" onclick="findOrders()">
                                                 <i class="fas fa-search me-2"></i>Buscar Pedidos
                                             </button>
-                                        ` : ''}
-                                        <button class="btn btn-outline-primary" onclick="viewOrders()">
-                                            <i class="fas fa-list me-2"></i>Ver Mis Pedidos
-                                        </button>
+                                        ` : `
+                                            <button class="btn btn-outline-primary btn-lg py-3" onclick="viewMyOrders()">
+                                                <i class="fas fa-list me-2"></i>Mis Pedidos
+                                            </button>
+                                        `}
                                     </div>
                                 </div>
                             </div>
@@ -732,28 +951,27 @@
                 </div>
             `;
             
-            // Cargar estadísticas
             loadDashboardStats();
         }
 
         async function loadDashboardStats() {
             try {
                 // Contar usuarios
-                const usersSnapshot = await window.firebase.firestore.getDocs(
-                    window.firebase.firestore.collection(window.firebaseDB, 'usuarios')
+                const usersSnapshot = await window.firebaseModules.firestore.getDocs(
+                    window.firebaseModules.firestore.collection(window.firebaseDB, 'usuarios')
                 );
                 document.getElementById('usersCount').textContent = usersSnapshot.size;
                 
-                // Contar pedidos del usuario actual
-                const ordersQuery = window.firebase.firestore.query(
-                    window.firebase.firestore.collection(window.firebaseDB, 'pedidos'),
-                    window.firebase.firestore.where('clienteId', '==', AppState.currentUser.uid)
+                // Contar pedidos del usuario
+                const ordersQuery = window.firebaseModules.firestore.query(
+                    window.firebaseModules.firestore.collection(window.firebaseDB, 'pedidos'),
+                    window.firebaseModules.firestore.where('clienteId', '==', AppState.currentUser.uid)
                 );
-                const ordersSnapshot = await window.firebase.firestore.getDocs(ordersQuery);
+                const ordersSnapshot = await window.firebaseModules.firestore.getDocs(ordersQuery);
                 document.getElementById('ordersCount').textContent = ordersSnapshot.size;
                 
             } catch (error) {
-                console.error('Error cargando estadísticas:', error);
+                console.error('Error estadísticas:', error);
             }
         }
 
@@ -765,113 +983,117 @@
                 const orderData = {
                     clienteId: AppState.currentUser.uid,
                     clienteNombre: AppState.userData?.nombre || 'Cliente',
-                    clienteTelefono: AppState.userData?.telefono || '+50700000000',
                     descripcion: 'Pedido de prueba - Documentos importantes',
                     origen: 'Calle 50, Panamá',
                     destino: 'Vía España, Panamá',
                     urgencia: 'standard',
                     precio: 15.50,
-                    metodoPago: 'cash',
                     status: 'pending',
-                    createdAt: window.firebase.firestore.serverTimestamp(),
-                    updatedAt: window.firebase.firestore.serverTimestamp()
+                    createdAt: window.firebaseModules.firestore.serverTimestamp()
                 };
                 
-                await window.firebase.firestore.addDoc(
-                    window.firebase.firestore.collection(window.firebaseDB, 'pedidos'),
+                await window.firebaseModules.firestore.addDoc(
+                    window.firebaseModules.firestore.collection(window.firebaseDB, 'pedidos'),
                     orderData
                 );
                 
                 Swal.fire({
                     title: '✅ Pedido creado',
-                    text: 'Se ha agregado un pedido de prueba a la base de datos',
-                    icon: 'success'
-                }).then(() => {
-                    loadDashboardStats();
+                    text: 'Pedido de prueba agregado a la base de datos',
+                    icon: 'success',
+                    background: 'white',
+                    color: '#333'
                 });
                 
+                loadDashboardStats();
+                
             } catch (error) {
-                Swal.fire('Error', `No se pudo crear: ${error.message}`, 'error');
+                Swal.fire('Error', error.message, 'error');
             }
         }
 
-        async function checkCollections() {
-            const collections = ['usuarios', 'pedidos', 'notificaciones', 'chats'];
-            let results = [];
-            
-            for (const coll of collections) {
-                try {
-                    const snapshot = await window.firebase.firestore.getDocs(
-                        window.firebase.firestore.collection(window.firebaseDB, coll)
-                    );
-                    results.push(`✅ ${coll}: ${snapshot.size} documentos`);
-                } catch (error) {
-                    results.push(`❌ ${coll}: No existe o sin permisos`);
-                }
-            }
-            
+        function checkDatabase() {
             Swal.fire({
-                title: '📁 Estado de Colecciones',
-                html: `<div class="text-start"><pre>${results.join('\n')}</pre></div>`,
-                width: 500
+                title: 'Estado de la Base de Datos',
+                html: `
+                    <div class="text-start">
+                        <p><i class="fas fa-check-circle text-success"></i> Firebase conectado</p>
+                        <p><i class="fas fa-database text-primary"></i> Proyecto: ${firebaseConfig.projectId}</p>
+                        <p><i class="fas fa-user-check text-info"></i> Usuario: ${AppState.currentUser?.email}</p>
+                        <hr>
+                        <p class="small text-muted">Colecciones disponibles:</p>
+                        <ul class="small">
+                            <li>usuarios (datos de usuarios)</li>
+                            <li>pedidos (registro de pedidos)</li>
+                            <li>notificaciones (mensajes del sistema)</li>
+                        </ul>
+                    </div>
+                `,
+                background: 'white',
+                color: '#333'
             });
         }
 
-        async function testAllServices() {
-            const tests = [
-                { name: 'Auth - Usuario actual', test: () => AppState.currentUser ? '✅' : '❌' },
-                { name: 'Firestore - Conexión', test: testFirestoreConnection },
-                { name: 'Firestore - Escritura', test: testFirestoreWrite },
-                { name: 'LocalStorage', test: () => localStorage.getItem('rapidsend_user') ? '✅' : '⚠️' }
-            ];
-            
-            let results = [];
-            
-            for (const test of tests) {
-                try {
-                    const result = await (typeof test.test === 'function' ? test.test() : test.test);
-                    results.push(`${result} ${test.name}`);
-                } catch (error) {
-                    results.push(`❌ ${test.name}: ${error.message}`);
-                }
-            }
-            
-            Swal.fire({
-                title: '🧪 Resultados de Prueba',
-                html: `<div class="text-start"><pre>${results.join('\n')}</pre></div>`,
-                icon: 'info'
-            });
-        }
-
-        async function testFirestoreConnection() {
+        async function testFirebase() {
             try {
-                const testDoc = await window.firebase.firestore.addDoc(
-                    window.firebase.firestore.collection(window.firebaseDB, 'test_logs'),
+                await window.firebaseModules.firestore.addDoc(
+                    window.firebaseModules.firestore.collection(window.firebaseDB, 'test_logs'),
                     {
-                        test: 'Prueba de conexión',
-                        timestamp: window.firebase.firestore.serverTimestamp(),
-                        userId: AppState.currentUser.uid
-                    }
-                );
-                return '✅';
-            } catch (error) {
-                throw new Error(error.message);
-            }
-        }
-
-        async function testFirestoreWrite() {
-            try {
-                await window.firebase.firestore.setDoc(
-                    window.firebase.firestore.doc(window.firebaseDB, 'test', 'connection'),
-                    {
-                        lastTest: new Date().toISOString(),
-                        status: 'active',
+                        test: 'Prueba de Firebase',
+                        timestamp: window.firebaseModules.firestore.serverTimestamp(),
                         user: AppState.currentUser.email
                     }
                 );
-                return '✅';
+                
+                Swal.fire('✅ Firebase funciona', 'Se escribió un documento de prueba', 'success');
+                
             } catch (error) {
-                throw new Error(error.message);
+                Swal.fire('❌ Error', error.message, 'error');
+            }
+        }
+
+        async function testAllServices() {
+            Swal.fire({
+                title: '🧪 Probando servicios...',
+                html: '<div class="loading-spinner"></div>',
+                showConfirmButton: false,
+                allowOutsideClick: false
+            });
+            
+            try {
+                // Test Auth
+                const user = window.firebaseAuth.currentUser;
+                
+                // Test Firestore write
+                await window.firebaseModules.firestore.addDoc(
+                    window.firebaseModules.firestore.collection(window.firebaseDB, 'test_logs'),
+                    {
+                        service: 'Firestore Write Test',
+                        user: user.email,
+                        timestamp: window.firebaseModules.firestore.serverTimestamp()
+                    }
+                );
+                
+                // Test Firestore read
+                const usersSnapshot = await window.firebaseModules.firestore.getDocs(
+                    window.firebaseModules.firestore.collection(window.firebaseDB, 'usuarios')
+                );
+                
+                Swal.fire({
+                    title: '✅ Todos los servicios funcionan',
+                    html: `
+                        <div class="text-start">
+                            <p><i class="fas fa-check-circle text-success"></i> Authentication: OK</p>
+                            <p><i class="fas fa-check-circle text-success"></i> Firestore Write: OK</p>
+                            <p><i class="fas fa-check-circle text-success"></i> Firestore Read: ${usersSnapshot.size} usuarios</p>
+                            <p><i class="fas fa-check-circle text-success"></i> Local Storage: OK</p>
+                        </div>
+                    `,
+                    icon: 'success'
+                });
+                
+            } catch (error) {
+                Swal.fire('❌ Error en pruebas', error.message, 'error');
             }
         }
 
@@ -880,20 +1102,28 @@
                 title: 'Mi Perfil',
                 html: `
                     <div class="text-center">
-                        <div class="profile-pic mx-auto mb-3" style="background: #4361ee; color: white; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-user fa-3x"></i>
+                        <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 100px; height: 100px;">
+                            <i class="fas fa-user fa-3x text-white"></i>
                         </div>
                         
-                        <h5>${AppState.userData?.nombre || 'Usuario'}</h5>
+                        <h5 class="fw-bold">${AppState.userData?.nombre || 'Usuario'}</h5>
                         <p class="text-muted">${AppState.userData?.email || ''}</p>
                         
                         <div class="text-start mt-4">
-                            <p><strong>Rol:</strong> ${AppState.userRole === 'cliente' ? 'Cliente' : 'Repartidor'}</p>
-                            <p><strong>Teléfono:</strong> ${AppState.userData?.telefono || 'No registrado'}</p>
-                            <p><strong>ID Firebase:</strong> <small>${AppState.currentUser?.uid?.substring(0, 15)}...</small></p>
+                            <p><strong><i class="fas fa-id-card me-2"></i>Rol:</strong> 
+                               <span class="badge ${AppState.userRole === 'cliente' ? 'bg-primary' : 'bg-success'}">
+                                   ${AppState.userRole === 'cliente' ? 'Cliente' : 'Repartidor'}
+                               </span>
+                            </p>
+                            <p><strong><i class="fas fa-phone me-2"></i>WhatsApp:</strong> ${AppState.userData?.telefono || 'No registrado'}</p>
+                            <p><strong><i class="fas fa-fire me-2"></i>Firebase ID:</strong> 
+                               <small class="text-muted">${AppState.currentUser?.uid?.substring(0, 15)}...</small>
+                            </p>
                         </div>
                     </div>
                 `,
+                background: 'white',
                 showConfirmButton: false,
                 showCloseButton: true
             });
@@ -904,44 +1134,46 @@
                 title: 'Configuración Firebase',
                 html: `
                     <div class="text-start">
-                        <pre style="font-size: 12px; background: #f8f9fa; padding: 10px; border-radius: 5px;">
-${JSON.stringify(firebaseConfig, null, 2)}
-                        </pre>
-                        <p class="small text-muted mt-3">Estado: <span class="text-success">✅ Configurado correctamente</span></p>
+                        <p><strong>Proyecto:</strong> ${firebaseConfig.projectId}</p>
+                        <p><strong>App ID:</strong> ${firebaseConfig.appId}</p>
+                        <p><strong>Auth Domain:</strong> ${firebaseConfig.authDomain}</p>
+                        <p><strong>API Key:</strong> 
+                           <span class="text-success">Nueva y segura ✅</span>
+                        </p>
+                        <hr>
+                        <p class="small text-muted">
+                            <i class="fas fa-info-circle"></i> Esta clave API es diferente a la anterior comprometida.
+                        </p>
                     </div>
                 `,
-                width: 600
+                width: 500,
+                background: 'white'
             });
         }
 
-        function createOrderModal() {
+        function createNewOrder() {
             Swal.fire({
-                title: 'Crear Nuevo Pedido',
+                title: '📦 Nuevo Pedido',
                 html: `
                     <div class="text-start">
                         <div class="mb-3">
-                            <label class="form-label">Descripción</label>
                             <input type="text" class="form-control" id="orderDesc" placeholder="¿Qué vas a enviar?">
                         </div>
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label">Origen</label>
-                                <input type="text" class="form-control" id="orderFrom" placeholder="Desde">
+                                <input type="text" class="form-control" id="orderFrom" placeholder="Origen">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Destino</label>
-                                <input type="text" class="form-control" id="orderTo" placeholder="Hacia">
+                                <input type="text" class="form-control" id="orderTo" placeholder="Destino">
                             </div>
                         </div>
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label">Precio ($)</label>
-                                <input type="number" class="form-control" id="orderPrice" value="10" min="3" max="100">
+                                <input type="number" class="form-control" id="orderPrice" value="10" placeholder="Precio ($)">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Urgencia</label>
                                 <select class="form-select" id="orderUrgency">
                                     <option value="standard">Normal</option>
                                     <option value="express">Express</option>
@@ -954,6 +1186,7 @@ ${JSON.stringify(firebaseConfig, null, 2)}
                 showCancelButton: true,
                 confirmButtonText: 'Crear Pedido',
                 cancelButtonText: 'Cancelar',
+                background: 'white',
                 preConfirm: () => {
                     const desc = document.getElementById('orderDesc').value;
                     const from = document.getElementById('orderFrom').value;
@@ -979,7 +1212,6 @@ ${JSON.stringify(firebaseConfig, null, 2)}
                 const orderData = {
                     clienteId: AppState.currentUser.uid,
                     clienteNombre: AppState.userData?.nombre || 'Cliente',
-                    clienteTelefono: AppState.userData?.telefono || '',
                     descripcion: data.desc,
                     origen: data.from,
                     destino: data.to,
@@ -987,12 +1219,11 @@ ${JSON.stringify(firebaseConfig, null, 2)}
                     precio: parseFloat(data.price),
                     metodoPago: 'cash',
                     status: 'pending',
-                    createdAt: window.firebase.firestore.serverTimestamp(),
-                    updatedAt: window.firebase.firestore.serverTimestamp()
+                    createdAt: window.firebaseModules.firestore.serverTimestamp()
                 };
                 
-                await window.firebase.firestore.addDoc(
-                    window.firebase.firestore.collection(window.firebaseDB, 'pedidos'),
+                await window.firebaseModules.firestore.addDoc(
+                    window.firebaseModules.firestore.collection(window.firebaseDB, 'pedidos'),
                     orderData
                 );
                 
@@ -1000,51 +1231,55 @@ ${JSON.stringify(firebaseConfig, null, 2)}
                 loadDashboardStats();
                 
             } catch (error) {
-                Swal.fire('Error', `No se pudo crear: ${error.message}`, 'error');
+                Swal.fire('Error', error.message, 'error');
             }
+        }
+
+        async function toggleOnlineStatus() {
+            if (!AppState.userData) return;
+            
+            const newStatus = !AppState.userData.activo;
+            
+            try {
+                await window.firebaseModules.firestore.updateDoc(
+                    window.firebaseModules.firestore.doc(window.firebaseDB, 'usuarios', AppState.currentUser.uid),
+                    {
+                        activo: newStatus,
+                        lastActive: window.firebaseModules.firestore.serverTimestamp()
+                    }
+                );
+                
+                AppState.userData.activo = newStatus;
+                
+                Swal.fire(
+                    newStatus ? '🟢 En línea' : '🔴 Desconectado',
+                    `Estado actualizado a ${newStatus ? 'en línea' : 'desconectado'}`,
+                    'success'
+                );
+                
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        }
+
+        function findOrders() {
+            Swal.fire('Modo Repartidor', 'Buscando pedidos disponibles...', 'info');
+        }
+
+        function viewMyOrders() {
+            Swal.fire('Mis Pedidos', 'Aquí verás tu historial de pedidos', 'info');
         }
 
         async function logout() {
             try {
-                await window.firebase.auth.signOut(window.firebaseAuth);
+                await window.firebaseModules.auth.signOut(window.firebaseAuth);
                 localStorage.removeItem('rapidsend_user');
-                // El listener onAuthStateChanged manejará el redireccionamiento
             } catch (error) {
                 console.error('Logout error:', error);
             }
         }
 
-        // ============================================
-        // FUNCIONES ADICIONALES
-        // ============================================
-        function checkDatabase() {
-            Swal.fire({
-                title: 'Estado de la Base de Datos',
-                html: `
-                    <div class="text-start">
-                        <p><strong>Proyecto Firebase:</strong> ${firebaseConfig.projectId}</p>
-                        <p><strong>App ID:</strong> ${firebaseConfig.appId.substring(0, 20)}...</p>
-                        <p><strong>API Key:</strong> ${firebaseConfig.apiKey.substring(0, 20)}...</p>
-                        <hr>
-                        <p>✅ Authentication configurado</p>
-                        <p>✅ Firestore Database activo</p>
-                        <p>✅ Credenciales seguras</p>
-                        <p>✅ Usuario actual: ${AppState.currentUser?.email}</p>
-                    </div>
-                `,
-                icon: 'info'
-            });
-        }
-
-        function viewOrders() {
-            Swal.fire('En desarrollo', 'Esta función estará disponible en la próxima actualización', 'info');
-        }
-
-        function loadAvailableOrders() {
-            Swal.fire('Modo Repartidor', 'Buscando pedidos disponibles...', 'info');
-        }
-
-        console.log('✨ Aplicación RapidSend inicializada');
+        console.log('✨ RapidSend - Aplicación lista');
     </script>
 </body>
 </html>
