@@ -395,78 +395,59 @@
         }
     </style>
     
-    <!-- Firebase SDK v10+ -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            doc, 
-            getDoc, 
-            setDoc, 
-            updateDoc, 
-            query, 
-            where, 
-            orderBy, 
-            serverTimestamp 
-        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    <!-- Firebase SDK tradicional (compatible con GitHub Pages) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
 
-        // 🔥 TUS CREDENCIALES ACTUALES
-        const firebaseConfig = {
-            apiKey: "AIzaSyDxD4g_uYEUKB37uNHvDWus_NQHoSAMK_8",
-            authDomain: "rapidsend-1f640.firebaseapp.com",
-            projectId: "rapidsend-1f640",
-            storageBucket: "rapidsend-1f640.firebasestorage.app",
-            messagingSenderId: "249514582496",
-            appId: "1:249514582496:web:cafcc8760282983f24cb85"
-        };
+<script>
+    // 🔥 TUS CREDENCIALES ACTUALES
+    const firebaseConfig = {
+        apiKey: "AIzaSyDxD4g_uYEUKB37uNHvDWus_NQHoSAMK_8",
+        authDomain: "rapidsend-1f640.firebaseapp.com",
+        projectId: "rapidsend-1f640",
+        storageBucket: "rapidsend-1f640.firebasestorage.app",
+        messagingSenderId: "249514582496",
+        appId: "1:249514582496:web:cafcc8760282983f24cb85"
+    };
 
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    // Inicializar Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-        // Hacer disponible globalmente
-        window.firebaseAuth = auth;
-        window.firebaseDB = db;
-        window.firebaseModules = {
-            auth: { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged },
-            firestore: { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy, serverTimestamp }
-        };
+    // Hacer disponible globalmente
+    window.firebaseAuth = auth;
+    window.firebaseDB = db;
+    window.firebaseModules = {
+        auth: firebase.auth,
+        firestore: firebase.firestore
+    };
 
-        console.log('🔥 Firebase inicializado - RapidSend Red');
-        
-        // Actualizar estado de conexión
-        function updateConnectionStatus(connected) {
-            let badge = document.getElementById('connectionBadge');
-            if (!badge) {
-                badge = document.createElement('div');
-                badge.id = 'connectionBadge';
-                badge.className = 'connection-badge';
-                document.body.appendChild(badge);
-            }
-            
-            if (connected) {
-                badge.innerHTML = '<i class="fas fa-bolt"></i> Conectado';
-                badge.className = 'connection-badge connection-online';
-            } else {
-                badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Sin conexión';
-                badge.className = 'connection-badge connection-offline';
-            }
+    console.log('🔥 Firebase inicializado - RapidSend Red');
+    
+    // Actualizar estado de conexión
+    function updateConnectionStatus(connected) {
+        let badge = document.getElementById('connectionBadge');
+        if (!badge) {
+            badge = document.createElement('div');
+            badge.id = 'connectionBadge';
+            badge.className = 'connection-badge';
+            document.body.appendChild(badge);
         }
         
-        // Prueba inicial de conexión
-        setTimeout(() => updateConnectionStatus(true), 1000);
-    </script>
+        if (connected) {
+            badge.innerHTML = '<i class="fas fa-bolt"></i> Conectado';
+            badge.className = 'connection-badge connection-online';
+        } else {
+            badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Sin conexión';
+            badge.className = 'connection-badge connection-offline';
+        }
+    }
+    
+    // Prueba inicial de conexión
+    setTimeout(() => updateConnectionStatus(true), 1000);
+</script>
 </head>
 <body>
     <!-- Estado de conexión -->
