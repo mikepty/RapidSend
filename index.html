@@ -676,97 +676,281 @@
                     </div>
                 </div>
             `;
+            
+            // Agregar event listeners después de renderizar
+            setTimeout(() => {
+                const loginBtn = document.getElementById('loginForm')?.querySelector('button');
+                const registerBtn = document.getElementById('registerForm')?.querySelector('button');
+                
+                if (loginBtn) {
+                    loginBtn.addEventListener('click', loginWithEmail);
+                }
+                if (registerBtn) {
+                    registerBtn.addEventListener('click', registerWithEmail);
+                }
+                
+                // Agregar event listeners para las pestañas
+                const tabButtons = document.querySelectorAll('#authTab .nav-link');
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const tab = this.textContent.includes('Iniciar') ? 'login' : 'register';
+                        showAuthTab(tab);
+                    });
+                });
+                
+                // Permitir Enter en los formularios
+                document.getElementById('loginPassword')?.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') loginWithEmail();
+                });
+                
+                document.getElementById('regPassword')?.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') registerWithEmail();
+                });
+                
+                // Agregar botón demo
+                const demoBtn = document.querySelector('button[onclick*="quickDemo"]');
+                if (demoBtn) {
+                    demoBtn.addEventListener('click', quickDemo);
+                }
+            }, 100);
         }
 
         function showAuthTab(tab) {
-            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
-            document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginTab = document.querySelector('#authTab .nav-link:first-child');
+            const registerTab = document.querySelector('#authTab .nav-link:last-child');
+            
+            if (loginForm && registerForm && loginTab && registerTab) {
+                if (tab === 'login') {
+                    loginForm.style.display = 'block';
+                    registerForm.style.display = 'none';
+                    loginTab.classList.add('active');
+                    registerTab.classList.remove('active');
+                } else {
+                    loginForm.style.display = 'none';
+                    registerForm.style.display = 'block';
+                    loginTab.classList.remove('active');
+                    registerTab.classList.add('active');
+                }
+            }
         }
 
         async function loginWithEmail() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+            const email = document.getElementById('loginEmail')?.value || '';
+            const password = document.getElementById('loginPassword')?.value || '';
             
             if (!email || !password) {
-                Swal.fire('Error', 'Completa todos los campos', 'error');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor ingresa tu correo y contraseña',
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white'
+                });
                 return;
             }
             
             try {
-                await window.firebaseModules.auth.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+                Swal.fire({
+                    title: 'Iniciando sesión...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                    background: 'white'
+                });
+                
+                await window.firebaseModules.auth.signInWithEmailAndPassword(
+                    window.firebaseAuth, 
+                    email, 
+                    password
+                );
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Bienvenido!',
+                    text: 'Sesión iniciada correctamente',
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white',
+                    timer: 1500
+                });
+                
             } catch (error) {
-                Swal.fire('Error', error.message, 'error');
+                let errorMessage = 'Error al iniciar sesión';
+                if (error.code === 'auth/invalid-credential') {
+                    errorMessage = 'Correo o contraseña incorrectos';
+                } else if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'Usuario no encontrado';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Contraseña incorrecta';
+                } else {
+                    errorMessage = error.message;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de inicio de sesión',
+                    text: errorMessage,
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white'
+                });
             }
         }
 
         async function registerWithEmail() {
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const phone = document.getElementById('regPhone').value;
-            const role = document.getElementById('regRole').value;
+            const name = document.getElementById('regName')?.value || '';
+            const email = document.getElementById('regEmail')?.value || '';
+            const password = document.getElementById('regPassword')?.value || '';
+            const phone = document.getElementById('regPhone')?.value || '';
+            const roleSelect = document.getElementById('regRole');
+            const role = roleSelect ? roleSelect.value : 'cliente';
             
+            // Validaciones
             if (!name || !email || !password || !phone) {
-                Swal.fire('Error', 'Completa todos los campos', 'error');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor completa todos los campos',
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white'
+                });
                 return;
             }
             
             if (password.length < 6) {
-                Swal.fire('Error', 'La contraseña debe tener al menos 6 caracteres', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Contraseña muy corta',
+                    text: 'La contraseña debe tener al menos 6 caracteres',
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white'
+                });
+                return;
+            }
+            
+            // Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Email inválido',
+                    text: 'Por favor ingresa un correo electrónico válido',
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white'
+                });
                 return;
             }
             
             try {
-                const result = await window.firebaseModules.auth.createUserWithEmailAndPassword(
-                    window.firebaseAuth, email, password
+                Swal.fire({
+                    title: 'Creando cuenta...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                    background: 'white'
+                });
+                
+                // 1. Crear usuario en Authentication
+                const userCredential = await window.firebaseModules.auth.createUserWithEmailAndPassword(
+                    window.firebaseAuth,
+                    email,
+                    password
                 );
                 
-                await result.user.updateProfile({ displayName: name });
+                const user = userCredential.user;
                 
+                // 2. Actualizar perfil con nombre
+                await user.updateProfile({ displayName: name });
+                
+                // 3. Crear documento en Firestore
                 await window.firebaseModules.firestore.setDoc(
-                    window.firebaseModules.firestore.doc(window.firebaseDB, 'usuarios', result.user.uid),
+                    window.firebaseModules.firestore.doc(window.firebaseDB, 'usuarios', user.uid),
                     {
                         nombre: name,
                         email: email,
                         rol: role,
                         telefono: `+507${phone.replace(/\D/g, '')}`,
                         fechaRegistro: window.firebaseModules.firestore.serverTimestamp(),
-                        activo: role === 'repartidor' ? true : null
+                        activo: role === 'repartidor' ? true : null,
+                        lastActive: window.firebaseModules.firestore.serverTimestamp()
                     }
                 );
                 
-                Swal.fire('✅ Cuenta creada', 'Bienvenido a RapidSend', 'success');
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Cuenta creada!',
+                    text: 'Tu cuenta ha sido creada exitosamente',
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white',
+                    timer: 2000
+                });
                 
             } catch (error) {
-                Swal.fire('Error', error.message, 'error');
+                let errorMessage = 'Error al crear la cuenta';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Este correo ya está registrado';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'La contraseña es muy débil';
+                } else {
+                    errorMessage = error.message;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al registrar',
+                    text: errorMessage,
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white'
+                });
             }
         }
 
         async function quickDemo() {
             try {
+                Swal.fire({
+                    title: 'Iniciando modo demo...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                    background: 'white'
+                });
+                
                 await window.firebaseModules.auth.signInWithEmailAndPassword(
                     window.firebaseAuth,
                     'demo@rapidsend.com',
                     'demo123456'
                 );
+                
             } catch (error) {
                 if (error.code === 'auth/user-not-found') {
                     await createDemoUser();
                 } else {
-                    Swal.fire('Error', error.message, 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error demo',
+                        text: error.message,
+                        confirmButtonColor: 'var(--primary)',
+                        background: 'white'
+                    });
                 }
             }
         }
 
         async function createDemoUser() {
             try {
+                Swal.fire({
+                    title: 'Creando cuenta demo...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                    background: 'white'
+                });
+                
                 const result = await window.firebaseModules.auth.createUserWithEmailAndPassword(
                     window.firebaseAuth,
                     'demo@rapidsend.com',
                     'demo123456'
                 );
                 
-                await result.user.updateProfile({ displayName: 'Usuario Demo' });
+                await result.user.updateProfile({ 
+                    displayName: 'Usuario Demo' 
+                });
                 
                 await window.firebaseModules.firestore.setDoc(
                     window.firebaseModules.firestore.doc(window.firebaseDB, 'usuarios', result.user.uid),
@@ -775,14 +959,28 @@
                         email: 'demo@rapidsend.com',
                         rol: 'cliente',
                         telefono: '+50760000000',
-                        fechaRegistro: window.firebaseModules.firestore.serverTimestamp()
+                        fechaRegistro: window.firebaseModules.firestore.serverTimestamp(),
+                        activo: true
                     }
                 );
                 
-                Swal.fire('✅ Demo creado', 'Ahora puedes explorar RapidSend', 'success');
+                Swal.fire({
+                    icon: 'success',
+                    title: '✅ Demo creado',
+                    text: 'Ahora puedes explorar RapidSend',
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white',
+                    timer: 2000
+                });
                 
             } catch (error) {
-                Swal.fire('Error', 'No se pudo crear el demo', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al crear demo',
+                    text: error.message,
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white'
+                });
             }
         }
 
@@ -951,7 +1149,27 @@
                 </div>
             `;
             
-            loadDashboardStats();
+            // Agregar event listeners después de renderizar
+            setTimeout(() => {
+                document.getElementById('btnLogout')?.addEventListener('click', logout);
+                document.querySelector('button[onclick*="createTestOrder"]')?.addEventListener('click', createTestOrder);
+                document.querySelector('button[onclick*="checkDatabase"]')?.addEventListener('click', checkDatabase);
+                document.querySelector('button[onclick*="toggleOnlineStatus"]')?.addEventListener('click', toggleOnlineStatus);
+                document.querySelector('button[onclick*="showProfile"]')?.addEventListener('click', showProfile);
+                document.querySelector('button[onclick*="testFirebase"]')?.addEventListener('click', testFirebase);
+                document.querySelector('button[onclick*="testAllServices"]')?.addEventListener('click', testAllServices);
+                document.querySelector('button[onclick*="createNewOrder"]')?.addEventListener('click', createNewOrder);
+                document.querySelector('button[onclick*="findOrders"]')?.addEventListener('click', findOrders);
+                document.querySelector('button[onclick*="viewMyOrders"]')?.addEventListener('click', viewMyOrders);
+                
+                // Inicializar dropdowns de Bootstrap
+                const dropdowns = document.querySelectorAll('.dropdown-toggle');
+                dropdowns.forEach(dropdown => {
+                    new bootstrap.Dropdown(dropdown);
+                });
+                
+                loadDashboardStats();
+            }, 100);
         }
 
         async function loadDashboardStats() {
@@ -1272,10 +1490,33 @@
 
         async function logout() {
             try {
+                Swal.fire({
+                    title: 'Cerrando sesión...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                    background: 'white'
+                });
+                
                 await window.firebaseModules.auth.signOut(window.firebaseAuth);
                 localStorage.removeItem('rapidsend_user');
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sesión cerrada',
+                    text: 'Has cerrado sesión correctamente',
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white',
+                    timer: 1500
+                });
+                
             } catch (error) {
-                console.error('Logout error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo cerrar sesión: ' + error.message,
+                    confirmButtonColor: 'var(--primary)',
+                    background: 'white'
+                });
             }
         }
 
