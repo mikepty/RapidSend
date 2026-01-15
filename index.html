@@ -4,246 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RapidSend - Entregas Express</title>
-    
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    
-    <!-- Leaflet CSS (Mapas) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <style>
         :root {
             --primary: #e74c3c;
             --primary-dark: #c0392b;
-            --secondary: #3498db;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --info: #3498db;
-            --dark: #2c3e50;
-            --light: #ecf0f1;
-            --gray: #95a5a6;
         }
-        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f9f9f9 0%, #e8e8e8 100%);
-            color: #333;
-            min-height: 100vh;
-            margin: 0;
         }
-        
-        /* Navbar */
         .navbar-main {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
             box-shadow: 0 2px 15px rgba(231, 76, 60, 0.3);
-            padding: 1rem 0;
         }
-        
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 1.8rem;
-            color: white !important;
-        }
-        
-        /* Botones */
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
             font-weight: 700;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-            color: white;
         }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-            border: none;
-        }
-        
-        /* Tarjetas */
         .card-main {
             background: white;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             border-top: 5px solid var(--primary);
-            transition: all 0.3s ease;
         }
-        
-        .card-main:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        
-        /* Mapa */
-        #map {
+        #map, #orderMap, #mapaPedido {
             height: 400px;
             border-radius: 15px;
-            z-index: 1;
         }
-        
-        .leaflet-container {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        /* Chat */
-        .chat-container {
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 15px;
-            background: #f8f9fa;
-        }
-        
-        .message {
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 10px;
-            max-width: 70%;
-        }
-        
-        .message.sent {
-            background: var(--primary);
+        .whatsapp-btn {
+            background: #25D366;
             color: white;
-            margin-left: auto;
+            border: none;
         }
-        
-        .message.received {
-            background: #e9ecef;
-            color: #333;
-        }
-        
-        /* Pedidos */
         .order-card {
             background: white;
             border-left: 5px solid var(--primary);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
         }
-        
-        .order-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .order-card.urgent {
-            border-left-color: #e74c3c;
-            background: linear-gradient(to right, rgba(231, 76, 60, 0.05), white);
-        }
-        
-        .order-card.express {
-            border-left-color: #f39c12;
-            background: linear-gradient(to right, rgba(243, 156, 18, 0.05), white);
-        }
-        
-        /* Login */
-        .login-screen {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            min-height: 100vh;
+        .google-btn {
+            background: white;
+            border: 2px solid #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            gap: 10px;
         }
-        
-        .login-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            max-width: 450px;
-            width: 100%;
-        }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(231, 76, 60, 0.1);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 2rem auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Badges */
-        .badge-status {
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.85rem;
-        }
-        
-        .status-pending { background: rgba(231, 76, 60, 0.1); color: var(--primary); }
-        .status-accepted { background: rgba(52, 152, 219, 0.1); color: var(--info); }
-        .status-picked { background: rgba(243, 156, 18, 0.1); color: var(--warning); }
-        .status-delivered { background: rgba(46, 204, 113, 0.1); color: var(--success); }
-        
-        /* Responsive */
         @media (max-width: 768px) {
-            .navbar-brand { font-size: 1.5rem; }
-            #map { height: 300px; }
+            #map, #orderMap, #mapaPedido { height: 300px; }
         }
     </style>
-    
-    <!-- Firebase v12.7.0 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged,
-            updateProfile
-        } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            doc, 
-            getDoc, 
-            setDoc, 
-            updateDoc, 
-            deleteDoc,
-            query, 
-            where, 
-            orderBy, 
-            serverTimestamp,
-            onSnapshot,
-            Timestamp
-        } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-        
-        import { 
-            getStorage,
-            ref,
-            uploadBytes,
-            getDownloadURL
-        } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
+</head>
+<body>
+    <div id="app">
+        <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+            <div style="background: white; padding: 40px; border-radius: 20px; text-align: center;">
+                <h1 style="color: #e74c3c;">RapidSend</h1>
+                <div style="margin: 20px auto; width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid #e74c3c; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <p>Cargando...</p>
+            </div>
+        </div>
+    </div>
 
-        // 🔥 TUS CREDENCIALES
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}</style>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyDxD4g_uYEUKB37uNHvDWus_NQHoSAMK_8",
             authDomain: "rapidsend-1f640.firebaseapp.com",
@@ -253,2053 +94,672 @@
             appId: "1:249514582496:web:cafcc8760282983f24cb85"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
+        const googleProvider = new GoogleAuthProvider();
 
-        // Hacer disponible globalmente
-        window.firebase = {
-            app,
-            auth,
-            db,
-            storage,
-            firestore: {
-                collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc,
-                query, where, orderBy, serverTimestamp, onSnapshot, Timestamp
-            },
-            authMethods: {
-                createUserWithEmailAndPassword, 
-                signInWithEmailAndPassword, 
-                signOut, 
-                onAuthStateChanged,
-                updateProfile
-            },
-            storageMethods: {
-                ref, uploadBytes, getDownloadURL
+        window.firebase = { app, auth, db, googleProvider, firestore: { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy, serverTimestamp, onSnapshot }, authMethods: { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, signInWithPopup }};
+        
+        window.AppState = { currentUser: null, userData: null, userRole: null, selectedOrigin: null, selectedDestination: null };
+
+        onAuthStateChanged(auth, async (user) => {
+            window.AppState.currentUser = user;
+            if (user) {
+                const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
+                if (userDoc.exists()) {
+                    window.AppState.userData = userDoc.data();
+                    window.AppState.userRole = userDoc.data().rol;
+                } else {
+                    await setDoc(doc(db, 'usuarios', user.uid), {
+                        nombre: user.displayName || 'Usuario',
+                        email: user.email,
+                        rol: 'cliente',
+                        telefono: '',
+                        fechaRegistro: serverTimestamp(),
+                        activo: false,
+                        calificacion: 5.0,
+                        entregasCompletadas: 0
+                    });
+                    window.AppState.userData = { nombre: user.displayName, email: user.email, rol: 'cliente' };
+                    window.AppState.userRole = 'cliente';
+                }
+                renderMainLayout();
+            } else {
+                renderLoginScreen();
             }
-        };
-
-        console.log('✅ Firebase v12.7.0 inicializado');
-    </script>
-</head>
-<body>
-    <div id="app">
-        <!-- Loading inicial -->
-        <div class="login-screen">
-            <div class="login-card text-center">
-                <div class="login-logo-icon" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                    <i class="fas fa-bolt fa-2x text-white"></i>
-                </div>
-                <h1 style="color: #e74c3c; font-weight: 800;">RapidSend</h1>
-                <p class="text-muted mb-4">Entregas Express</p>
-                
-                <div class="loading-spinner"></div>
-                <p class="mt-3 text-muted">Cargando aplicación...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <!-- Leaflet JS (Mapas) -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- Socket.io para chat en tiempo real -->
-    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-    
-    <script>
-        // ============================================
-        // ESTADO GLOBAL DE LA APLICACIÓN
-        // ============================================
-        const AppState = {
-            currentUser: null,
-            userData: null,
-            userRole: null,
-            currentOrder: null,
-            map: null,
-            socket: null,
-            onlineRepartidores: new Map(),
-            pedidosListener: null,
-            chatListener: null
-        };
-
-        // ============================================
-        // INICIALIZACIÓN
-        // ============================================
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 RapidSend - Iniciando aplicación...');
-            
-            // Esperar a que Firebase se cargue
-            await waitForFirebase();
-            initAuth();
         });
 
-        async function waitForFirebase() {
-            return new Promise((resolve) => {
-                const check = () => {
-                    if (window.firebase && window.firebase.auth) {
-                        console.log('✅ Firebase listo');
-                        resolve();
-                    } else {
-                        setTimeout(check, 100);
-                    }
-                };
-                check();
-            });
-        }
-
-        function initAuth() {
-            window.firebase.authMethods.onAuthStateChanged(window.firebase.auth, async (user) => {
-                AppState.currentUser = user;
-                
-                if (user) {
-                    console.log('👤 Usuario autenticado:', user.email);
-                    await loadUserData(user.uid);
-                    initSocketConnection();
-                    renderMainLayout();
-                } else {
-                    renderLoginScreen();
-                }
-            });
-        }
-
-        async function loadUserData(uid) {
-            try {
-                const userDoc = await window.firebase.firestore.getDoc(
-                    window.firebase.firestore.doc(window.firebase.db, 'usuarios', uid)
-                );
-                
-                if (userDoc.exists()) {
-                    AppState.userData = userDoc.data();
-                    AppState.userRole = AppState.userData.rol;
-                    localStorage.setItem('rapidsend_user', JSON.stringify({
-                        uid: uid,
-                        role: AppState.userRole,
-                        data: AppState.userData
-                    }));
-                } else {
-                    await createUserDocument(uid);
-                }
-            } catch (error) {
-                console.error('Error cargando usuario:', error);
-                // Crear usuario básico
-                AppState.userData = { 
-                    nombre: 'Usuario', 
-                    email: AppState.currentUser.email, 
-                    rol: 'cliente',
-                    telefono: '',
-                    fechaRegistro: new Date()
-                };
-                AppState.userRole = 'cliente';
-            }
-        }
-
-        async function createUserDocument(uid) {
-            const user = window.firebase.auth.currentUser;
-            await window.firebase.firestore.setDoc(
-                window.firebase.firestore.doc(window.firebase.db, 'usuarios', uid),
-                {
-                    nombre: user.displayName || 'Usuario',
-                    email: user.email,
-                    rol: 'cliente',
-                    telefono: '',
-                    fechaRegistro: window.firebase.firestore.serverTimestamp(),
-                    activo: false,
-                    ubicacion: null
-                }
-            );
-            AppState.userData = { 
-                nombre: user.displayName || 'Usuario', 
-                email: user.email, 
-                rol: 'cliente',
-                telefono: '',
-                activo: false
-            };
-            AppState.userRole = 'cliente';
-        }
-
-        // ============================================
-        // SOCKET.IO CONEXIÓN EN TIEMPO REAL
-        // ============================================
-        function initSocketConnection() {
-            // Para producción, cambiar a tu servidor WebSocket
-            AppState.socket = io('https://rapidsend-socket.glitch.me', {
-                auth: {
-                    userId: AppState.currentUser.uid,
-                    role: AppState.userRole
-                }
-            });
-
-            AppState.socket.on('connect', () => {
-                console.log('🔌 Conectado al servidor WebSocket');
-                
-                // Si es repartidor, notificar que está en línea
-                if (AppState.userRole === 'repartidor') {
-                    updateRepartidorStatus(true);
-                    startLocationSharing();
-                }
-            });
-
-            AppState.socket.on('new-order', (order) => {
-                if (AppState.userRole === 'repartidor') {
-                    showNewOrderNotification(order);
-                }
-            });
-
-            AppState.socket.on('order-updated', (order) => {
-                if (AppState.currentOrder && AppState.currentOrder.id === order.id) {
-                    AppState.currentOrder = order;
-                    updateOrderDisplay();
-                }
-                refreshOrdersList();
-            });
-
-            AppState.socket.on('chat-message', (message) => {
-                if (AppState.currentOrder && 
-                    (AppState.currentOrder.id === message.orderId || 
-                     message.orderId === AppState.currentOrder.id)) {
-                    displayMessage(message);
-                }
-            });
-
-            AppState.socket.on('repartidor-location', (data) => {
-                if (AppState.currentOrder && 
-                    AppState.currentOrder.repartidorId === data.repartidorId) {
-                    updateRepartidorOnMap(data);
-                }
-            });
-        }
-
-        // ============================================
-        // INTERFAZ DE USUARIO
-        // ============================================
-        function renderLoginScreen() {
+        window.renderLoginScreen = function() {
             document.getElementById('app').innerHTML = `
-                <div class="login-screen">
-                    <div class="login-card">
-                        <div class="text-center mb-4">
-                            <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                                <i class="fas fa-bolt fa-2x text-white"></i>
-                            </div>
-                            <h1 style="color: #e74c3c; font-weight: 800;">RapidSend</h1>
-                            <p class="text-muted">Entregas Express en Panamá</p>
-                            <span class="badge" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 5px 15px; border-radius: 20px;">v12.7.0</span>
+                <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 20px;">
+                    <div style="background: white; padding: 40px; border-radius: 20px; max-width: 450px; width: 100%;">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <h1 style="color: #e74c3c;">RapidSend</h1>
+                            <p>Entregas Express</p>
                         </div>
-
-                        <ul class="nav nav-pills nav-fill mb-4">
-                            <li class="nav-item">
-                                <button class="nav-link active" onclick="showAuthTab('login')">Iniciar Sesión</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" onclick="showAuthTab('register')">Registrarse</button>
-                            </li>
-                        </ul>
-
-                        <div id="loginTab">
-                            <div class="mb-3">
-                                <input type="email" class="form-control" id="loginEmail" placeholder="Correo electrónico" value="demo@rapidsend.com">
-                            </div>
-                            
-                            <div class="mb-4">
-                                <input type="password" class="form-control" id="loginPassword" placeholder="Contraseña" value="demo123456">
-                            </div>
-                            
-                            <button onclick="handleLogin()" class="btn btn-primary w-100 mb-3">
-                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
-                            </button>
-                            
-                            <div class="text-center">
-                                <button onclick="quickDemo()" class="btn btn-outline-primary w-100">
-                                    <i class="fas fa-rocket me-2"></i>Modo Demo
-                                </button>
-                            </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" id="loginEmail" placeholder="Correo electrónico">
                         </div>
-
-                        <div id="registerTab" style="display: none;">
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="regName" placeholder="Nombre completo">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <input type="email" class="form-control" id="regEmail" placeholder="Correo electrónico">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <input type="password" class="form-control" id="regPassword" placeholder="Contraseña (mínimo 6 caracteres)">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text">+507</span>
-                                    <input type="tel" class="form-control" id="regPhone" placeholder="WhatsApp">
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <select class="form-select" id="regRole">
-                                    <option value="cliente">👤 Soy Cliente</option>
-                                    <option value="repartidor">🏍️ Soy Repartidor</option>
-                                </select>
-                            </div>
-                            
-                            <button onclick="handleRegister()" class="btn btn-primary w-100 mb-3">
-                                <i class="fas fa-user-plus me-2"></i>Crear Cuenta
-                            </button>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Contraseña">
                         </div>
-                        
-                        <div class="text-center mt-4">
-                            <small class="text-muted">
-                                <i class="fas fa-fire me-1"></i> Firebase: rapidsend-1f640
-                            </small>
+                        <button onclick="handleLogin()" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
+                        <button onclick="handleGoogleLogin()" class="google-btn btn w-100 mb-3">
+                            <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                            Google
+                        </button>
+                        <hr>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="regName" placeholder="Nombre completo">
                         </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" id="regEmail" placeholder="Correo">
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" id="regPassword" placeholder="Contraseña">
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" class="form-control" id="regPhone" placeholder="WhatsApp +507">
+                        </div>
+                        <div class="mb-3">
+                            <select class="form-select" id="regRole">
+                                <option value="cliente">👤 Cliente</option>
+                                <option value="repartidor">🏍️ Repartidor</option>
+                            </select>
+                        </div>
+                        <button onclick="handleRegister()" class="btn btn-primary w-100">Registrarse</button>
                     </div>
                 </div>
             `;
-        }
+        };
 
-        function renderMainLayout() {
+        window.handleLogin = async function() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            if (!email || !password) return Swal.fire('Error', 'Completa todos los campos', 'error');
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                Swal.fire('Error', 'Credenciales incorrectas', 'error');
+            }
+        };
+
+        window.handleRegister = async function() {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const phone = document.getElementById('regPhone').value.trim();
+            const role = document.getElementById('regRole').value;
+            if (!name || !email || !password) return Swal.fire('Error', 'Completa todos los campos', 'error');
+            try {
+                const result = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(result.user, { displayName: name });
+                await setDoc(doc(db, 'usuarios', result.user.uid), {
+                    nombre: name,
+                    email: email,
+                    rol: role,
+                    telefono: phone ? `+507${phone.replace(/\D/g, '')}` : '',
+                    fechaRegistro: serverTimestamp(),
+                    activo: false,
+                    calificacion: 5.0,
+                    entregasCompletadas: 0
+                });
+                Swal.fire('Éxito', 'Cuenta creada', 'success');
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        };
+
+        window.handleGoogleLogin = async function() {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const userDoc = await getDoc(doc(db, 'usuarios', result.user.uid));
+                if (!userDoc.exists()) {
+                    const { value: role } = await Swal.fire({
+                        title: 'Selecciona tu rol',
+                        input: 'select',
+                        inputOptions: { 'cliente': '👤 Cliente', 'repartidor': '🏍️ Repartidor' },
+                        showCancelButton: false
+                    });
+                    await setDoc(doc(db, 'usuarios', result.user.uid), {
+                        nombre: result.user.displayName,
+                        email: result.user.email,
+                        rol: role,
+                        telefono: '',
+                        fechaRegistro: serverTimestamp(),
+                        activo: false,
+                        calificacion: 5.0,
+                        entregasCompletadas: 0
+                    });
+                }
+            } catch (error) {
+                if (error.code !== 'auth/popup-closed-by-user') {
+                    Swal.fire('Error', error.message, 'error');
+                }
+            }
+        };
+
+        window.renderMainLayout = function() {
+            const role = window.AppState.userRole;
             document.getElementById('app').innerHTML = `
-                <!-- Navbar -->
-                <nav class="navbar navbar-main navbar-expand-lg">
+                <nav class="navbar navbar-main">
                     <div class="container-fluid">
-                        <a class="navbar-brand" href="#" onclick="loadHome()">
+                        <a class="navbar-brand text-white" href="#" onclick="loadHome()">
                             <i class="fas fa-bolt me-2"></i>RapidSend
-                            <span class="badge bg-light text-dark ms-2">${AppState.userRole}</span>
+                            <span class="badge bg-light text-dark ms-2">${role === 'repartidor' ? 'Repartidor' : 'Cliente'}</span>
                         </a>
-                        
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="dropdown">
-                                <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                                    <i class="fas fa-user me-2"></i>${AppState.userData?.nombre || 'Usuario'}
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" onclick="showProfile()">
-                                        <i class="fas fa-id-card me-2"></i>Mi Perfil
-                                    </a></li>
-                                    ${AppState.userRole === 'repartidor' ? `
-                                        <li><a class="dropdown-item" href="#" onclick="toggleOnlineStatus()">
-                                            <i class="fas fa-toggle-${AppState.userData?.activo ? 'on' : 'off'} me-2"></i>
-                                            ${AppState.userData?.activo ? 'En Línea' : 'Desconectado'}
-                                        </a></li>
-                                    ` : ''}
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="#" onclick="handleLogout()">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
-                                    </a></li>
-                                </ul>
-                            </div>
-                        </div>
+                        <button class="btn btn-light" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
                     </div>
                 </nav>
-
-                <!-- Contenido Principal -->
-                <div class="container-fluid py-4">
+                <div class="container py-4">
                     <div class="row">
-                        <!-- Sidebar -->
-                        <div class="col-lg-3 mb-4">
+                        <div class="col-md-3 mb-4">
                             <div class="card-main p-3">
-                                <h5 class="mb-3"><i class="fas fa-bars me-2"></i>Menú</h5>
-                                <div class="list-group list-group-flush">
-                                    <button class="list-group-item list-group-item-action border-0 py-3" onclick="loadHome()">
-                                        <i class="fas fa-home me-3"></i>Inicio
+                                <h5><i class="fas fa-bars me-2"></i>Menú</h5>
+                                <div class="list-group">
+                                    <button class="list-group-item list-group-item-action" onclick="loadHome()">
+                                        <i class="fas fa-home me-2"></i>Inicio
                                     </button>
-                                    
-                                    ${AppState.userRole === 'cliente' ? `
-                                        <button class="list-group-item list-group-item-action border-0 py-3" onclick="showCreateOrder()">
-                                            <i class="fas fa-plus-circle me-3"></i>Nuevo Pedido
+                                    ${role === 'cliente' ? `
+                                        <button class="list-group-item list-group-item-action" onclick="showCreateOrder()">
+                                            <i class="fas fa-plus me-2"></i>Nuevo Pedido
                                         </button>
-                                        <button class="list-group-item list-group-item-action border-0 py-3" onclick="loadMyOrders()">
-                                            <i class="fas fa-list me-3"></i>Mis Pedidos
+                                        <button class="list-group-item list-group-item-action" onclick="loadMyOrders()">
+                                            <i class="fas fa-list me-2"></i>Mis Pedidos
                                         </button>
                                     ` : `
-                                        <button class="list-group-item list-group-item-action border-0 py-3" onclick="loadAvailableOrders()">
-                                            <i class="fas fa-search me-3"></i>Pedidos Disponibles
+                                        <button class="list-group-item list-group-item-action" onclick="loadAvailableOrders()">
+                                            <i class="fas fa-search me-2"></i>Pedidos Disponibles
                                         </button>
-                                        <button class="list-group-item list-group-item-action border-0 py-3" onclick="loadMyDeliveries()">
-                                            <i class="fas fa-motorcycle me-3"></i>Mis Entregas
+                                        <button class="list-group-item list-group-item-action" onclick="loadMyDeliveries()">
+                                            <i class="fas fa-motorcycle me-2"></i>Mis Entregas
+                                        </button>
+                                        <button class="list-group-item list-group-item-action" onclick="toggleOnlineStatus()">
+                                            <i class="fas fa-toggle-on me-2"></i>${window.AppState.userData?.activo ? 'Desconectar' : 'Conectar'}
                                         </button>
                                     `}
-                                    
-                                    <button class="list-group-item list-group-item-action border-0 py-3" onclick="showMap()">
-                                        <i class="fas fa-map me-3"></i>Mapa en Vivo
-                                    </button>
-                                    
-                                    <button class="list-group-item list-group-item-action border-0 py-3" onclick="showStats()">
-                                        <i class="fas fa-chart-line me-3"></i>Estadísticas
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Información de usuario -->
-                            <div class="card-main p-3 mt-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3" 
-                                         style="width: 50px; height: 50px;">
-                                        <i class="fas ${AppState.userRole === 'cliente' ? 'fa-user' : 'fa-motorcycle'} text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">${AppState.userData?.nombre}</h6>
-                                        <small class="text-muted">${AppState.userRole}</small>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Contenido Dinámico -->
-                        <div class="col-lg-9">
-                            <div id="contentArea">
-                                <!-- Aquí se carga el contenido dinámico -->
-                                ${renderHomeContent()}
-                            </div>
+                        <div class="col-md-9">
+                            <div id="contentArea"></div>
                         </div>
                     </div>
                 </div>
             `;
-            
-            // Inicializar dropdowns de Bootstrap
-            const dropdowns = document.querySelectorAll('.dropdown-toggle');
-            dropdowns.forEach(dropdown => {
-                new bootstrap.Dropdown(dropdown);
-            });
-        }
+            loadHome();
+        };
 
-        function renderHomeContent() {
-            if (AppState.userRole === 'cliente') {
-                return `
-                    <div class="card-main p-4">
-                        <h2 class="mb-4"><i class="fas fa-home me-2"></i>Bienvenido, ${AppState.userData?.nombre}</h2>
-                        
-                        <div class="row mb-4">
+        window.loadHome = function() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="card-main p-4">
+                    <h2>Bienvenido, ${window.AppState.userData?.nombre}</h2>
+                    <div class="row mt-4">
+                        ${window.AppState.userRole === 'cliente' ? `
                             <div class="col-md-4 mb-3">
                                 <div class="card text-center p-4">
-                                    <div class="display-4 text-primary mb-2">
-                                        <i class="fas fa-box"></i>
-                                    </div>
+                                    <i class="fas fa-box fa-3x text-primary mb-3"></i>
                                     <h5>Crear Pedido</h5>
-                                    <p class="text-muted">Envía algo ahora</p>
-                                    <button class="btn btn-primary w-100" onclick="showCreateOrder()">
-                                        <i class="fas fa-plus me-2"></i>Nuevo Pedido
+                                    <button class="btn btn-primary mt-2" onclick="showCreateOrder()">
+                                        <i class="fas fa-plus me-2"></i>Nuevo
                                     </button>
                                 </div>
                             </div>
-                            
                             <div class="col-md-4 mb-3">
                                 <div class="card text-center p-4">
-                                    <div class="display-4 text-success mb-2">
-                                        <i class="fas fa-history"></i>
-                                    </div>
+                                    <i class="fas fa-list fa-3x text-success mb-3"></i>
                                     <h5>Mis Pedidos</h5>
-                                    <p class="text-muted">Ver historial</p>
-                                    <button class="btn btn-outline-primary w-100" onclick="loadMyOrders()">
-                                        <i class="fas fa-list me-2"></i>Ver Pedidos
-                                    </button>
+                                    <button class="btn btn-outline-primary mt-2" onclick="loadMyOrders()">Ver</button>
                                 </div>
                             </div>
-                            
+                        ` : `
                             <div class="col-md-4 mb-3">
                                 <div class="card text-center p-4">
-                                    <div class="display-4 text-warning mb-2">
-                                        <i class="fas fa-map-marked-alt"></i>
-                                    </div>
-                                    <h5>Seguimiento</h5>
-                                    <p class="text-muted">En tiempo real</p>
-                                    <button class="btn btn-outline-primary w-100" onclick="showMap()">
-                                        <i class="fas fa-map me-2"></i>Ver Mapa
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Pedidos activos -->
-                        <div id="activeOrdersContainer">
-                            <h4 class="mb-3"><i class="fas fa-bolt me-2"></i>Pedidos Activos</h4>
-                            <div id="ordersList" class="text-center py-4">
-                                <div class="loading-spinner"></div>
-                                <p class="mt-2">Cargando pedidos...</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                return `
-                    <div class="card-main p-4">
-                        <h2 class="mb-4"><i class="fas fa-motorcycle me-2"></i>Panel de Repartidor</h2>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-4 mb-3">
-                                <div class="card text-center p-4">
-                                    <div class="display-4 text-primary mb-2">
-                                        <i class="fas fa-search"></i>
-                                    </div>
+                                    <i class="fas fa-search fa-3x text-primary mb-3"></i>
                                     <h5>Buscar Pedidos</h5>
-                                    <p class="text-muted">Encuentra entregas</p>
-                                    <button class="btn btn-primary w-100" onclick="loadAvailableOrders()">
-                                        <i class="fas fa-search me-2"></i>Ver Pedidos
-                                    </button>
+                                    <button class="btn btn-primary mt-2" onclick="loadAvailableOrders()">Buscar</button>
                                 </div>
                             </div>
-                            
                             <div class="col-md-4 mb-3">
                                 <div class="card text-center p-4">
-                                    <div class="display-4 text-success mb-2">
-                                        <i class="fas fa-tasks"></i>
-                                    </div>
+                                    <i class="fas fa-motorcycle fa-3x text-success mb-3"></i>
                                     <h5>Mis Entregas</h5>
-                                    <p class="text-muted">En progreso</p>
-                                    <button class="btn btn-outline-primary w-100" onclick="loadMyDeliveries()">
-                                        <i class="fas fa-list me-2"></i>Ver Entregas
-                                    </button>
+                                    <button class="btn btn-outline-primary mt-2" onclick="loadMyDeliveries()">Ver</button>
                                 </div>
                             </div>
-                            
-                            <div class="col-md-4 mb-3">
-                                <div class="card text-center p-4">
-                                    <div class="display-4 ${AppState.userData?.activo ? 'text-success' : 'text-danger'} mb-2">
-                                        <i class="fas fa-toggle-${AppState.userData?.activo ? 'on' : 'off'}"></i>
-                                    </div>
-                                    <h5>Estado</h5>
-                                    <p class="text-muted">${AppState.userData?.activo ? 'En línea' : 'Desconectado'}</p>
-                                    <button class="btn ${AppState.userData?.activo ? 'btn-success' : 'btn-danger'} w-100" onclick="toggleOnlineStatus()">
-                                        <i class="fas fa-toggle-${AppState.userData?.activo ? 'on' : 'off'} me-2"></i>
-                                        ${AppState.userData?.activo ? 'En Línea' : 'Activar'}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Estadísticas rápidas -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card p-3">
-                                    <h5><i class="fas fa-chart-line me-2"></i>Estadísticas Hoy</h5>
-                                    <div class="row text-center mt-3">
-                                        <div class="col-6">
-                                            <h3 class="text-primary" id="todayDeliveries">0</h3>
-                                            <small class="text-muted">Entregas</small>
-                                        </div>
-                                        <div class="col-6">
-                                            <h3 class="text-success" id="todayEarnings">$0</h3>
-                                            <small class="text-muted">Ganancias</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="card p-3">
-                                    <h5><i class="fas fa-map-marked-alt me-2"></i>Mapa en Vivo</h5>
-                                    <p class="text-muted">Sigue tus entregas</p>
-                                    <button class="btn btn-outline-primary w-100" onclick="showMap()">
-                                        <i class="fas fa-map me-2"></i>Abrir Mapa
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        `}
                     </div>
-                `;
-            }
-        }
+                </div>
+            `;
+        };
 
-        // ============================================
-        // FUNCIONES PRINCIPALES
-        // ============================================
-        function showAuthTab(tab) {
-            document.getElementById('loginTab').style.display = tab === 'login' ? 'block' : 'none';
-            document.getElementById('registerTab').style.display = tab === 'register' ? 'block' : 'none';
-            
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                if ((tab === 'login' && link.textContent.includes('Iniciar')) || 
-                    (tab === 'register' && link.textContent.includes('Registrarse'))) {
-                    link.classList.add('active');
-                }
-            });
-        }
+        window.handleLogout = async function() {
+            await signOut(auth);
+        };
 
-        async function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+        console.log('✅ RapidSend Mejorado Cargado');
+    </script>
+</body>
+</html>
+    <script>
+        // CREAR PEDIDO CON MAPA
+        window.showCreateOrder = async function() {
+            window.AppState.selectedOrigin = null;
+            window.AppState.selectedDestination = null;
             
-            if (!email || !password) {
-                Swal.fire('Error', 'Completa todos los campos', 'error');
-                return;
-            }
-            
-            try {
-                const result = await window.firebase.authMethods.signInWithEmailAndPassword(
-                    window.firebase.auth, email, password
-                );
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Bienvenido!',
-                    text: 'Sesión iniciada correctamente',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-                
-            } catch (error) {
-                Swal.fire('Error', error.message, 'error');
-            }
-        }
-
-        async function handleRegister() {
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const phone = document.getElementById('regPhone').value;
-            const role = document.getElementById('regRole').value;
-            
-            if (!name || !email || !password || !phone) {
-                Swal.fire('Error', 'Completa todos los campos', 'error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                Swal.fire('Error', 'La contraseña debe tener al menos 6 caracteres', 'error');
-                return;
-            }
-            
-            try {
-                const result = await window.firebase.authMethods.createUserWithEmailAndPassword(
-                    window.firebase.auth, email, password
-                );
-                
-                await window.firebase.authMethods.updateProfile(result.user, { displayName: name });
-                
-                await window.firebase.firestore.setDoc(
-                    window.firebase.firestore.doc(window.firebase.db, 'usuarios', result.user.uid),
-                    {
-                        nombre: name,
-                        email: email,
-                        rol: role,
-                        telefono: `+507${phone.replace(/\D/g, '')}`,
-                        fechaRegistro: window.firebase.firestore.serverTimestamp(),
-                        activo: role === 'repartidor' ? true : false,
-                        calificacion: role === 'repartidor' ? 5.0 : null,
-                        entregasCompletadas: role === 'repartidor' ? 0 : null,
-                        ubicacion: null
-                    }
-                );
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: '✅ Cuenta creada',
-                    text: 'Bienvenido a RapidSend',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                
-            } catch (error) {
-                Swal.fire('Error', error.message, 'error');
-            }
-        }
-
-        async function quickDemo() {
-            try {
-                await handleLogin();
-            } catch (error) {
-                // Si no existe, crear cuenta demo
-                document.getElementById('regName').value = 'Usuario Demo';
-                document.getElementById('regEmail').value = 'demo@rapidsend.com';
-                document.getElementById('regPassword').value = 'demo123456';
-                document.getElementById('regPhone').value = '60000000';
-                document.getElementById('regRole').value = 'cliente';
-                await handleRegister();
-            }
-        }
-
-        // ============================================
-        // FUNCIONES DE PEDIDOS (CLIENTE)
-        // ============================================
-        async function showCreateOrder() {
             const { value: formValues } = await Swal.fire({
                 title: '📦 Nuevo Pedido',
                 html: `
                     <div class="text-start">
-                        <div class="mb-3">
-                            <label class="form-label">¿Qué vas a enviar?</label>
-                            <input type="text" class="form-control" id="orderDesc" placeholder="Ej: Documentos importantes, paquete pequeño, etc.">
+                        <input type="text" class="form-control mb-3" id="orderDesc" placeholder="¿Qué vas a enviar?">
+                        <div class="alert alert-info py-2 mb-2">
+                            <small><i class="fas fa-info-circle me-1"></i> Click: 1º origen (rojo), 2º destino (verde)</small>
                         </div>
-                        
+                        <div id="mapaPedido" style="height: 350px; border-radius: 10px; margin-bottom: 15px;"></div>
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Origen</label>
-                                <input type="text" class="form-control" id="orderFrom" placeholder="Dirección de recogida">
+                            <div class="col-6">
+                                <input type="text" class="form-control" id="orderFrom" placeholder="Origen" readonly>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Destino</label>
-                                <input type="text" class="form-control" id="orderTo" placeholder="Dirección de entrega">
+                            <div class="col-6">
+                                <input type="text" class="form-control" id="orderTo" placeholder="Destino" readonly>
                             </div>
                         </div>
-                        
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Precio estimado ($)</label>
-                                <input type="number" class="form-control" id="orderPrice" value="10" min="5" max="100">
+                            <div class="col-6">
+                                <input type="number" class="form-control" id="orderPrice" value="10" min="5">
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Urgencia</label>
+                            <div class="col-6">
                                 <select class="form-select" id="orderUrgency">
-                                    <option value="standard">Normal (2-3 horas)</option>
-                                    <option value="express">Express (1 hora)</option>
-                                    <option value="urgent">Urgente (30 min)</option>
+                                    <option value="standard">Normal (2-3h)</option>
+                                    <option value="express">Express (1h)</option>
+                                    <option value="urgent">Urgente (30min)</option>
                                 </select>
                             </div>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Instrucciones especiales</label>
-                            <textarea class="form-control" id="orderInstructions" rows="2" placeholder="Opcional"></textarea>
-                        </div>
+                        <textarea class="form-control" id="orderInstructions" rows="2" placeholder="Instrucciones (opcional)"></textarea>
                     </div>
                 `,
+                width: '90%',
                 showCancelButton: true,
                 confirmButtonText: 'Crear Pedido',
-                cancelButtonText: 'Cancelar',
-                preConfirm: () => {
-                    const desc = document.getElementById('orderDesc').value;
-                    const from = document.getElementById('orderFrom').value;
-                    const to = document.getElementById('orderTo').value;
-                    const price = document.getElementById('orderPrice').value;
+                didOpen: () => {
+                    const defaultCoords = [8.9833, -79.5167];
+                    const map = L.map('mapaPedido').setView(defaultCoords, 13);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                     
-                    if (!desc || !from || !to) {
-                        Swal.showValidationMessage('Completa los campos requeridos');
+                    let clickCount = 0;
+                    let originMarker = null;
+                    let destMarker = null;
+                    let routeControl = null;
+                    
+                    map.on('click', async function(e) {
+                        const coords = [e.latlng.lat, e.latlng.lng];
+                        
+                        if (clickCount === 0) {
+                            if (originMarker) map.removeLayer(originMarker);
+                            originMarker = L.marker(coords, {
+                                icon: L.divIcon({
+                                    html: '<div style="background: #e74c3c; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white;"></div>',
+                                    iconSize: [30, 30],
+                                    iconAnchor: [15, 30]
+                                })
+                            }).addTo(map);
+                            
+                            const addr = `${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`;
+                            document.getElementById('orderFrom').value = addr;
+                            window.AppState.selectedOrigin = { coords, address: addr };
+                            clickCount = 1;
+                        } else if (clickCount === 1) {
+                            if (destMarker) map.removeLayer(destMarker);
+                            destMarker = L.marker(coords, {
+                                icon: L.divIcon({
+                                    html: '<div style="background: #2ecc71; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white;"></div>',
+                                    iconSize: [30, 30],
+                                    iconAnchor: [15, 30]
+                                })
+                            }).addTo(map);
+                            
+                            const addr = `${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`;
+                            document.getElementById('orderTo').value = addr;
+                            window.AppState.selectedDestination = { coords, address: addr };
+                            
+                            if (routeControl) map.removeControl(routeControl);
+                            routeControl = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(window.AppState.selectedOrigin.coords),
+                                    L.latLng(coords)
+                                ],
+                                lineOptions: { styles: [{ color: '#3498db', weight: 4 }] },
+                                createMarker: () => null
+                            }).addTo(map);
+                            
+                            const R = 6371;
+                            const dLat = (coords[0] - window.AppState.selectedOrigin.coords[0]) * Math.PI / 180;
+                            const dLon = (coords[1] - window.AppState.selectedOrigin.coords[1]) * Math.PI / 180;
+                            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                                Math.cos(window.AppState.selectedOrigin.coords[0] * Math.PI / 180) * 
+                                Math.cos(coords[0] * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                            const distance = R * c;
+                            const price = Math.max(5, Math.round(distance * 2));
+                            document.getElementById('orderPrice').value = price;
+                            clickCount = 2;
+                        }
+                    });
+                    
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition((pos) => {
+                            map.setView([pos.coords.latitude, pos.coords.longitude], 15);
+                        });
+                    }
+                },
+                preConfirm: () => {
+                    const desc = document.getElementById('orderDesc').value.trim();
+                    if (!desc || !window.AppState.selectedOrigin || !window.AppState.selectedDestination) {
+                        Swal.showValidationMessage('Completa descripción y selecciona origen/destino');
                         return false;
                     }
-                    
-                    return { 
-                        desc, 
-                        from, 
-                        to, 
-                        price,
+                    return {
+                        desc,
+                        from: window.AppState.selectedOrigin.address,
+                        to: window.AppState.selectedDestination.address,
+                        originCoords: window.AppState.selectedOrigin.coords,
+                        destCoords: window.AppState.selectedDestination.coords,
+                        price: document.getElementById('orderPrice').value,
                         urgency: document.getElementById('orderUrgency').value,
-                        instructions: document.getElementById('orderInstructions').value
+                        instructions: document.getElementById('orderInstructions').value.trim()
                     };
                 }
             });
 
             if (formValues) {
-                await createOrder(formValues);
-            }
-        }
-
-        async function createOrder(data) {
-            try {
-                const orderData = {
-                    clienteId: AppState.currentUser.uid,
-                    clienteNombre: AppState.userData?.nombre,
-                    clienteTelefono: AppState.userData?.telefono,
-                    descripcion: data.desc,
-                    origen: data.from,
-                    destino: data.to,
-                    urgencia: data.urgency,
-                    precio: parseFloat(data.price),
-                    instrucciones: data.instructions || '',
-                    metodoPago: 'efectivo',
-                    status: 'pending',
-                    createdAt: window.firebase.firestore.serverTimestamp(),
-                    updatedAt: window.firebase.firestore.serverTimestamp()
-                };
-                
-                const docRef = await window.firebase.firestore.addDoc(
-                    window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
-                    orderData
-                );
-                
-                // Notificar a repartidores vía WebSocket
-                if (AppState.socket && AppState.socket.connected) {
-                    AppState.socket.emit('new-order', {
-                        ...orderData,
-                        id: docRef.id
-                    });
+                try {
+                    await window.firebase.firestore.addDoc(
+                        window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
+                        {
+                            clienteId: window.AppState.currentUser.uid,
+                            clienteNombre: window.AppState.userData?.nombre,
+                            clienteTelefono: window.AppState.userData?.telefono || '',
+                            descripcion: formValues.desc,
+                            origen: formValues.from,
+                            destino: formValues.to,
+                            origenCoords: { lat: formValues.originCoords[0], lng: formValues.originCoords[1] },
+                            destinoCoords: { lat: formValues.destCoords[0], lng: formValues.destCoords[1] },
+                            urgencia: formValues.urgency,
+                            precio: parseFloat(formValues.price),
+                            instrucciones: formValues.instructions,
+                            status: 'pending',
+                            createdAt: window.firebase.firestore.serverTimestamp(),
+                            updatedAt: window.firebase.firestore.serverTimestamp()
+                        }
+                    );
+                    Swal.fire('Éxito', 'Pedido creado', 'success');
+                    loadMyOrders();
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
                 }
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: '✅ Pedido creado',
-                    text: 'Los repartidores han sido notificados',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                
-                loadMyOrders();
-                
-            } catch (error) {
-                Swal.fire('Error', error.message, 'error');
             }
-        }
+        };
 
-        async function loadMyOrders() {
+        // CARGAR MIS PEDIDOS
+        window.loadMyOrders = async function() {
             document.getElementById('contentArea').innerHTML = `
                 <div class="card-main p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex justify-content-between mb-4">
                         <h2><i class="fas fa-list me-2"></i>Mis Pedidos</h2>
                         <button class="btn btn-primary" onclick="showCreateOrder()">
-                            <i class="fas fa-plus me-2"></i>Nuevo Pedido
+                            <i class="fas fa-plus me-2"></i>Nuevo
                         </button>
                     </div>
-                    
-                    <div id="ordersList">
-                        <div class="text-center py-5">
-                            <div class="loading-spinner"></div>
-                            <p class="mt-3">Cargando pedidos...</p>
-                        </div>
-                    </div>
+                    <div id="ordersList">Cargando...</div>
                 </div>
             `;
             
             try {
-                const ordersQuery = window.firebase.firestore.query(
+                const q = window.firebase.firestore.query(
                     window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
-                    window.firebase.firestore.where('clienteId', '==', AppState.currentUser.uid),
+                    window.firebase.firestore.where('clienteId', '==', window.AppState.currentUser.uid),
                     window.firebase.firestore.orderBy('createdAt', 'desc')
                 );
                 
-                const snapshot = await window.firebase.firestore.getDocs(ordersQuery);
-                displayOrders(snapshot.docs);
-                
-                // Escuchar cambios en tiempo real
-                if (AppState.pedidosListener) {
-                    AppState.pedidosListener();
-                }
-                
-                AppState.pedidosListener = window.firebase.firestore.onSnapshot(ordersQuery, (snapshot) => {
-                    displayOrders(snapshot.docs);
-                });
-                
-            } catch (error) {
-                console.error('Error cargando pedidos:', error);
-                document.getElementById('ordersList').innerHTML = `
-                    <div class="alert alert-danger">
-                        Error cargando pedidos: ${error.message}
-                    </div>
-                `;
-            }
-        }
-
-        function displayOrders(docs) {
-            if (docs.length === 0) {
-                document.getElementById('ordersList').innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                        <h4>No hay pedidos</h4>
-                        <p class="text-muted">Crea tu primer pedido</p>
-                        <button class="btn btn-primary" onclick="showCreateOrder()">
-                            <i class="fas fa-plus me-2"></i>Crear Pedido
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '<div class="row">';
-            
-            docs.forEach(doc => {
-                const order = doc.data();
-                const orderId = doc.id;
-                
-                let statusBadge = '';
-                let statusColor = '';
-                
-                switch(order.status) {
-                    case 'pending':
-                        statusBadge = '<span class="badge-status status-pending">Pendiente</span>';
-                        statusColor = 'warning';
-                        break;
-                    case 'accepted':
-                        statusBadge = `<span class="badge-status status-accepted">Aceptado por ${order.repartidorNombre || 'repartidor'}</span>`;
-                        statusColor = 'info';
-                        break;
-                    case 'picked':
-                        statusBadge = '<span class="badge-status status-picked">En camino</span>';
-                        statusColor = 'primary';
-                        break;
-                    case 'delivered':
-                        statusBadge = '<span class="badge-status status-delivered">Entregado</span>';
-                        statusColor = 'success';
-                        break;
-                    case 'cancelled':
-                        statusBadge = '<span class="badge-status" style="background: rgba(108, 117, 125, 0.1); color: #6c757d;">Cancelado</span>';
-                        statusColor = 'secondary';
-                        break;
-                }
-                
-                html += `
-                    <div class="col-md-6 mb-3">
-                        <div class="order-card ${order.urgencia}">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                    <h5 class="mb-1">${order.descripcion}</h5>
-                                    <small class="text-muted">#${orderId.substring(0, 8)}</small>
-                                </div>
-                                ${statusBadge}
+                window.firebase.firestore.onSnapshot(q, (snapshot) => {
+                    if (snapshot.empty) {
+                        document.getElementById('ordersList').innerHTML = `
+                            <div class="text-center py-5">
+                                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                <h4>No hay pedidos</h4>
+                                <button class="btn btn-primary" onclick="showCreateOrder()">Crear Pedido</button>
                             </div>
-                            
-                            <div class="mb-2">
-                                <small><i class="fas fa-map-marker-alt text-danger me-1"></i> ${order.origen}</small><br>
-                                <small><i class="fas fa-flag-checkered text-success me-1"></i> ${order.destino}</small>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong class="text-primary">$${order.precio.toFixed(2)}</strong>
-                                    <small class="text-muted ms-2">${order.urgencia}</small>
+                        `;
+                    } else {
+                        let html = '<div class="row">';
+                        snapshot.forEach(doc => {
+                            const order = doc.data();
+                            const id = doc.id;
+                            html += `
+                                <div class="col-md-6 mb-3">
+                                    <div class="order-card">
+                                        <h6>${order.descripcion}</h6>
+                                        <small class="text-muted">#${id.substring(0, 8)}</small>
+                                        <div class="mt-2">
+                                            <small><i class="fas fa-map-marker-alt text-danger me-1"></i> ${order.origen.substring(0, 30)}...</small><br>
+                                            <small><i class="fas fa-flag-checkered text-success me-1"></i> ${order.destino.substring(0, 30)}...</small>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <strong class="text-primary">$${order.precio}</strong>
+                                            <span class="badge bg-${order.status === 'pending' ? 'warning' : order.status === 'delivered' ? 'success' : 'info'}">
+                                                ${order.status === 'pending' ? 'Pendiente' : order.status === 'delivered' ? 'Entregado' : 'En proceso'}
+                                            </span>
+                                        </div>
+                                        ${order.repartidorTelefono && order.status !== 'delivered' ? `
+                                            <button class="btn btn-sm whatsapp-btn w-100 mt-2" onclick="openWhatsApp('${order.repartidorTelefono}', '${id}')">
+                                                <i class="fab fa-whatsapp me-1"></i> Contactar Repartidor
+                                            </button>
+                                        ` : ''}
+                                    </div>
                                 </div>
-                                
-                                <div>
-                                    ${order.status === 'pending' ? `
-                                        <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder('${orderId}')">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    ` : ''}
-                                    
-                                    ${order.status === 'accepted' || order.status === 'picked' ? `
-                                        <button class="btn btn-sm btn-primary" onclick="showOrderDetail('${orderId}')">
-                                            <i class="fas fa-eye"></i> Seguir
-                                        </button>
-                                    ` : ''}
-                                    
-                                    ${order.status === 'delivered' ? `
-                                        <button class="btn btn-sm btn-success" onclick="rateOrder('${orderId}')">
-                                            <i class="fas fa-star"></i> Calificar
-                                        </button>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += '</div>';
-            document.getElementById('ordersList').innerHTML = html;
-        }
-
-        // ============================================
-        // FUNCIONES DE REPARTIDOR
-        // ============================================
-        async function loadAvailableOrders() {
-            document.getElementById('contentArea').innerHTML = `
-                <div class="card-main p-4">
-                    <h2 class="mb-4"><i class="fas fa-search me-2"></i>Pedidos Disponibles</h2>
-                    
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Solo se muestran pedidos disponibles para repartidores en línea.
-                        Asegúrate de estar <strong>En Línea</strong> para ver pedidos.
-                    </div>
-                    
-                    <div id="availableOrdersList">
-                        <div class="text-center py-5">
-                            <div class="loading-spinner"></div>
-                            <p class="mt-3">Buscando pedidos disponibles...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            if (!AppState.userData?.activo) {
-                document.getElementById('availableOrdersList').innerHTML = `
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Debes estar <strong>En Línea</strong> para ver pedidos disponibles.
-                        <button class="btn btn-sm btn-warning ms-2" onclick="toggleOnlineStatus()">
-                            Activar Modo En Línea
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            try {
-                const ordersQuery = window.firebase.firestore.query(
-                    window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
-                    window.firebase.firestore.where('status', '==', 'pending'),
-                    window.firebase.firestore.orderBy('createdAt', 'desc')
-                );
-                
-                const snapshot = await window.firebase.firestore.getDocs(ordersQuery);
-                displayAvailableOrders(snapshot.docs);
-                
-            } catch (error) {
-                console.error('Error cargando pedidos:', error);
-            }
-        }
-
-        function displayAvailableOrders(docs) {
-            if (docs.length === 0) {
-                document.getElementById('availableOrdersList').innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                        <h4>No hay pedidos disponibles</h4>
-                        <p class="text-muted">Los pedidos nuevos aparecerán aquí automáticamente</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '<div class="row">';
-            
-            docs.forEach(doc => {
-                const order = doc.data();
-                const orderId = doc.id;
-                
-                let urgencyBadge = '';
-                let urgencyClass = '';
-                
-                switch(order.urgencia) {
-                    case 'urgent':
-                        urgencyBadge = '<span class="badge bg-danger">Urgente</span>';
-                        urgencyClass = 'urgent';
-                        break;
-                    case 'express':
-                        urgencyBadge = '<span class="badge bg-warning">Express</span>';
-                        urgencyClass = 'express';
-                        break;
-                    default:
-                        urgencyBadge = '<span class="badge bg-secondary">Normal</span>';
-                }
-                
-                html += `
-                    <div class="col-md-6 mb-3">
-                        <div class="order-card ${urgencyClass}">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                    <h5 class="mb-1">${order.descripcion}</h5>
-                                    <small class="text-muted">De: ${order.clienteNombre}</small>
-                                </div>
-                                ${urgencyBadge}
-                            </div>
-                            
-                            <div class="mb-3">
-                                <div class="d-flex align-items-center mb-1">
-                                    <i class="fas fa-map-marker-alt text-danger me-2"></i>
-                                    <small>${order.origen}</small>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-flag-checkered text-success me-2"></i>
-                                    <small>${order.destino}</small>
-                                </div>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h4 class="text-primary mb-0">$${order.precio.toFixed(2)}</h4>
-                                    <small class="text-muted">Ganancia</small>
-                                </div>
-                                
-                                <div>
-                                    <button class="btn btn-success" onclick="acceptOrder('${orderId}')">
-                                        <i class="fas fa-check me-1"></i> Aceptar Pedido
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            ${order.instrucciones ? `
-                                <div class="mt-2 p-2 bg-light rounded">
-                                    <small><i class="fas fa-info-circle me-1"></i> ${order.instrucciones}</small>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += '</div>';
-            document.getElementById('availableOrdersList').innerHTML = html;
-        }
-
-        async function acceptOrder(orderId) {
-            try {
-                await window.firebase.firestore.updateDoc(
-                    window.firebase.firestore.doc(window.firebase.db, 'pedidos', orderId),
-                    {
-                        status: 'accepted',
-                        repartidorId: AppState.currentUser.uid,
-                        repartidorNombre: AppState.userData?.nombre,
-                        acceptedAt: window.firebase.firestore.serverTimestamp()
+                            `;
+                        });
+                        html += '</div>';
+                        document.getElementById('ordersList').innerHTML = html;
                     }
-                );
-                
-                // Notificar al cliente
-                if (AppState.socket && AppState.socket.connected) {
-                    AppState.socket.emit('order-accepted', { orderId, repartidor: AppState.userData });
-                }
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: '✅ Pedido aceptado',
-                    text: 'El cliente ha sido notificado',
-                    timer: 2000,
-                    showConfirmButton: false
                 });
-                
-                loadMyDeliveries();
-                
             } catch (error) {
-                Swal.fire('Error', error.message, 'error');
+                document.getElementById('ordersList').innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
             }
-        }
+        };
 
-        async function loadMyDeliveries() {
+        // PEDIDOS DISPONIBLES (REPARTIDOR)
+        window.loadAvailableOrders = async function() {
             document.getElementById('contentArea').innerHTML = `
                 <div class="card-main p-4">
-                    <h2 class="mb-4"><i class="fas fa-motorcycle me-2"></i>Mis Entregas</h2>
-                    
-                    <ul class="nav nav-tabs mb-4" id="deliveriesTab">
-                        <li class="nav-item">
-                            <button class="nav-link active" onclick="showDeliveriesTab('active')">Activas</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" onclick="showDeliveriesTab('completed')">Completadas</button>
-                        </li>
-                    </ul>
-                    
-                    <div id="deliveriesContent">
-                        <div class="text-center py-5">
-                            <div class="loading-spinner"></div>
-                            <p class="mt-3">Cargando entregas...</p>
-                        </div>
-                    </div>
+                    <h2><i class="fas fa-search me-2"></i>Pedidos Disponibles</h2>
+                    <div id="availableList" class="mt-4">Cargando...</div>
                 </div>
             `;
             
-            showDeliveriesTab('active');
-        }
-
-        async function showDeliveriesTab(tab) {
-            const isActive = tab === 'active';
-            const statuses = isActive ? ['accepted', 'picked'] : ['delivered', 'cancelled'];
+            const q = window.firebase.firestore.query(
+                window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
+                window.firebase.firestore.where('status', '==', 'pending')
+            );
             
-            try {
-                let queryConstraints = [
-                    window.firebase.firestore.where('repartidorId', '==', AppState.currentUser.uid),
-                    window.firebase.firestore.where('status', 'in', statuses),
-                    window.firebase.firestore.orderBy('createdAt', 'desc')
-                ];
-                
-                if (isActive) {
-                    queryConstraints.push(window.firebase.firestore.orderBy('acceptedAt', 'desc'));
+            window.firebase.firestore.onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    document.getElementById('availableList').innerHTML = '<p class="text-muted text-center">No hay pedidos disponibles</p>';
+                } else {
+                    let html = '<div class="row">';
+                    snapshot.forEach(doc => {
+                        const order = doc.data();
+                        const id = doc.id;
+                        html += `
+                            <div class="col-md-6 mb-3">
+                                <div class="order-card">
+                                    <h6>${order.descripcion}</h6>
+                                    <small>Cliente: ${order.clienteNombre}</small>
+                                    <div class="mt-2">
+                                        <small><i class="fas fa-map-marker-alt text-danger me-1"></i> ${order.origen.substring(0, 25)}...</small><br>
+                                        <small><i class="fas fa-flag-checkered text-success me-1"></i> ${order.destino.substring(0, 25)}...</small>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <h5 class="text-primary mb-0">$${order.precio}</h5>
+                                        <button class="btn btn-success" onclick="acceptOrder('${id}')">
+                                            <i class="fas fa-check me-1"></i> Aceptar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    document.getElementById('availableList').innerHTML = html;
                 }
-                
-                const ordersQuery = window.firebase.firestore.query(
-                    window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
-                    ...queryConstraints
-                );
-                
-                const snapshot = await window.firebase.firestore.getDocs(ordersQuery);
-                displayDeliveries(snapshot.docs, isActive);
-                
-            } catch (error) {
-                console.error('Error cargando entregas:', error);
-            }
-        }
+            });
+        };
 
-        function displayDeliveries(docs, isActive) {
-            if (docs.length === 0) {
-                document.getElementById('deliveriesContent').innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="fas ${isActive ? 'fa-box-open' : 'fa-history'} fa-3x text-muted mb-3"></i>
-                        <h4>No hay entregas ${isActive ? 'activas' : 'completadas'}</h4>
-                        <p class="text-muted">${isActive ? 'Acepta un pedido para comenzar' : 'Aún no has completado entregas'}</p>
-                        ${isActive ? `
-                            <button class="btn btn-primary" onclick="loadAvailableOrders()">
-                                <i class="fas fa-search me-2"></i>Buscar Pedidos
-                            </button>
-                        ` : ''}
-                    </div>
-                `;
-                return;
+        window.acceptOrder = async function(orderId) {
+            const result = await Swal.fire({
+                title: '¿Aceptar pedido?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, aceptar'
+            });
+            
+            if (result.isConfirmed) {
+                try {
+                    await window.firebase.firestore.updateDoc(
+                        window.firebase.firestore.doc(window.firebase.db, 'pedidos', orderId),
+                        {
+                            status: 'accepted',
+                            repartidorId: window.AppState.currentUser.uid,
+                            repartidorNombre: window.AppState.userData?.nombre,
+                            repartidorTelefono: window.AppState.userData?.telefono,
+                            acceptedAt: window.firebase.firestore.serverTimestamp()
+                        }
+                    );
+                    Swal.fire('Éxito', 'Pedido aceptado', 'success');
+                    loadMyDeliveries();
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
+                }
             }
+        };
+
+        // MIS ENTREGAS
+        window.loadMyDeliveries = async function() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="card-main p-4">
+                    <h2><i class="fas fa-motorcycle me-2"></i>Mis Entregas</h2>
+                    <div id="deliveriesList" class="mt-4">Cargando...</div>
+                </div>
+            `;
             
-            let html = '<div class="row">';
+            const q = window.firebase.firestore.query(
+                window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
+                window.firebase.firestore.where('repartidorId', '==', window.AppState.currentUser.uid)
+            );
             
-            docs.forEach(doc => {
-                const order = doc.data();
-                const orderId = doc.id;
-                
-                html += `
-                    <div class="col-md-6 mb-3">
-                        <div class="order-card">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                    <h5 class="mb-1">${order.descripcion}</h5>
-                                    <small class="text-muted">Cliente: ${order.clienteNombre}</small>
-                                </div>
-                                <span class="badge bg-${getStatusColor(order.status)}">
-                                    ${getStatusText(order.status)}
-                                </span>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <div class="d-flex align-items-center mb-1">
-                                    <i class="fas fa-map-marker-alt text-danger me-2"></i>
-                                    <small>${order.origen}</small>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-flag-checkered text-success me-2"></i>
-                                    <small>${order.destino}</small>
-                                </div>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h4 class="text-primary mb-0">$${order.precio.toFixed(2)}</h4>
-                                    <small class="text-muted">Ganancia</small>
-                                </div>
-                                
-                                <div>
-                                    ${isActive ? `
-                                        <div class="btn-group">
+            window.firebase.firestore.onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    document.getElementById('deliveriesList').innerHTML = '<p class="text-muted text-center">No tienes entregas</p>';
+                } else {
+                    let html = '<div class="row">';
+                    snapshot.forEach(doc => {
+                        const order = doc.data();
+                        const id = doc.id;
+                        html += `
+                            <div class="col-md-6 mb-3">
+                                <div class="order-card">
+                                    <h6>${order.descripcion}</h6>
+                                    <small>Cliente: ${order.clienteNombre}</small>
+                                    <div class="mt-2">
+                                        <small><i class="fas fa-map-marker-alt text-danger me-1"></i> ${order.origen.substring(0, 25)}...</small><br>
+                                        <small><i class="fas fa-flag-checkered text-success me-1"></i> ${order.destino.substring(0, 25)}...</small>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h5 class="text-primary">$${order.precio}</h5>
+                                        <div class="btn-group w-100">
                                             ${order.status === 'accepted' ? `
-                                                <button class="btn btn-sm btn-primary" onclick="updateOrderStatus('${orderId}', 'picked')">
+                                                <button class="btn btn-sm btn-primary" onclick="updateStatus('${id}', 'picked')">
                                                     <i class="fas fa-box me-1"></i> Recogido
                                                 </button>
                                             ` : ''}
-                                            
                                             ${order.status === 'picked' ? `
-                                                <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${orderId}', 'delivered')">
+                                                <button class="btn btn-sm btn-success" onclick="updateStatus('${id}', 'delivered')">
                                                     <i class="fas fa-check me-1"></i> Entregado
                                                 </button>
                                             ` : ''}
-                                            
-                                            <button class="btn btn-sm btn-outline-primary" onclick="showOrderDetail('${orderId}')">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
+                                            ${order.destinoCoords ? `
+                                                <button class="btn btn-sm btn-info" onclick="openInWaze(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
+                                                    <i class="fab fa-waze"></i> Waze
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="openInGoogleMaps(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
+                                                    <i class="fas fa-map"></i> Maps
+                                                </button>
+                                            ` : ''}
                                         </div>
-                                    ` : `
-                                        <button class="btn btn-sm btn-outline-secondary" onclick="showOrderDetail('${orderId}')">
-                                            <i class="fas fa-eye me-1"></i> Ver Detalles
-                                        </button>
-                                    `}
+                                        ${order.clienteTelefono ? `
+                                            <button class="btn btn-sm whatsapp-btn w-100 mt-2" onclick="openWhatsApp('${order.clienteTelefono}', '${id}')">
+                                                <i class="fab fa-whatsapp me-1"></i> Contactar Cliente
+                                            </button>
+                                        ` : ''}
+                                    </div>
                                 </div>
                             </div>
-                            
-                            ${order.instrucciones ? `
-                                <div class="mt-2 p-2 bg-light rounded">
-                                    <small><i class="fas fa-info-circle me-1"></i> ${order.instrucciones}</small>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += '</div>';
-            document.getElementById('deliveriesContent').innerHTML = html;
-        }
-
-        async function updateOrderStatus(orderId, newStatus) {
-            const statusText = getStatusText(newStatus);
-            
-            try {
-                const updateData = {
-                    status: newStatus,
-                    updatedAt: window.firebase.firestore.serverTimestamp()
-                };
-                
-                if (newStatus === 'picked') {
-                    updateData.pickedAt = window.firebase.firestore.serverTimestamp();
-                } else if (newStatus === 'delivered') {
-                    updateData.deliveredAt = window.firebase.firestore.serverTimestamp();
+                        `;
+                    });
+                    html += '</div>';
+                    document.getElementById('deliveriesList').innerHTML = html;
                 }
-                
+            });
+        };
+
+        window.updateStatus = async function(orderId, newStatus) {
+            try {
                 await window.firebase.firestore.updateDoc(
                     window.firebase.firestore.doc(window.firebase.db, 'pedidos', orderId),
-                    updateData
-                );
-                
-                // Notificar al cliente
-                if (AppState.socket && AppState.socket.connected) {
-                    AppState.socket.emit('order-updated', { 
-                        orderId, 
+                    {
                         status: newStatus,
-                        repartidor: AppState.userData 
-                    });
-                }
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: `✅ Pedido ${statusText.toLowerCase()}`,
-                    text: 'El cliente ha sido notificado',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                
-                loadMyDeliveries();
-                
+                        updatedAt: window.firebase.firestore.serverTimestamp(),
+                        ...(newStatus === 'picked' ? { pickedAt: window.firebase.firestore.serverTimestamp() } : {}),
+                        ...(newStatus === 'delivered' ? { deliveredAt: window.firebase.firestore.serverTimestamp() } : {})
+                    }
+                );
+                Swal.fire('Actualizado', 'Estado del pedido actualizado', 'success');
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
-        }
+        };
 
-        // ============================================
-        // MAPA INTERACTIVO
-        // ============================================
-        async function showMap() {
-            document.getElementById('contentArea').innerHTML = `
-                <div class="card-main p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2><i class="fas fa-map me-2"></i>Mapa en Vivo</h2>
-                        <div>
-                            <button class="btn btn-outline-primary me-2" onclick="locateMe()">
-                                <i class="fas fa-location-arrow me-1"></i>Mi Ubicación
-                            </button>
-                            ${AppState.userRole === 'repartidor' && AppState.userData?.activo ? `
-                                <button class="btn btn-success" onclick="toggleLocationSharing()">
-                                    <i class="fas fa-share-alt me-1"></i> ${AppState.locationSharing ? 'Dejar de compartir' : 'Compartir ubicación'}
-                                </button>
-                            ` : ''}
-                        </div>
-                    </div>
-                    
-                    <div id="map" class="mb-4"></div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card p-3">
-                                <h5><i class="fas fa-info-circle me-2"></i>Instrucciones</h5>
-                                <ul class="small">
-                                    <li>Click en el mapa para marcar ubicaciones</li>
-                                    <li>Arrastra los marcadores para ajustar</li>
-                                    <li>Los repartidores aparecen en tiempo real</li>
-                                    <li>Los pedidos activos se muestran en azul</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card p-3">
-                                <h5><i class="fas fa-users me-2"></i>Repartidores en línea</h5>
-                                <div id="onlineRepartidoresList" class="mt-2">
-                                    <div class="text-center py-2">
-                                        <div class="spinner-border spinner-border-sm text-primary"></div>
-                                        <small class="text-muted ms-2">Buscando repartidores...</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            initMap();
-            loadOnlineRepartidores();
-        }
-
-        function initMap() {
-            // Coordenadas de Panamá City por defecto
-            const defaultCoords = [8.9833, -79.5167];
-            
-            // Inicializar mapa
-            AppState.map = L.map('map').setView(defaultCoords, 13);
-            
-            // Agregar capa de OpenStreetMap
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(AppState.map);
-            
-            // Agregar control de escala
-            L.control.scale().addTo(AppState.map);
-            
-            // Si el usuario tiene pedido activo, mostrar ruta
-            if (AppState.currentOrder) {
-                showOrderOnMap(AppState.currentOrder);
-            }
-            
-            // Centrar en ubicación del usuario si está disponible
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const userCoords = [position.coords.latitude, position.coords.longitude];
-                        AppState.map.setView(userCoords, 15);
-                        
-                        // Agregar marcador del usuario
-                        L.marker(userCoords, {
-                            icon: L.divIcon({
-                                className: 'user-marker',
-                                html: '<div style="background: #3498db; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>',
-                                iconSize: [26, 26],
-                                iconAnchor: [13, 13]
-                            })
-                        })
-                        .addTo(AppState.map)
-                        .bindPopup('Tu ubicación actual')
-                        .openPopup();
-                    },
-                    (error) => {
-                        console.warn('Error obteniendo ubicación:', error);
-                        // Usar ubicación por defecto
-                        AppState.map.setView(defaultCoords, 13);
-                    }
-                );
-            }
-        }
-
-        function locateMe() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const userCoords = [position.coords.latitude, position.coords.longitude];
-                        AppState.map.setView(userCoords, 15);
-                    },
-                    (error) => {
-                        Swal.fire('Error', 'No se pudo obtener tu ubicación', 'error');
-                    }
-                );
-            } else {
-                Swal.fire('Error', 'Tu navegador no soporta geolocalización', 'error');
-            }
-        }
-
-        function showOrderOnMap(order) {
-            // Esta función simula la geocodificación
-            // En producción, usarías un servicio como Google Maps Geocoding API
-            
-            // Coordenadas aleatorias para demostración
-            const originCoords = [
-                8.9833 + (Math.random() * 0.05 - 0.025),
-                -79.5167 + (Math.random() * 0.05 - 0.025)
-            ];
-            
-            const destCoords = [
-                8.9833 + (Math.random() * 0.05 - 0.025),
-                -79.5167 + (Math.random() * 0.05 - 0.025)
-            ];
-            
-            // Marcador de origen
-            L.marker(originCoords, {
-                icon: L.divIcon({
-                    className: 'origin-marker',
-                    html: '<div style="background: #e74c3c; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>',
-                    iconSize: [26, 26],
-                    iconAnchor: [13, 13]
-                })
-            })
-            .addTo(AppState.map)
-            .bindPopup(`<strong>Origen:</strong> ${order.origen}`);
-            
-            // Marcador de destino
-            L.marker(destCoords, {
-                icon: L.divIcon({
-                    className: 'dest-marker',
-                    html: '<div style="background: #2ecc71; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>',
-                    iconSize: [26, 26],
-                    iconAnchor: [13, 13]
-                })
-            })
-            .addTo(AppState.map)
-            .bindPopup(`<strong>Destino:</strong> ${order.destino}`);
-            
-            // Línea entre origen y destino
-            L.polyline([originCoords, destCoords], {
-                color: '#3498db',
-                weight: 3,
-                opacity: 0.7,
-                dashArray: '10, 10'
-            }).addTo(AppState.map);
-            
-            // Ajustar vista para mostrar ambos puntos
-            const bounds = L.latLngBounds([originCoords, destCoords]);
-            AppState.map.fitBounds(bounds, { padding: [50, 50] });
-        }
-
-        function loadOnlineRepartidores() {
-            // Escuchar repartidores en línea
-            const repartidoresQuery = window.firebase.firestore.query(
-                window.firebase.firestore.collection(window.firebase.db, 'usuarios'),
-                window.firebase.firestore.where('rol', '==', 'repartidor'),
-                window.firebase.firestore.where('activo', '==', true)
-            );
-            
-            window.firebase.firestore.onSnapshot(repartidoresQuery, (snapshot) => {
-                const repartidores = [];
-                snapshot.forEach(doc => {
-                    repartidores.push({ id: doc.id, ...doc.data() });
-                });
-                
-                displayOnlineRepartidores(repartidores);
-                updateRepartidoresOnMap(repartidores);
-            });
-        }
-
-        function displayOnlineRepartidores(repartidores) {
-            if (repartidores.length === 0) {
-                document.getElementById('onlineRepartidoresList').innerHTML = `
-                    <div class="text-center py-3">
-                        <i class="fas fa-users-slash fa-2x text-muted mb-2"></i>
-                        <p class="small text-muted">No hay repartidores en línea</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '<div class="list-group list-group-flush">';
-            
-            repartidores.forEach(repartidor => {
-                html += `
-                    <div class="list-group-item border-0 py-2">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-success d-flex align-items-center justify-content-center me-2" 
-                                 style="width: 30px; height: 30px;">
-                                <i class="fas fa-motorcycle text-white fa-sm"></i>
-                            </div>
-                            <div>
-                                <small class="d-block">${repartidor.nombre}</small>
-                                <small class="text-muted">⭐ ${repartidor.calificacion || '5.0'}</small>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += '</div>';
-            document.getElementById('onlineRepartidoresList').innerHTML = html;
-        }
-
-        function updateRepartidoresOnMap(repartidores) {
-            // Limpiar marcadores antiguos
-            if (AppState.repartidorMarkers) {
-                AppState.repartidorMarkers.forEach(marker => marker.remove());
-            }
-            
-            AppState.repartidorMarkers = [];
-            
-            // Agregar nuevos marcadores
-            repartidores.forEach(repartidor => {
-                if (repartidor.ubicacion && repartidor.ubicacion.latitude && repartidor.ubicacion.longitude) {
-                    const marker = L.marker(
-                        [repartidor.ubicacion.latitude, repartidor.ubicacion.longitude],
-                        {
-                            icon: L.divIcon({
-                                className: 'repartidor-marker',
-                                html: '<div style="background: #f39c12; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"><i class="fas fa-motorcycle" style="color: white; font-size: 10px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></div>',
-                                iconSize: [26, 26],
-                                iconAnchor: [13, 13]
-                            })
-                        }
-                    )
-                    .addTo(AppState.map)
-                    .bindPopup(`<strong>${repartidor.nombre}</strong><br>⭐ ${repartidor.calificacion || '5.0'}`);
-                    
-                    AppState.repartidorMarkers.push(marker);
-                }
-            });
-        }
-
-        // ============================================
-        // CHAT EN TIEMPO REAL
-        // ============================================
-        async function showOrderDetail(orderId) {
-            try {
-                const orderDoc = await window.firebase.firestore.getDoc(
-                    window.firebase.firestore.doc(window.firebase.db, 'pedidos', orderId)
-                );
-                
-                if (!orderDoc.exists()) {
-                    Swal.fire('Error', 'El pedido no existe', 'error');
-                    return;
-                }
-                
-                const order = orderDoc.data();
-                AppState.currentOrder = { id: orderId, ...order };
-                
-                document.getElementById('contentArea').innerHTML = `
-                    <div class="card-main p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h2><i class="fas fa-box me-2"></i>Pedido #${orderId.substring(0, 8)}</h2>
-                            <button class="btn btn-outline-primary" onclick="load${AppState.userRole === 'cliente' ? 'MyOrders' : 'MyDeliveries'}()">
-                                <i class="fas fa-arrow-left me-1"></i> Volver
-                            </button>
-                        </div>
-                        
-                        <div class="row">
-                            <!-- Información del pedido -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>Detalles del Pedido</h5>
-                                        
-                                        <table class="table table-sm">
-                                            <tr>
-                                                <td><strong>Descripción:</strong></td>
-                                                <td>${order.descripcion}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Origen:</strong></td>
-                                                <td>${order.origen}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Destino:</strong></td>
-                                                <td>${order.destino}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Precio:</strong></td>
-                                                <td class="text-primary">$${order.precio.toFixed(2)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Urgencia:</strong></td>
-                                                <td>${getUrgencyText(order.urgencia)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Estado:</strong></td>
-                                                <td><span class="badge bg-${getStatusColor(order.status)}">${getStatusText(order.status)}</span></td>
-                                            </tr>
-                                            ${order.repartidorNombre ? `
-                                                <tr>
-                                                    <td><strong>Repartidor:</strong></td>
-                                                    <td>${order.repartidorNombre}</td>
-                                                </tr>
-                                            ` : ''}
-                                            ${order.instrucciones ? `
-                                                <tr>
-                                                    <td><strong>Instrucciones:</strong></td>
-                                                    <td>${order.instrucciones}</td>
-                                                </tr>
-                                            ` : ''}
-                                        </table>
-                                        
-                                        ${AppState.userRole === 'repartidor' && order.status === 'accepted' ? `
-                                            <div class="d-grid gap-2 mt-3">
-                                                <button class="btn btn-primary" onclick="updateOrderStatus('${orderId}', 'picked')">
-                                                    <i class="fas fa-box me-2"></i> Marcar como Recogido
-                                                </button>
-                                            </div>
-                                        ` : ''}
-                                        
-                                        ${AppState.userRole === 'repartidor' && order.status === 'picked' ? `
-                                            <div class="d-grid gap-2 mt-3">
-                                                <button class="btn btn-success" onclick="updateOrderStatus('${orderId}', 'delivered')">
-                                                    <i class="fas fa-check me-2"></i> Marcar como Entregado
-                                                </button>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Chat y Mapa -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title"><i class="fas fa-comments me-2"></i>Chat</h5>
-                                        
-                                        <div class="chat-container mb-3" id="chatMessages">
-                                            <div class="text-center py-4">
-                                                <div class="spinner-border spinner-border-sm text-primary"></div>
-                                                <p class="mt-2 small text-muted">Cargando mensajes...</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="chatInput" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') sendMessage('${orderId}')">
-                                            <button class="btn btn-primary" onclick="sendMessage('${orderId}')">
-                                                <i class="fas fa-paper-plane"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Mapa -->
-                        <div class="card mt-4">
-                            <div class="card-body">
-                                <h5 class="card-title"><i class="fas fa-map me-2"></i>Ruta de Entrega</h5>
-                                <div id="orderMap" style="height: 300px; border-radius: 10px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Inicializar mapa para este pedido
-                initOrderMap(orderId, order);
-                
-                // Cargar historial de chat
-                loadChatHistory(orderId);
-                
-                // Escuchar nuevos mensajes
-                listenToChat(orderId);
-                
-            } catch (error) {
-                Swal.fire('Error', error.message, 'error');
-            }
-        }
-
-        function initOrderMap(orderId, order) {
-            const map = L.map('orderMap').setView([8.9833, -79.5167], 13);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-            
-            // Simular coordenadas para demostración
-            const originCoords = [8.9833, -79.5167];
-            const destCoords = [8.9900, -79.5200];
-            
-            // Marcadores
-            L.marker(originCoords).addTo(map)
-                .bindPopup(`<strong>Origen:</strong> ${order.origen}`);
-            
-            L.marker(destCoords).addTo(map)
-                .bindPopup(`<strong>Destino:</strong> ${order.destino}`);
-            
-            // Línea de ruta
-            L.polyline([originCoords, destCoords], {
-                color: '#3498db',
-                weight: 3
-            }).addTo(map);
-            
-            // Ajustar vista
-            map.fitBounds(L.latLngBounds([originCoords, destCoords]));
-        }
-
-        async function loadChatHistory(orderId) {
-            try {
-                const messagesQuery = window.firebase.firestore.query(
-                    window.firebase.firestore.collection(window.firebase.db, 'chats'),
-                    window.firebase.firestore.where('orderId', '==', orderId),
-                    window.firebase.firestore.orderBy('timestamp', 'asc')
-                );
-                
-                const snapshot = await window.firebase.firestore.getDocs(messagesQuery);
-                displayChatMessages(snapshot.docs);
-                
-            } catch (error) {
-                console.error('Error cargando chat:', error);
-            }
-        }
-
-        function listenToChat(orderId) {
-            if (AppState.chatListener) {
-                AppState.chatListener();
-            }
-            
-            const messagesQuery = window.firebase.firestore.query(
-                window.firebase.firestore.collection(window.firebase.db, 'chats'),
-                window.firebase.firestore.where('orderId', '==', orderId),
-                window.firebase.firestore.orderBy('timestamp', 'asc')
-            );
-            
-            AppState.chatListener = window.firebase.firestore.onSnapshot(messagesQuery, (snapshot) => {
-                displayChatMessages(snapshot.docs);
-            });
-        }
-
-        function displayChatMessages(docs) {
-            const container = document.getElementById('chatMessages');
-            if (!container) return;
-            
-            if (docs.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-4">
-                        <i class="fas fa-comments fa-2x text-muted mb-3"></i>
-                        <p class="text-muted">No hay mensajes todavía</p>
-                        <small>Envía el primer mensaje</small>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            
-            docs.forEach(doc => {
-                const message = doc.data();
-                const isSentByMe = message.senderId === AppState.currentUser.uid;
-                
-                html += `
-                    <div class="message ${isSentByMe ? 'sent' : 'received'}">
-                        <div class="small">${message.text}</div>
-                        <div class="text-end" style="font-size: 0.7rem; opacity: 0.7;">
-                            ${formatTime(message.timestamp?.toDate())}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-            container.scrollTop = container.scrollHeight;
-        }
-
-        async function sendMessage(orderId) {
-            const input = document.getElementById('chatInput');
-            const text = input.value.trim();
-            
-            if (!text) return;
-            
-            try {
-                const messageData = {
-                    orderId: orderId,
-                    senderId: AppState.currentUser.uid,
-                    senderName: AppState.userData?.nombre,
-                    senderRole: AppState.userRole,
-                    text: text,
-                    timestamp: window.firebase.firestore.serverTimestamp()
-                };
-                
-                await window.firebase.firestore.addDoc(
-                    window.firebase.firestore.collection(window.firebase.db, 'chats'),
-                    messageData
-                );
-                
-                // Enviar via WebSocket
-                if (AppState.socket && AppState.socket.connected) {
-                    AppState.socket.emit('chat-message', messageData);
-                }
-                
-                input.value = '';
-                
-            } catch (error) {
-                console.error('Error enviando mensaje:', error);
-                Swal.fire('Error', 'No se pudo enviar el mensaje', 'error');
-            }
-        }
-
-        // ============================================
-        // FUNCIONES AUXILIARES
-        // ============================================
-        function getStatusText(status) {
-            switch(status) {
-                case 'pending': return 'Pendiente';
-                case 'accepted': return 'Aceptado';
-                case 'picked': return 'En camino';
-                case 'delivered': return 'Entregado';
-                case 'cancelled': return 'Cancelado';
-                default: return status;
-            }
-        }
-
-        function getStatusColor(status) {
-            switch(status) {
-                case 'pending': return 'warning';
-                case 'accepted': return 'info';
-                case 'picked': return 'primary';
-                case 'delivered': return 'success';
-                case 'cancelled': return 'secondary';
-                default: return 'light';
-            }
-        }
-
-        function getUrgencyText(urgency) {
-            switch(urgency) {
-                case 'urgent': return 'Urgente (30 min)';
-                case 'express': return 'Express (1 hora)';
-                case 'standard': return 'Normal (2-3 horas)';
-                default: return urgency;
-            }
-        }
-
-        function formatTime(date) {
-            if (!date) return '';
-            return date.toLocaleTimeString('es-PA', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-        }
-
-        async function toggleOnlineStatus() {
-            const newStatus = !AppState.userData?.activo;
-            
+        window.toggleOnlineStatus = async function() {
+            const newStatus = !window.AppState.userData?.activo;
             try {
                 await window.firebase.firestore.updateDoc(
-                    window.firebase.firestore.doc(window.firebase.db, 'usuarios', AppState.currentUser.uid),
-                    {
-                        activo: newStatus,
-                        lastActive: window.firebase.firestore.serverTimestamp()
-                    }
+                    window.firebase.firestore.doc(window.firebase.db, 'usuarios', window.AppState.currentUser.uid),
+                    { activo: newStatus }
                 );
-                
-                AppState.userData.activo = newStatus;
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: newStatus ? '🟢 En línea' : '🔴 Desconectado',
-                    text: `Estado actualizado a ${newStatus ? 'en línea' : 'desconectado'}`,
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-                
-                if (newStatus && AppState.userRole === 'repartidor') {
-                    startLocationSharing();
-                }
-                
+                window.AppState.userData.activo = newStatus;
+                Swal.fire('Éxito', `Estado: ${newStatus ? 'En línea' : 'Desconectado'}`, 'success');
                 renderMainLayout();
-                
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
-        }
+        };
 
-        function startLocationSharing() {
-            if (!navigator.geolocation || AppState.userRole !== 'repartidor') return;
-            
-            AppState.locationWatchId = navigator.geolocation.watchPosition(
-                (position) => {
-                    const location = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                    };
-                    
-                    // Actualizar en Firestore
-                    window.firebase.firestore.updateDoc(
-                        window.firebase.firestore.doc(window.firebase.db, 'usuarios', AppState.currentUser.uid),
-                        {
-                            ubicacion: location,
-                            lastLocationUpdate: window.firebase.firestore.serverTimestamp()
-                        }
-                    );
-                    
-                    // Enviar via WebSocket
-                    if (AppState.socket && AppState.socket.connected) {
-                        AppState.socket.emit('repartidor-location', {
-                            repartidorId: AppState.currentUser.uid,
-                            repartidorName: AppState.userData?.nombre,
-                            location: location
-                        });
-                    }
-                },
-                (error) => {
-                    console.warn('Error obteniendo ubicación:', error);
-                },
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 30000,
-                    timeout: 27000
-                }
-            );
-            
-            AppState.locationSharing = true;
-        }
+        window.openWhatsApp = function(phone, orderId) {
+            const text = encodeURIComponent(`Hola! Te escribo sobre el pedido #${orderId.substring(0, 8)}`);
+            window.open(`https://wa.me/${phone.replace(/\D/g, '')}?text=${text}`, '_blank');
+        };
 
-        function toggleLocationSharing() {
-            if (AppState.locationSharing) {
-                if (AppState.locationWatchId) {
-                    navigator.geolocation.clearWatch(AppState.locationWatchId);
-                    AppState.locationWatchId = null;
-                }
-                AppState.locationSharing = false;
-            } else {
-                startLocationSharing();
-            }
-            
-            Swal.fire({
-                icon: 'info',
-                title: AppState.locationSharing ? '📍 Ubicación compartida' : '📍 Compartir ubicación detenido',
-                timer: 1500,
-                showConfirmButton: false
-            });
-        }
+        window.openInWaze = function(lat, lng) {
+            window.open(`https://waze.com/ul?ll=${lat},${lng}&navigate=yes`, '_blank');
+        };
 
-        function loadHome() {
-            document.getElementById('contentArea').innerHTML = renderHomeContent();
-        }
-
-        function showProfile() {
-            Swal.fire({
-                title: 'Mi Perfil',
-                html: `
-                    <div class="text-center">
-                        <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3" 
-                             style="width: 100px; height: 100px;">
-                            <i class="fas ${AppState.userRole === 'cliente' ? 'fa-user' : 'fa-motorcycle'} fa-3x text-white"></i>
-                        </div>
-                        
-                        <h5>${AppState.userData?.nombre}</h5>
-                        <p class="text-muted">${AppState.userData?.email}</p>
-                        
-                        <div class="text-start mt-3">
-                            <p><strong><i class="fas fa-id-card me-2"></i>Rol:</strong> ${AppState.userRole}</p>
-                            <p><strong><i class="fas fa-phone me-2"></i>WhatsApp:</strong> ${AppState.userData?.telefono || 'No registrado'}</p>
-                            <p><strong><i class="fas fa-fire me-2"></i>Firebase ID:</strong> 
-                               <small class="text-muted">${AppState.currentUser?.uid?.substring(0, 15)}...</small>
-                            </p>
-                            ${AppState.userRole === 'repartidor' ? `
-                                <p><strong><i class="fas fa-star me-2"></i>Calificación:</strong> ⭐ ${AppState.userData?.calificacion || '5.0'}</p>
-                                <p><strong><i class="fas fa-check-circle me-2"></i>Entregas:</strong> ${AppState.userData?.entregasCompletadas || 0}</p>
-                                <p><strong><i class="fas fa-toggle-${AppState.userData?.activo ? 'on' : 'off'} me-2"></i>Estado:</strong> 
-                                   ${AppState.userData?.activo ? '<span class="text-success">En línea</span>' : '<span class="text-danger">Desconectado</span>'}
-                                </p>
-                            ` : ''}
-                        </div>
-                    </div>
-                `,
-                showConfirmButton: false,
-                showCloseButton: true
-            });
-        }
-
-        function showStats() {
-            Swal.fire({
-                title: 'Estadísticas',
-                html: `
-                    <div class="text-start">
-                        <p><strong><i class="fas fa-fire me-2"></i>Firebase:</strong> Conectado ✅</p>
-                        <p><strong><i class="fas fa-database me-2"></i>Proyecto:</strong> ${firebaseConfig.projectId}</p>
-                        <p><strong><i class="fas fa-users me-2"></i>Usuario:</strong> ${AppState.currentUser?.email}</p>
-                        <p><strong><i class="fas fa-code me-2"></i>Versión:</strong> Firebase v12.7.0</p>
-                        <hr>
-                        <p class="small text-muted">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Esta es la versión completa de RapidSend con todas las funciones activas.
-                        </p>
-                    </div>
-                `,
-                width: 500
-            });
-        }
-
-        async function handleLogout() {
-            try {
-                // Detener compartir ubicación si está activo
-                if (AppState.locationWatchId) {
-                    navigator.geolocation.clearWatch(AppState.locationWatchId);
-                }
-                
-                // Cerrar conexión WebSocket
-                if (AppState.socket) {
-                    AppState.socket.disconnect();
-                }
-                
-                // Remover listeners
-                if (AppState.pedidosListener) {
-                    AppState.pedidosListener();
-                }
-                if (AppState.chatListener) {
-                    AppState.chatListener();
-                }
-                
-                // Cerrar sesión en Firebase
-                await window.firebase.authMethods.signOut(window.firebase.auth);
-                localStorage.removeItem('rapidsend_user');
-                
-                // Limpiar estado
-                AppState.currentUser = null;
-                AppState.userData = null;
-                AppState.userRole = null;
-                AppState.currentOrder = null;
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Sesión cerrada',
-                    text: 'Has cerrado sesión correctamente',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-                
-            } catch (error) {
-                console.error('Error al cerrar sesión:', error);
-                Swal.fire('Error', 'No se pudo cerrar sesión', 'error');
-            }
-        }
-
-        // Inicializar
-        console.log('✨ RapidSend v12.7.0 - Aplicación completa cargada');
+        window.openInGoogleMaps = function(lat, lng) {
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`, '_blank');
+        };
     </script>
 </body>
 </html>
