@@ -49,6 +49,10 @@
             padding: 15px;
             margin-bottom: 15px;
         }
+        .order-card.urgent {
+            border-left-color: #e74c3c;
+            background: linear-gradient(to right, rgba(231, 76, 60, 0.05), white);
+        }
         .google-btn {
             background: white;
             border: 2px solid #ddd;
@@ -81,9 +85,10 @@
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}</style>
     
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // FIREBASE 12.8.0
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDxD4g_uYEUKB37uNHvDWus_NQHoSAMK_8",
@@ -99,9 +104,19 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        window.firebase = { app, auth, db, googleProvider, firestore: { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy, serverTimestamp, onSnapshot }, authMethods: { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, signInWithPopup }};
+        window.firebase = { 
+            app, auth, db, googleProvider, 
+            firestore: { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy, serverTimestamp, onSnapshot }, 
+            authMethods: { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, signInWithPopup }
+        };
         
-        window.AppState = { currentUser: null, userData: null, userRole: null, selectedOrigin: null, selectedDestination: null };
+        window.AppState = { 
+            currentUser: null, 
+            userData: null, 
+            userRole: null, 
+            selectedOrigin: null, 
+            selectedDestination: null 
+        };
 
         onAuthStateChanged(auth, async (user) => {
             window.AppState.currentUser = user;
@@ -166,6 +181,7 @@
                             <select class="form-select" id="regRole">
                                 <option value="cliente">👤 Cliente</option>
                                 <option value="repartidor">🏍️ Repartidor</option>
+                                <option value="institucion">🏥 Institución</option>
                             </select>
                         </div>
                         <button onclick="handleRegister()" class="btn btn-primary w-100">Registrarse</button>
@@ -219,7 +235,11 @@
                     const { value: role } = await Swal.fire({
                         title: 'Selecciona tu rol',
                         input: 'select',
-                        inputOptions: { 'cliente': '👤 Cliente', 'repartidor': '🏍️ Repartidor' },
+                        inputOptions: { 
+                            'cliente': '👤 Cliente', 
+                            'repartidor': '🏍️ Repartidor',
+                            'institucion': '🏥 Institución'
+                        },
                         showCancelButton: false
                     });
                     await setDoc(doc(db, 'usuarios', result.user.uid), {
@@ -242,12 +262,14 @@
 
         window.renderMainLayout = function() {
             const role = window.AppState.userRole;
+            const roleText = role === 'repartidor' ? 'Repartidor' : role === 'institucion' ? 'Institución' : 'Cliente';
+            
             document.getElementById('app').innerHTML = `
                 <nav class="navbar navbar-main">
                     <div class="container-fluid">
                         <a class="navbar-brand text-white" href="#" onclick="loadHome()">
                             <i class="fas fa-bolt me-2"></i>RapidSend
-                            <span class="badge bg-light text-dark ms-2">${role === 'repartidor' ? 'Repartidor' : 'Cliente'}</span>
+                            <span class="badge bg-light text-dark ms-2">${roleText}</span>
                         </a>
                         <button class="btn btn-light" onclick="handleLogout()">
                             <i class="fas fa-sign-out-alt"></i>
@@ -263,7 +285,7 @@
                                     <button class="list-group-item list-group-item-action" onclick="loadHome()">
                                         <i class="fas fa-home me-2"></i>Inicio
                                     </button>
-                                    ${role === 'cliente' ? `
+                                    ${role === 'cliente' || role === 'institucion' ? `
                                         <button class="list-group-item list-group-item-action" onclick="showCreateOrder()">
                                             <i class="fas fa-plus me-2"></i>Nuevo Pedido
                                         </button>
@@ -294,11 +316,12 @@
         };
 
         window.loadHome = function() {
+            const role = window.AppState.userRole;
             document.getElementById('contentArea').innerHTML = `
                 <div class="card-main p-4">
                     <h2>Bienvenido, ${window.AppState.userData?.nombre}</h2>
                     <div class="row mt-4">
-                        ${window.AppState.userRole === 'cliente' ? `
+                        ${role === 'cliente' || role === 'institucion' ? `
                             <div class="col-md-4 mb-3">
                                 <div class="card text-center p-4">
                                     <i class="fas fa-box fa-3x text-primary mb-3"></i>
@@ -340,12 +363,12 @@
             await signOut(auth);
         };
 
-        console.log('✅ RapidSend Mejorado Cargado');
+        console.log('✅ RapidSend Firebase 12.8.0 Cargado');
     </script>
-</body>
-</html>
     <script>
-        // CREAR PEDIDO CON MAPA
+        // ============================================
+        // CREAR PEDIDO CON CAMPOS NUEVOS
+        // ============================================
         window.showCreateOrder = async function() {
             window.AppState.selectedOrigin = null;
             window.AppState.selectedDestination = null;
@@ -354,24 +377,50 @@
                 title: '📦 Nuevo Pedido',
                 html: `
                     <div class="text-start">
-                        <input type="text" class="form-control mb-3" id="orderDesc" placeholder="¿Qué vas a enviar?">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">¿Qué vas a enviar?</label>
+                            <input type="text" class="form-control" id="orderDesc" placeholder="Descripción del pedido">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tipo de Pedido</label>
+                            <select class="form-select" id="tipoPedido">
+                                <option value="normal">📦 Normal</option>
+                                <option value="medicamento">💊 Medicamento</option>
+                                <option value="insumo_medico">🏥 Insumo Médico</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nivel de Urgencia</label>
+                            <select class="form-select" id="nivelUrgencia">
+                                <option value="baja">🟢 Baja</option>
+                                <option value="media" selected>🟡 Media</option>
+                                <option value="alta">🔴 Alta</option>
+                            </select>
+                        </div>
+                        
                         <div class="alert alert-info py-2 mb-2">
                             <small><i class="fas fa-info-circle me-1"></i> Click: 1º origen (rojo), 2º destino (verde)</small>
                         </div>
                         <div id="mapaPedido" style="height: 350px; border-radius: 10px; margin-bottom: 15px;"></div>
+                        
                         <div class="row mb-3">
                             <div class="col-6">
-                                <input type="text" class="form-control" id="orderFrom" placeholder="Origen" readonly>
+                                <input type="text" class="form-control form-control-sm" id="orderFrom" placeholder="Origen" readonly>
                             </div>
                             <div class="col-6">
-                                <input type="text" class="form-control" id="orderTo" placeholder="Destino" readonly>
+                                <input type="text" class="form-control form-control-sm" id="orderTo" placeholder="Destino" readonly>
                             </div>
                         </div>
+                        
                         <div class="row mb-3">
                             <div class="col-6">
+                                <label class="form-label">Precio inicial ($)</label>
                                 <input type="number" class="form-control" id="orderPrice" value="10" min="5">
                             </div>
                             <div class="col-6">
+                                <label class="form-label">Tiempo</label>
                                 <select class="form-select" id="orderUrgency">
                                     <option value="standard">Normal (2-3h)</option>
                                     <option value="express">Express (1h)</option>
@@ -379,6 +428,7 @@
                                 </select>
                             </div>
                         </div>
+                        
                         <textarea class="form-control" id="orderInstructions" rows="2" placeholder="Instrucciones (opcional)"></textarea>
                     </div>
                 `,
@@ -386,8 +436,7 @@
                 showCancelButton: true,
                 confirmButtonText: 'Crear Pedido',
                 didOpen: () => {
-                    const defaultCoords = [8.9833, -79.5167];
-                    const map = L.map('mapaPedido').setView(defaultCoords, 13);
+                    const map = L.map('mapaPedido').setView([8.9833, -79.5167], 13);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                     
                     let clickCount = 0;
@@ -395,7 +444,7 @@
                     let destMarker = null;
                     let routeControl = null;
                     
-                    map.on('click', async function(e) {
+                    map.on('click', function(e) {
                         const coords = [e.latlng.lat, e.latlng.lng];
                         
                         if (clickCount === 0) {
@@ -428,10 +477,7 @@
                             
                             if (routeControl) map.removeControl(routeControl);
                             routeControl = L.Routing.control({
-                                waypoints: [
-                                    L.latLng(window.AppState.selectedOrigin.coords),
-                                    L.latLng(coords)
-                                ],
+                                waypoints: [L.latLng(window.AppState.selectedOrigin.coords), L.latLng(coords)],
                                 lineOptions: { styles: [{ color: '#3498db', weight: 4 }] },
                                 createMarker: () => null
                             }).addTo(map);
@@ -439,9 +485,7 @@
                             const R = 6371;
                             const dLat = (coords[0] - window.AppState.selectedOrigin.coords[0]) * Math.PI / 180;
                             const dLon = (coords[1] - window.AppState.selectedOrigin.coords[1]) * Math.PI / 180;
-                            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                                Math.cos(window.AppState.selectedOrigin.coords[0] * Math.PI / 180) * 
-                                Math.cos(coords[0] * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(window.AppState.selectedOrigin.coords[0] * Math.PI / 180) * Math.cos(coords[0] * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
                             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
                             const distance = R * c;
                             const price = Math.max(5, Math.round(distance * 2));
@@ -470,19 +514,24 @@
                         destCoords: window.AppState.selectedDestination.coords,
                         price: document.getElementById('orderPrice').value,
                         urgency: document.getElementById('orderUrgency').value,
-                        instructions: document.getElementById('orderInstructions').value.trim()
+                        instructions: document.getElementById('orderInstructions').value.trim(),
+                        tipoPedido: document.getElementById('tipoPedido').value,
+                        nivelUrgencia: document.getElementById('nivelUrgencia').value
                     };
                 }
             });
 
             if (formValues) {
                 try {
+                    Swal.fire({ title: 'Creando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                    
                     await window.firebase.firestore.addDoc(
                         window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
                         {
-                            clienteId: window.AppState.currentUser.uid,
-                            clienteNombre: window.AppState.userData?.nombre,
-                            clienteTelefono: window.AppState.userData?.telefono || '',
+                            clienteId: AppState.currentUser.uid,
+                            clienteNombre: AppState.userData?.nombre,
+                            clienteTelefono: AppState.userData?.telefono || '',
+                            clienteEmail: AppState.userData?.email,
                             descripcion: formValues.desc,
                             origen: formValues.from,
                             destino: formValues.to,
@@ -491,12 +540,30 @@
                             urgencia: formValues.urgency,
                             precio: parseFloat(formValues.price),
                             instrucciones: formValues.instructions,
+                            metodoPago: 'efectivo',
                             status: 'pending',
+                            
+                            // CAMPOS NUEVOS - Sistema de contraofertas
+                            tipoPedido: formValues.tipoPedido,
+                            nivelUrgencia: formValues.nivelUrgencia,
+                            precioInicial: parseFloat(formValues.price),
+                            precioFinal: null,
+                            estadoNegociacion: 'abierta',
+                            creadoPorRol: AppState.userRole,
+                            institucionId: AppState.userRole === 'institucion' ? AppState.currentUser.uid : null,
+                            
+                            repartidorId: null,
+                            repartidorNombre: null,
+                            repartidorTelefono: null,
                             createdAt: window.firebase.firestore.serverTimestamp(),
-                            updatedAt: window.firebase.firestore.serverTimestamp()
+                            updatedAt: window.firebase.firestore.serverTimestamp(),
+                            acceptedAt: null,
+                            pickedAt: null,
+                            deliveredAt: null
                         }
                     );
-                    Swal.fire('Éxito', 'Pedido creado', 'success');
+                    
+                    Swal.fire({ icon: 'success', title: 'Pedido creado', timer: 2000, showConfirmButton: false });
                     loadMyOrders();
                 } catch (error) {
                     Swal.fire('Error', error.message, 'error');
@@ -504,7 +571,9 @@
             }
         };
 
-        // CARGAR MIS PEDIDOS
+        // ============================================
+        // MIS PEDIDOS (CLIENTE/INSTITUCIÓN)
+        // ============================================
         window.loadMyOrders = async function() {
             document.getElementById('contentArea').innerHTML = `
                 <div class="card-main p-4">
@@ -521,7 +590,7 @@
             try {
                 const q = window.firebase.firestore.query(
                     window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
-                    window.firebase.firestore.where('clienteId', '==', window.AppState.currentUser.uid),
+                    window.firebase.firestore.where('clienteId', '==', AppState.currentUser.uid),
                     window.firebase.firestore.orderBy('createdAt', 'desc')
                 );
                 
@@ -539,20 +608,35 @@
                         snapshot.forEach(doc => {
                             const order = doc.data();
                             const id = doc.id;
+                            const statusColor = order.status === 'pending' ? 'warning' : order.status === 'delivered' ? 'success' : 'info';
+                            const statusText = order.status === 'pending' ? 'Pendiente' : order.status === 'delivered' ? 'Entregado' : 'En proceso';
+                            const precioMostrar = order.precioFinal || order.precioInicial || order.precio;
+                            
                             html += `
                                 <div class="col-md-6 mb-3">
-                                    <div class="order-card">
-                                        <h6>${order.descripcion}</h6>
-                                        <small class="text-muted">#${id.substring(0, 8)}</small>
+                                    <div class="order-card ${order.nivelUrgencia === 'alta' ? 'urgent' : ''}">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <h6>${order.descripcion}</h6>
+                                                <small class="text-muted">#${id.substring(0, 8)}</small>
+                                            </div>
+                                            <span class="badge bg-${statusColor}">${statusText}</span>
+                                        </div>
                                         <div class="mt-2">
                                             <small><i class="fas fa-map-marker-alt text-danger me-1"></i> ${order.origen.substring(0, 30)}...</small><br>
                                             <small><i class="fas fa-flag-checkered text-success me-1"></i> ${order.destino.substring(0, 30)}...</small>
                                         </div>
+                                        <div class="mt-2">
+                                            ${order.tipoPedido !== 'normal' ? `<span class="badge bg-info">${order.tipoPedido === 'medicamento' ? '💊 Medicamento' : '🏥 Insumo Médico'}</span> ` : ''}
+                                            ${order.nivelUrgencia ? `<span class="badge bg-${order.nivelUrgencia === 'alta' ? 'danger' : order.nivelUrgencia === 'media' ? 'warning' : 'secondary'}">${order.nivelUrgencia}</span>` : ''}
+                                        </div>
                                         <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <strong class="text-primary">$${order.precio}</strong>
-                                            <span class="badge bg-${order.status === 'pending' ? 'warning' : order.status === 'delivered' ? 'success' : 'info'}">
-                                                ${order.status === 'pending' ? 'Pendiente' : order.status === 'delivered' ? 'Entregado' : 'En proceso'}
-                                            </span>
+                                            <strong class="text-primary">$${precioMostrar}</strong>
+                                            ${order.status === 'pending' && order.estadoNegociacion === 'contraoferta' ? `
+                                                <button class="btn btn-sm btn-warning" onclick="verContraofertas('${id}')">
+                                                    <i class="fas fa-dollar-sign me-1"></i> Ver Ofertas
+                                                </button>
+                                            ` : ''}
                                         </div>
                                         ${order.repartidorTelefono && order.status !== 'delivered' ? `
                                             <button class="btn btn-sm whatsapp-btn w-100 mt-2" onclick="openWhatsApp('${order.repartidorTelefono}', '${id}')">
@@ -572,7 +656,9 @@
             }
         };
 
+        // ============================================
         // PEDIDOS DISPONIBLES (REPARTIDOR)
+        // ============================================
         window.loadAvailableOrders = async function() {
             document.getElementById('contentArea').innerHTML = `
                 <div class="card-main p-4">
@@ -594,20 +680,35 @@
                     snapshot.forEach(doc => {
                         const order = doc.data();
                         const id = doc.id;
+                        const precioInicial = order.precioInicial || order.precio;
+                        
                         html += `
                             <div class="col-md-6 mb-3">
-                                <div class="order-card">
-                                    <h6>${order.descripcion}</h6>
-                                    <small>Cliente: ${order.clienteNombre}</small>
+                                <div class="order-card ${order.nivelUrgencia === 'alta' ? 'urgent' : ''}">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <div>
+                                            <h6>${order.descripcion}</h6>
+                                            <small>Cliente: ${order.clienteNombre}</small>
+                                        </div>
+                                        ${order.tipoPedido !== 'normal' ? `<span class="badge bg-info">${order.tipoPedido === 'medicamento' ? '💊' : '🏥'}</span>` : ''}
+                                    </div>
                                     <div class="mt-2">
                                         <small><i class="fas fa-map-marker-alt text-danger me-1"></i> ${order.origen.substring(0, 25)}...</small><br>
                                         <small><i class="fas fa-flag-checkered text-success me-1"></i> ${order.destino.substring(0, 25)}...</small>
                                     </div>
-                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <h5 class="text-primary mb-0">$${order.precio}</h5>
-                                        <button class="btn btn-success" onclick="acceptOrder('${id}')">
-                                            <i class="fas fa-check me-1"></i> Aceptar
-                                        </button>
+                                    <div class="mt-2">
+                                        ${order.nivelUrgencia ? `<span class="badge bg-${order.nivelUrgencia === 'alta' ? 'danger' : order.nivelUrgencia === 'media' ? 'warning' : 'secondary'}">${order.nivelUrgencia}</span>` : ''}
+                                    </div>
+                                    <div class="mt-3">
+                                        <h5 class="text-primary mb-2">$${precioInicial}</h5>
+                                        <div class="btn-group w-100">
+                                            <button class="btn btn-success btn-sm" onclick="acceptOrderDirect('${id}')">
+                                                <i class="fas fa-check me-1"></i> Aceptar
+                                            </button>
+                                            <button class="btn btn-warning btn-sm" onclick="enviarContraoferta('${id}', ${precioInicial})">
+                                                <i class="fas fa-dollar-sign me-1"></i> Ofertar
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -619,35 +720,9 @@
             });
         };
 
-        window.acceptOrder = async function(orderId) {
-            const result = await Swal.fire({
-                title: '¿Aceptar pedido?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, aceptar'
-            });
-            
-            if (result.isConfirmed) {
-                try {
-                    await window.firebase.firestore.updateDoc(
-                        window.firebase.firestore.doc(window.firebase.db, 'pedidos', orderId),
-                        {
-                            status: 'accepted',
-                            repartidorId: window.AppState.currentUser.uid,
-                            repartidorNombre: window.AppState.userData?.nombre,
-                            repartidorTelefono: window.AppState.userData?.telefono,
-                            acceptedAt: window.firebase.firestore.serverTimestamp()
-                        }
-                    );
-                    Swal.fire('Éxito', 'Pedido aceptado', 'success');
-                    loadMyDeliveries();
-                } catch (error) {
-                    Swal.fire('Error', error.message, 'error');
-                }
-            }
-        };
-
-        // MIS ENTREGAS
+        // ============================================
+        // MIS ENTREGAS (REPARTIDOR)
+        // ============================================
         window.loadMyDeliveries = async function() {
             document.getElementById('contentArea').innerHTML = `
                 <div class="card-main p-4">
@@ -658,7 +733,7 @@
             
             const q = window.firebase.firestore.query(
                 window.firebase.firestore.collection(window.firebase.db, 'pedidos'),
-                window.firebase.firestore.where('repartidorId', '==', window.AppState.currentUser.uid)
+                window.firebase.firestore.where('repartidorId', '==', AppState.currentUser.uid)
             );
             
             window.firebase.firestore.onSnapshot(q, (snapshot) => {
@@ -669,42 +744,52 @@
                     snapshot.forEach(doc => {
                         const order = doc.data();
                         const id = doc.id;
+                        const statusColor = order.status === 'accepted' ? 'info' : order.status === 'picked' ? 'primary' : 'success';
+                        const precioFinal = order.precioFinal || order.precioInicial || order.precio;
+                        
                         html += `
                             <div class="col-md-6 mb-3">
                                 <div class="order-card">
-                                    <h6>${order.descripcion}</h6>
-                                    <small>Cliente: ${order.clienteNombre}</small>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <div>
+                                            <h6>${order.descripcion}</h6>
+                                            <small>Cliente: ${order.clienteNombre}</small>
+                                        </div>
+                                        <span class="badge bg-${statusColor}">${order.status}</span>
+                                    </div>
                                     <div class="mt-2">
                                         <small><i class="fas fa-map-marker-alt text-danger me-1"></i> ${order.origen.substring(0, 25)}...</small><br>
                                         <small><i class="fas fa-flag-checkered text-success me-1"></i> ${order.destino.substring(0, 25)}...</small>
                                     </div>
                                     <div class="mt-3">
-                                        <h5 class="text-primary">$${order.precio}</h5>
-                                        <div class="btn-group w-100">
+                                        <h5 class="text-primary">$${precioFinal}</h5>
+                                        <div class="btn-group-vertical w-100 gap-2">
                                             ${order.status === 'accepted' ? `
-                                                <button class="btn btn-sm btn-primary" onclick="updateStatus('${id}', 'picked')">
+                                                <button class="btn btn-primary btn-sm" onclick="updateStatus('${id}', 'picked')">
                                                     <i class="fas fa-box me-1"></i> Recogido
                                                 </button>
                                             ` : ''}
                                             ${order.status === 'picked' ? `
-                                                <button class="btn btn-sm btn-success" onclick="updateStatus('${id}', 'delivered')">
+                                                <button class="btn btn-success btn-sm" onclick="updateStatus('${id}', 'delivered')">
                                                     <i class="fas fa-check me-1"></i> Entregado
                                                 </button>
                                             ` : ''}
                                             ${order.destinoCoords ? `
-                                                <button class="btn btn-sm btn-info" onclick="openInWaze(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
-                                                    <i class="fab fa-waze"></i> Waze
-                                                </button>
-                                                <button class="btn btn-sm btn-primary" onclick="openInGoogleMaps(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
-                                                    <i class="fas fa-map"></i> Maps
+                                                <div class="btn-group">
+                                                    <button class="btn btn-info btn-sm" onclick="openInWaze(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
+                                                        <i class="fab fa-waze"></i> Waze
+                                                    </button>
+                                                    <button class="btn btn-primary btn-sm" onclick="openInGoogleMaps(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
+                                                        <i class="fas fa-map"></i> Maps
+                                                    </button>
+                                                </div>
+                                            ` : ''}
+                                            ${order.clienteTelefono ? `
+                                                <button class="btn whatsapp-btn btn-sm" onclick="openWhatsApp('${order.clienteTelefono}', '${id}')">
+                                                    <i class="fab fa-whatsapp me-1"></i> Contactar Cliente
                                                 </button>
                                             ` : ''}
                                         </div>
-                                        ${order.clienteTelefono ? `
-                                            <button class="btn btn-sm whatsapp-btn w-100 mt-2" onclick="openWhatsApp('${order.clienteTelefono}', '${id}')">
-                                                <i class="fab fa-whatsapp me-1"></i> Contactar Cliente
-                                            </button>
-                                        ` : ''}
                                     </div>
                                 </div>
                             </div>
@@ -727,21 +812,21 @@
                         ...(newStatus === 'delivered' ? { deliveredAt: window.firebase.firestore.serverTimestamp() } : {})
                     }
                 );
-                Swal.fire('Actualizado', 'Estado del pedido actualizado', 'success');
+                Swal.fire({ icon: 'success', title: 'Actualizado', timer: 1500, showConfirmButton: false });
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
         };
 
         window.toggleOnlineStatus = async function() {
-            const newStatus = !window.AppState.userData?.activo;
+            const newStatus = !AppState.userData?.activo;
             try {
                 await window.firebase.firestore.updateDoc(
-                    window.firebase.firestore.doc(window.firebase.db, 'usuarios', window.AppState.currentUser.uid),
+                    window.firebase.firestore.doc(window.firebase.db, 'usuarios', AppState.currentUser.uid),
                     { activo: newStatus }
                 );
-                window.AppState.userData.activo = newStatus;
-                Swal.fire('Éxito', `Estado: ${newStatus ? 'En línea' : 'Desconectado'}`, 'success');
+                AppState.userData.activo = newStatus;
+                Swal.fire({ icon: 'success', title: newStatus ? 'En línea' : 'Desconectado', timer: 1500, showConfirmButton: false });
                 renderMainLayout();
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
@@ -749,7 +834,7 @@
         };
 
         window.openWhatsApp = function(phone, orderId) {
-            const text = encodeURIComponent(`Hola! Te escribo sobre el pedido #${orderId.substring(0, 8)}`);
+            const text = encodeURIComponent(`Hola! Pedido #${orderId.substring(0, 8)}`);
             window.open(`https://wa.me/${phone.replace(/\D/g, '')}?text=${text}`, '_blank');
         };
 
@@ -760,6 +845,254 @@
         window.openInGoogleMaps = function(lat, lng) {
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`, '_blank');
         };
+
+        // ============================================
+        // SISTEMA DE CONTRAOFERTAS
+        // ============================================
+        
+        // REPARTIDOR: Enviar contraoferta
+        window.enviarContraoferta = async function(pedidoId, precioInicial) {
+            try {
+                const { value: formValues } = await Swal.fire({
+                    title: '💰 Enviar Contraoferta',
+                    html: `
+                        <div class="text-start">
+                            <p class="text-muted mb-3">Precio inicial: <strong>$${precioInicial}</strong></p>
+                            <div class="mb-3">
+                                <label class="form-label">Tu oferta ($)</label>
+                                <input type="number" class="form-control" id="precioOferta" value="${(precioInicial * 0.85).toFixed(2)}" min="1" step="0.5">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tiempo estimado</label>
+                                <select class="form-select" id="tiempoEstimado">
+                                    <option value="15 min">15 minutos</option>
+                                    <option value="30 min" selected>30 minutos</option>
+                                    <option value="45 min">45 minutos</option>
+                                    <option value="1 hora">1 hora</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mensaje (opcional)</label>
+                                <textarea class="form-control" id="mensajeOferta" rows="2" placeholder="Puedo recogerlo rápido"></textarea>
+                            </div>
+                        </div>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Enviar Oferta',
+                    preConfirm: () => {
+                        const precio = parseFloat(document.getElementById('precioOferta').value);
+                        if (!precio || precio <= 0) {
+                            Swal.showValidationMessage('Precio inválido');
+                            return false;
+                        }
+                        return {
+                            precioOfertado: precio,
+                            tiempoEstimado: document.getElementById('tiempoEstimado').value,
+                            mensaje: document.getElementById('mensajeOferta').value.trim()
+                        };
+                    }
+                });
+                
+                if (!formValues) return;
+                
+                Swal.fire({ title: 'Enviando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                
+                const pedidoDoc = await window.firebase.firestore.getDoc(
+                    window.firebase.firestore.doc(window.firebase.db, 'pedidos', pedidoId)
+                );
+                
+                if (!pedidoDoc.exists() || pedidoDoc.data().status !== 'pending') {
+                    Swal.fire('Error', 'Pedido no disponible', 'error');
+                    return;
+                }
+                
+                await window.firebase.firestore.addDoc(
+                    window.firebase.firestore.collection(window.firebase.db, 'contraofertas'),
+                    {
+                        pedidoId: pedidoId,
+                        repartidorId: AppState.currentUser.uid,
+                        repartidorNombre: AppState.userData?.nombre,
+                        repartidorTelefono: AppState.userData?.telefono,
+                        repartidorCalificacion: AppState.userData?.calificacion || 5.0,
+                        precioOfertado: formValues.precioOfertado,
+                        tiempoEstimado: formValues.tiempoEstimado,
+                        mensaje: formValues.mensaje,
+                        estado: 'pendiente',
+                        createdAt: window.firebase.firestore.serverTimestamp()
+                    }
+                );
+                
+                await window.firebase.firestore.updateDoc(
+                    window.firebase.firestore.doc(window.firebase.db, 'pedidos', pedidoId),
+                    { estadoNegociacion: 'contraoferta', updatedAt: window.firebase.firestore.serverTimestamp() }
+                );
+                
+                Swal.fire({ icon: 'success', title: 'Oferta enviada', timer: 2000, showConfirmButton: false });
+                
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        };
+
+        // CLIENTE: Ver contraofertas
+        window.verContraofertas = async function(pedidoId) {
+            try {
+                const q = window.firebase.firestore.query(
+                    window.firebase.firestore.collection(window.firebase.db, 'contraofertas'),
+                    window.firebase.firestore.where('pedidoId', '==', pedidoId),
+                    window.firebase.firestore.where('estado', '==', 'pendiente'),
+                    window.firebase.firestore.orderBy('precioOfertado', 'asc')
+                );
+                
+                const snapshot = await window.firebase.firestore.getDocs(q);
+                
+                if (snapshot.empty) {
+                    Swal.fire('Sin ofertas', 'Aún no hay contraofertas', 'info');
+                    return;
+                }
+                
+                let html = '<div class="text-start">';
+                snapshot.forEach((doc) => {
+                    const o = doc.data();
+                    html += `
+                        <div class="border rounded p-3 mb-2" style="background: #f8f9fa;">
+                            <div class="d-flex justify-content-between mb-2">
+                                <strong>${o.repartidorNombre}</strong>
+                                <span class="text-warning">⭐ ${o.repartidorCalificacion?.toFixed(1) || '5.0'}</span>
+                            </div>
+                            <h4 class="text-primary mb-1">$${o.precioOfertado.toFixed(2)}</h4>
+                            <small class="text-muted">⏱️ ${o.tiempoEstimado}</small>
+                            ${o.mensaje ? `<p class="mt-2 mb-2"><small>💬 ${o.mensaje}</small></p>` : ''}
+                            <button class="btn btn-success btn-sm w-100" onclick="aceptarContraoferta('${doc.id}','${pedidoId}')">
+                                <i class="fas fa-check me-1"></i> Aceptar
+                            </button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                Swal.fire({ title: '💰 Ofertas Recibidas', html: html, width: 600, showConfirmButton: false, showCloseButton: true });
+                
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        };
+
+        // CLIENTE: Aceptar contraoferta
+        window.aceptarContraoferta = async function(contraofertaId, pedidoId) {
+            try {
+                const result = await Swal.fire({
+                    title: '¿Aceptar oferta?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí'
+                });
+                
+                if (!result.isConfirmed) return;
+                
+                Swal.fire({ title: 'Procesando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                
+                const contraDoc = await window.firebase.firestore.getDoc(
+                    window.firebase.firestore.doc(window.firebase.db, 'contraofertas', contraofertaId)
+                );
+                
+                if (!contraDoc.exists()) {
+                    Swal.fire('Error', 'Oferta no encontrada', 'error');
+                    return;
+                }
+                
+                const contra = contraDoc.data();
+                
+                await window.firebase.firestore.updateDoc(
+                    window.firebase.firestore.doc(window.firebase.db, 'contraofertas', contraofertaId),
+                    { estado: 'aceptada', aceptadaAt: window.firebase.firestore.serverTimestamp() }
+                );
+                
+                await window.firebase.firestore.updateDoc(
+                    window.firebase.firestore.doc(window.firebase.db, 'pedidos', pedidoId),
+                    {
+                        status: 'accepted',
+                        repartidorId: contra.repartidorId,
+                        repartidorNombre: contra.repartidorNombre,
+                        repartidorTelefono: contra.repartidorTelefono,
+                        precioFinal: contra.precioOfertado,
+                        estadoNegociacion: 'aceptada',
+                        acceptedAt: window.firebase.firestore.serverTimestamp(),
+                        updatedAt: window.firebase.firestore.serverTimestamp()
+                    }
+                );
+                
+                const otras = await window.firebase.firestore.getDocs(
+                    window.firebase.firestore.query(
+                        window.firebase.firestore.collection(window.firebase.db, 'contraofertas'),
+                        window.firebase.firestore.where('pedidoId', '==', pedidoId),
+                        window.firebase.firestore.where('estado', '==', 'pendiente')
+                    )
+                );
+                
+                otras.forEach(async (doc) => {
+                    if (doc.id !== contraofertaId) {
+                        await window.firebase.firestore.updateDoc(doc.ref, { estado: 'rechazada' });
+                    }
+                });
+                
+                Swal.fire({ icon: 'success', title: 'Oferta aceptada', html: `<p>Precio: $${contra.precioOfertado}</p>`, timer: 2000 });
+                loadMyOrders();
+                
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        };
+
+        // REPARTIDOR: Aceptar directo (sin contraoferta)
+        window.acceptOrderDirect = async function(orderId) {
+            try {
+                const result = await Swal.fire({
+                    title: '¿Aceptar pedido?',
+                    text: 'Al precio inicial',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí'
+                });
+                
+                if (!result.isConfirmed) return;
+                
+                Swal.fire({ title: 'Procesando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                
+                const pedidoDoc = await window.firebase.firestore.getDoc(
+                    window.firebase.firestore.doc(window.firebase.db, 'pedidos', orderId)
+                );
+                
+                if (!pedidoDoc.exists() || pedidoDoc.data().status !== 'pending') {
+                    Swal.fire('Error', 'Pedido no disponible', 'error');
+                    return;
+                }
+                
+                const pedido = pedidoDoc.data();
+                
+                await window.firebase.firestore.updateDoc(
+                    window.firebase.firestore.doc(window.firebase.db, 'pedidos', orderId),
+                    {
+                        status: 'accepted',
+                        repartidorId: AppState.currentUser.uid,
+                        repartidorNombre: AppState.userData?.nombre,
+                        repartidorTelefono: AppState.userData?.telefono,
+                        precioFinal: pedido.precioInicial || pedido.precio,
+                        estadoNegociacion: 'aceptada',
+                        acceptedAt: window.firebase.firestore.serverTimestamp(),
+                        updatedAt: window.firebase.firestore.serverTimestamp()
+                    }
+                );
+                
+                Swal.fire({ icon: 'success', title: 'Pedido aceptado', timer: 2000, showConfirmButton: false });
+                loadMyDeliveries();
+                
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        };
+
+        console.log('✅ RapidSend con Sistema de Contraofertas Cargado (Firebase 12.8.0)');
     </script>
 </body>
 </html>
