@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RapidSend</title>
+    <title>RapidSend - Sistema de Entregas</title>
     
     <!-- ============================================
          LIBRERÍAS EXTERNAS
@@ -23,6 +23,9 @@
             --red: #dc143c;
             --dark: #1a1a1a;
             --white: #fff;
+            --warning: #ffc107;
+            --success: #28a745;
+            --info: #17a2b8;
         }
         
         /* Reset básico */
@@ -67,6 +70,7 @@
             color: var(--white);
             padding: 1.5rem;
             text-align: center;
+            border-radius: 15px 15px 0 0;
         }
         
         .user-avatar {
@@ -87,6 +91,7 @@
             border: none;
             border-left: 4px solid transparent;
             transition: all 0.3s;
+            cursor: pointer;
         }
         
         .list-group-item:hover {
@@ -112,6 +117,7 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             transition: all 0.3s;
+            position: relative;
         }
         
         .order-card:hover {
@@ -123,6 +129,11 @@
             border-left-color: #8b0000;
             background: linear-gradient(to right, rgba(220, 20, 60, 0.08), var(--white));
             animation: pulse 2s infinite;
+        }
+        
+        .order-card.sensitive {
+            border-left-color: #ff6b6b;
+            background: linear-gradient(to right, rgba(255, 107, 107, 0.05), var(--white));
         }
         
         @keyframes pulse {
@@ -143,6 +154,7 @@
             font-weight: 700;
             padding: 0.75rem 2rem;
             border-radius: 30px;
+            transition: all 0.3s;
         }
         
         .btn-primary:hover {
@@ -158,6 +170,11 @@
             border-radius: 30px;
         }
         
+        .btn-whatsapp:hover {
+            background: #128C7E;
+            color: var(--white);
+        }
+        
         /* ============================================
            MAPAS
            ============================================ */
@@ -171,7 +188,7 @@
         }
         
         /* ============================================
-           BADGES
+           BADGES Y ETIQUETAS
            ============================================ */
         .badge-custom {
             padding: 0.5rem 1rem;
@@ -185,6 +202,107 @@
             padding: 1rem;
             border-radius: 10px;
             font-weight: 700;
+            margin-top: 1rem;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+        }
+        
+        .sensitive-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* ============================================
+           ALERTAS INFORMATIVAS
+           ============================================ */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .help-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        
+        /* ============================================
+           FORMULARIOS
+           ============================================ */
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        
+        .form-section-title {
+            font-weight: 700;
+            color: var(--red);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        /* ============================================
+           HISTORIAL Y TIMELINE
+           ============================================ */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #dee2e6;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 2px solid white;
         }
         
         /* ============================================
@@ -205,6 +323,10 @@
                 width: 60px;
                 height: 60px;
             }
+            
+            .order-card {
+                padding: 1rem;
+            }
         }
         
         /* ============================================
@@ -218,6 +340,16 @@
                 transform: rotate(360deg);
             }
         }
+        
+        .loading-spinner {
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 
@@ -229,7 +361,8 @@
         <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--red), #8b0000)">
             <div style="background: white; padding: 40px; border-radius: 20px; text-align: center">
                 <h1 style="color: var(--red)">RapidSend</h1>
-                <div style="margin: 20px auto; width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid var(--red); border-radius: 50%; animation: spin 1s linear infinite"></div>
+                <div class="loading-spinner"></div>
+                <p style="color: #666; margin-top: 1rem">Cargando aplicación...</p>
             </div>
         </div>
     </div>
@@ -275,7 +408,8 @@
             where,
             orderBy,
             serverTimestamp,
-            onSnapshot
+            onSnapshot,
+            deleteDoc
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
         
         // Configuración de Firebase
@@ -312,7 +446,8 @@
                 where: where,
                 orderBy: orderBy,
                 serverTimestamp: serverTimestamp,
-                onSnapshot: onSnapshot
+                onSnapshot: onSnapshot,
+                deleteDoc: deleteDoc
             },
             am: {
                 createUserWithEmailAndPassword: createUserWithEmailAndPassword,
@@ -360,14 +495,16 @@
                         activo: false,
                         calificacion: 5,
                         entregasCompletadas: 0,
-                        certificadoMedico: false
+                        certificadoMedico: false,
+                        capacitacionCompletada: false
                     });
                     
                     S.d = {
                         nombre: user.displayName,
                         email: user.email,
                         rol: 'cliente',
-                        certificadoMedico: false
+                        certificadoMedico: false,
+                        capacitacionCompletada: false
                     };
                     S.r = 'cliente';
                 }
@@ -391,10 +528,15 @@
             document.getElementById('app').innerHTML = `
                 <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--red), #8b0000); padding: 20px">
                     <div style="background: white; padding: 40px; border-radius: 20px; max-width: 500px; width: 100%">
-                        <h1 style="color: var(--red); text-align: center">RapidSend</h1>
+                        <h1 style="color: var(--red); text-align: center; margin-bottom: 0.5rem">
+                            <i class="fas fa-bolt"></i> RapidSend
+                        </h1>
+                        <p style="text-align: center; color: #666; margin-bottom: 2rem">
+                            Sistema de entregas rápidas y seguras
+                        </p>
                         
                         <!-- LOGIN -->
-                        <h5 class="mt-4">Iniciar Sesión</h5>
+                        <h5 class="mt-4 mb-3">Iniciar Sesión</h5>
                         <div class="mb-3">
                             <input type="email" class="form-control" id="le" placeholder="Email">
                         </div>
@@ -402,7 +544,7 @@
                             <input type="password" class="form-control" id="lp" placeholder="Contraseña">
                         </div>
                         <button onclick="login()" class="btn btn-primary w-100 mb-3">
-                            Ingresar
+                            <i class="fas fa-sign-in-alt me-2"></i>Ingresar
                         </button>
                         <button onclick="gLogin()" class="btn btn-outline-dark w-100 mb-3">
                             <i class="fab fa-google me-2"></i>Ingresar con Google
@@ -411,9 +553,9 @@
                         <hr>
                         
                         <!-- REGISTRO -->
-                        <h5>Crear Cuenta</h5>
+                        <h5 class="mb-3">Crear Cuenta Nueva</h5>
                         <div class="mb-3">
-                            <input type="text" class="form-control" id="rn" placeholder="Nombre">
+                            <input type="text" class="form-control" id="rn" placeholder="Nombre completo">
                         </div>
                         <div class="mb-3">
                             <input type="email" class="form-control" id="re" placeholder="Email">
@@ -422,17 +564,18 @@
                             <input type="password" class="form-control" id="rp" placeholder="Contraseña">
                         </div>
                         <div class="mb-3">
-                            <input type="tel" class="form-control" id="rt" placeholder="Teléfono">
+                            <input type="tel" class="form-control" id="rt" placeholder="Teléfono (opcional)">
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Tipo de cuenta</label>
                             <select class="form-select" id="rr">
-                                <option value="cliente">Cliente</option>
+                                <option value="cliente">Cliente - Persona Natural</option>
                                 <option value="repartidor">Repartidor</option>
-                                <option value="institucion">Institución</option>
+                                <option value="institucion">Institución Médica</option>
                             </select>
                         </div>
                         <button onclick="register()" class="btn btn-dark w-100">
-                            Registrar
+                            <i class="fas fa-user-plus me-2"></i>Crear Cuenta
                         </button>
                     </div>
                 </div>
@@ -490,7 +633,8 @@
                     activo: false,
                     calificacion: 5,
                     entregasCompletadas: 0,
-                    certificadoMedico: false
+                    certificadoMedico: false,
+                    capacitacionCompletada: false
                 });
                 
                 Swal.fire({
@@ -515,14 +659,16 @@
                 if (!userDoc.exists()) {
                     // Usuario nuevo con Google
                     const { value: rol } = await Swal.fire({
-                        title: 'Selecciona tu rol',
+                        title: 'Selecciona tu tipo de cuenta',
                         input: 'select',
                         inputOptions: {
-                            cliente: 'Cliente',
+                            cliente: 'Cliente - Persona Natural',
                             repartidor: 'Repartidor',
-                            institucion: 'Institución'
+                            institucion: 'Institución Médica'
                         },
-                        showCancelButton: false
+                        inputPlaceholder: 'Selecciona una opción',
+                        showCancelButton: false,
+                        allowOutsideClick: false
                     });
                     
                     await fb.fs.setDoc(fb.fs.doc(fb.db, 'usuarios', result.user.uid), {
@@ -534,7 +680,8 @@
                         activo: false,
                         calificacion: 5,
                         entregasCompletadas: 0,
-                        certificadoMedico: false
+                        certificadoMedico: false,
+                        capacitacionCompletada: false
                     });
                 }
             } catch (error) {
@@ -555,7 +702,7 @@
         window.renderMain = () => {
             const rol = S.r;
             const rolTexto = rol === 'repartidor' ? 'Repartidor' : 
-                           rol === 'institucion' ? 'Institución' : 'Cliente';
+                           rol === 'institucion' ? 'Institución Médica' : 'Cliente';
             
             document.getElementById('app').innerHTML = `
                 <!-- NAVBAR -->
@@ -597,6 +744,9 @@
                                         <button class="list-group-item list-group-item-action" onclick="myOrders()">
                                             <i class="fas fa-list me-2"></i>Mis Pedidos
                                         </button>
+                                        <button class="list-group-item list-group-item-action" onclick="orderHistory()">
+                                            <i class="fas fa-history me-2"></i>Historial
+                                        </button>
                                     ` : ''}
                                     
                                     ${rol === 'repartidor' ? `
@@ -606,9 +756,17 @@
                                         <button class="list-group-item list-group-item-action" onclick="myDelivs()">
                                             <i class="fas fa-motorcycle me-2"></i>Mis Entregas
                                         </button>
+                                        <button class="list-group-item list-group-item-action" onclick="deliveryHistory()">
+                                            <i class="fas fa-history me-2"></i>Historial
+                                        </button>
                                         <button class="list-group-item list-group-item-action" onclick="toggleOnline()">
                                             <i class="fas fa-toggle-on me-2"></i>${S.d?.activo ? 'Ponerse Offline' : 'Ponerse Online'}
                                         </button>
+                                        ${!S.d?.capacitacionCompletada ? `
+                                            <button class="list-group-item list-group-item-action text-warning" onclick="showTraining()">
+                                                <i class="fas fa-graduation-cap me-2"></i>Capacitación
+                                            </button>
+                                        ` : ''}
                                         <button class="list-group-item list-group-item-action" onclick="certify()">
                                             <i class="fas fa-certificate me-2"></i>Certificación Médica
                                         </button>
@@ -639,15 +797,27 @@
             document.getElementById('content').innerHTML = `
                 <div class="card-main p-4">
                     <h2>Bienvenido, ${S.d?.nombre}</h2>
+                    <p class="text-muted">Panel de control - ${S.r === 'repartidor' ? 'Repartidor' : S.r === 'institucion' ? 'Institución Médica' : 'Cliente'}</p>
                     
                     <div class="row mt-4">
                         ${S.r === 'cliente' || S.r === 'institucion' ? `
                             <div class="col-md-6 mb-3">
-                                <div class="card text-center p-4">
+                                <div class="card text-center p-4 h-100">
                                     <i class="fas fa-box fa-3x text-danger mb-3"></i>
                                     <h5>Crear Pedido</h5>
-                                    <button class="btn btn-primary mt-2" onclick="newOrder()">
-                                        Nuevo Pedido
+                                    <p class="text-muted small">Solicita una entrega rápida y segura</p>
+                                    <button class="btn btn-primary mt-auto" onclick="newOrder()">
+                                        <i class="fas fa-plus me-2"></i>Nuevo Pedido
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card text-center p-4 h-100">
+                                    <i class="fas fa-list fa-3x text-info mb-3"></i>
+                                    <h5>Mis Pedidos</h5>
+                                    <p class="text-muted small">Ver estado de tus entregas</p>
+                                    <button class="btn btn-primary mt-auto" onclick="myOrders()">
+                                        <i class="fas fa-eye me-2"></i>Ver Pedidos
                                     </button>
                                 </div>
                             </div>
@@ -655,20 +825,43 @@
                         
                         ${S.r === 'repartidor' ? `
                             <div class="col-md-6 mb-3">
-                                <div class="card text-center p-4">
+                                <div class="card text-center p-4 h-100">
                                     <i class="fas fa-search fa-3x text-danger mb-3"></i>
                                     <h5>Buscar Pedidos</h5>
-                                    <button class="btn btn-primary mt-2" onclick="availOrders()">
-                                        Ver Disponibles
+                                    <p class="text-muted small">Encuentra entregas disponibles</p>
+                                    <button class="btn btn-primary mt-auto" onclick="availOrders()">
+                                        <i class="fas fa-search me-2"></i>Ver Disponibles
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card text-center p-4 h-100">
+                                    <i class="fas fa-motorcycle fa-3x text-info mb-3"></i>
+                                    <h5>Mis Entregas</h5>
+                                    <p class="text-muted small">Gestiona tus entregas activas</p>
+                                    <button class="btn btn-primary mt-auto" onclick="myDelivs()">
+                                        <i class="fas fa-eye me-2"></i>Ver Entregas
                                     </button>
                                 </div>
                             </div>
                             
                             ${S.d?.certificadoMedico ? `
-                                <div class="col-12">
+                                <div class="col-12 mt-3">
                                     <div class="cert-badge">
                                         <i class="fas fa-check-circle me-2"></i>
                                         Certificado Médico Activo - Puedes transportar insumos médicos
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${!S.d?.capacitacionCompletada ? `
+                                <div class="col-12 mt-3">
+                                    <div class="warning-box">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>Atención:</strong> Completa tu capacitación para aceptar pedidos sensibles
+                                        <button class="btn btn-sm btn-warning ms-2" onclick="showTraining()">
+                                            Completar Ahora
+                                        </button>
                                     </div>
                                 </div>
                             ` : ''}
@@ -685,11 +878,17 @@
             const { value: formValues } = await Swal.fire({
                 title: 'Editar Perfil',
                 html: `
-                    <input class="form-control mb-3" id="pn" value="${S.d?.nombre || ''}" placeholder="Nombre">
-                    <input class="form-control mb-3" id="pt" value="${S.d?.telefono || ''}" placeholder="Teléfono">
+                    <div class="text-start">
+                        <label class="form-label">Nombre completo</label>
+                        <input class="form-control mb-3" id="pn" value="${S.d?.nombre || ''}" placeholder="Nombre">
+                        
+                        <label class="form-label">Teléfono</label>
+                        <input class="form-control mb-3" id="pt" value="${S.d?.telefono || ''}" placeholder="Teléfono">
+                    </div>
                 `,
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
                 preConfirm: () => {
                     return {
                         nombre: document.getElementById('pn').value,
@@ -718,15 +917,35 @@
             const { isConfirmed } = await Swal.fire({
                 title: 'Certificación Médica',
                 html: `
-                    <p>Para transportar insumos médicos necesitas certificación especial.</p>
-                    <p>¿Deseas solicitar la certificación?</p>
+                    <div class="text-start">
+                        <div class="info-box">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>¿Para qué sirve?</strong>
+                            <p class="mb-0 mt-2">Esta certificación te permite transportar medicamentos e insumos médicos con mayor responsabilidad.</p>
+                        </div>
+                        <h6 class="mt-3 mb-2">Requisitos:</h6>
+                        <ul>
+                            <li>Capacitación completada</li>
+                            <li>Compromiso de manejo cuidadoso</li>
+                            <li>Responsabilidad en el transporte</li>
+                        </ul>
+                        <p class="text-muted small mt-3">
+                            <i class="fas fa-exclamation-circle me-1"></i>
+                            Nota: No incluye responsabilidad médica, solo logística de transporte
+                        </p>
+                    </div>
                 `,
                 icon: 'info',
                 showCancelButton: true,
-                confirmButtonText: 'Solicitar'
+                confirmButtonText: 'Solicitar Certificación',
+                cancelButtonText: 'Cancelar'
             });
             
             if (isConfirmed) {
+                if (!S.d?.capacitacionCompletada) {
+                    return Swal.fire('Capacitación Requerida', 'Debes completar la capacitación antes de solicitar la certificación', 'warning');
+                }
+                
                 await fb.fs.updateDoc(
                     fb.fs.doc(fb.db, 'usuarios', S.u.uid),
                     { certificadoMedico: true }
@@ -734,7 +953,75 @@
                 
                 S.d.certificadoMedico = true;
                 
-                Swal.fire('Aprobado', 'Certificación activada exitosamente', 'success');
+                Swal.fire('¡Aprobado!', 'Certificación médica activada exitosamente', 'success');
+                renderMain();
+            }
+        };
+        
+        /**
+         * Mostrar capacitación para repartidores
+         */
+        window.showTraining = async () => {
+            const { isConfirmed } = await Swal.fire({
+                title: 'Capacitación de Manejo Seguro',
+                html: `
+                    <div class="text-start" style="max-height: 400px; overflow-y: auto;">
+                        <div class="info-box">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            <strong>Capacitación Básica de Transporte</strong>
+                        </div>
+                        
+                        <h6 class="mt-3 mb-2"><i class="fas fa-check-circle text-success me-2"></i>Reglas Fundamentales:</h6>
+                        <ol>
+                            <li class="mb-2"><strong>NO abrir paquetes:</strong> Nunca abras ni inspecciones el contenido de los paquetes</li>
+                            <li class="mb-2"><strong>Mantener estabilidad:</strong> Evita movimientos bruscos y golpes durante el transporte</li>
+                            <li class="mb-2"><strong>Evitar calor excesivo:</strong> No expongas los paquetes al sol directo por tiempo prolongado</li>
+                            <li class="mb-2"><strong>Entrega directa:</strong> Sin desvíos, del origen al destino sin paradas innecesarias</li>
+                            <li class="mb-2"><strong>Comunicación:</strong> Contacta al cliente inmediatamente si hay algún inconveniente</li>
+                        </ol>
+                        
+                        <div class="warning-box mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Importante:</strong> Esta capacitación NO te convierte en personal médico. 
+                            Solo te capacita para el manejo logístico y transporte cuidadoso.
+                        </div>
+                        
+                        <div class="mt-3">
+                            <label class="form-check">
+                                <input class="form-check-input" type="checkbox" id="acceptTraining">
+                                <span class="form-check-label">
+                                    He leído y acepto seguir estas reglas de manejo seguro
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                `,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Completar Capacitación',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    if (!document.getElementById('acceptTraining').checked) {
+                        Swal.showValidationMessage('Debes aceptar las reglas para continuar');
+                    }
+                }
+            });
+            
+            if (isConfirmed) {
+                await fb.fs.updateDoc(
+                    fb.fs.doc(fb.db, 'usuarios', S.u.uid),
+                    { capacitacionCompletada: true }
+                );
+                
+                S.d.capacitacionCompletada = true;
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Capacitación Completada!',
+                    text: 'Ahora puedes aceptar pedidos sensibles',
+                    timer: 2000
+                });
+                
                 renderMain();
             }
         };
@@ -755,6 +1042,7 @@
             Swal.fire({
                 icon: 'success',
                 title: nuevoEstado ? 'Ahora estás En línea' : 'Ahora estás Offline',
+                text: nuevoEstado ? 'Podrás recibir pedidos' : 'No recibirás pedidos nuevos',
                 timer: 1500,
                 showConfirmButton: false
             });
@@ -768,77 +1056,171 @@
          ============================================ -->
     <script>
         /**
-         * Crear nuevo pedido con mapa interactivo
+         * Crear nuevo pedido con formulario completo
          */
         window.newOrder = async () => {
             // Reset de variables temporales
             S.o = null;
             S.dest = null;
             
+            const esInstitucion = S.r === 'institucion';
+            
             const { value: formValues } = await Swal.fire({
-                title: 'Nuevo Pedido',
+                title: esInstitucion ? 'Nuevo Pedido Institucional' : 'Nuevo Pedido',
                 html: `
                     <div class="text-start">
-                        <input class="form-control mb-2" id="od" placeholder="Descripción del pedido">
-                        
-                        <select class="form-select mb-2" id="ot">
-                            <option value="normal">Normal</option>
-                            <option value="medicamento">Medicamento</option>
-                            <option value="insumo_medico">Insumo Médico</option>
-                        </select>
-                        
-                        <select class="form-select mb-2" id="ou">
-                            <option value="baja">Urgencia Baja</option>
-                            <option value="media">Urgencia Media</option>
-                            <option value="alta">Urgencia Alta</option>
-                        </select>
-                        
-                        <div class="alert alert-info py-2 mb-2">
-                            <small>
-                                <i class="fas fa-info-circle me-1"></i>
-                                Click en el mapa: 1° origen (rojo), 2° destino (verde)
-                            </small>
+                        <!-- DESCRIPCIÓN -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-info-circle me-2"></i>Información del Pedido
+                            </div>
+                            
+                            <label class="form-label">Descripción del pedido</label>
+                            <input class="form-control mb-2" id="od" placeholder="Ej: Documentos importantes">
+                            <small class="help-text">Describe brevemente qué necesitas enviar</small>
                         </div>
                         
-                        <!-- Mapa interactivo -->
-                        <div id="map" style="height: 350px"></div>
-                        
-                        <div class="row mb-2 mt-2">
-                            <div class="col-6">
-                                <input class="form-control" id="of" placeholder="Origen" readonly>
-                            </div>
-                            <div class="col-6">
-                                <input class="form-control" id="ot2" placeholder="Destino" readonly>
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-2">
-                            <div class="col-6">
-                                <input class="form-control" id="op" value="10" type="number" min="5" placeholder="Precio $">
-                            </div>
-                            <div class="col-6">
-                                <select class="form-select" id="ou2">
-                                    <option value="standard">Entrega Normal</option>
-                                    <option value="express">Express</option>
-                                    <option value="urgent">Urgente</option>
+                        <!-- TIPO DE CONTENIDO (CLIENTE) -->
+                        ${!esInstitucion ? `
+                            <div class="form-section">
+                                <div class="form-section-title">
+                                    <i class="fas fa-box me-2"></i>Tipo de Contenido
+                                </div>
+                                
+                                <select class="form-select mb-2" id="tipoContenido">
+                                    <option value="documento">Documento</option>
+                                    <option value="paquete">Paquete</option>
+                                    <option value="medicamento">Medicamento</option>
+                                    <option value="otro">Otro</option>
                                 </select>
+                                <small class="help-text">Selecciona el tipo de contenido a enviar</small>
+                                
+                                <div id="medicamentoFields" style="display:none;" class="mt-3">
+                                    <label class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="requiereReceta">
+                                        <span class="form-check-label">¿Requiere receta médica?</span>
+                                    </label>
+                                    
+                                    <label class="form-label">Descripción del medicamento</label>
+                                    <input class="form-control" id="descripcionMed" placeholder="Nombre del medicamento">
+                                    
+                                    <div class="info-box mt-2">
+                                        <small><i class="fas fa-info-circle me-1"></i>El repartidor NO abre ni manipula el contenido</small>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : `
+                            <!-- TIPO DE INSUMO (INSTITUCIÓN) -->
+                            <div class="form-section">
+                                <div class="form-section-title">
+                                    <i class="fas fa-hospital me-2"></i>Tipo de Insumo Médico
+                                </div>
+                                
+                                <select class="form-select mb-2" id="tipoInsumo">
+                                    <option value="reactivo">Reactivo Químico</option>
+                                    <option value="insumo_medico">Insumo Médico</option>
+                                    <option value="medicamento">Medicamento</option>
+                                    <option value="muestra">Muestra Biológica (solo informativo)</option>
+                                </select>
+                                <small class="help-text">Tipo de material médico a transportar</small>
+                                
+                                <div class="mt-3">
+                                    <label class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="manejoEspecial">
+                                        <span class="form-check-label">Requiere manejo especial</span>
+                                    </label>
+                                    
+                                    <label class="form-label">Instrucciones de transporte</label>
+                                    <textarea class="form-control" id="instruccionesTransporte" rows="2" placeholder="Ej: Mantener en posición vertical"></textarea>
+                                    <small class="help-text">Indicaciones específicas para el repartidor</small>
+                                </div>
+                                
+                                <div class="warning-box mt-2">
+                                    <small><i class="fas fa-exclamation-triangle me-1"></i>Responsabilidad logística únicamente, no médica</small>
+                                </div>
+                            </div>
+                        `}
+                        
+                        <!-- URGENCIA -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-clock me-2"></i>Nivel de Urgencia
+                            </div>
+                            
+                            <select class="form-select mb-2" id="nivelUrgencia">
+                                <option value="baja">Baja - Entrega en el día</option>
+                                <option value="media">Media - En pocas horas</option>
+                                <option value="alta">Alta - Urgente (prioridad)</option>
+                            </select>
+                            <small class="help-text">Qué tan rápido necesitas la entrega</small>
+                        </div>
+                        
+                        <!-- MAPA -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-map-marked-alt me-2"></i>Ubicaciones
+                            </div>
+                            
+                            <div class="info-box mb-2">
+                                <small>
+                                    <i class="fas fa-hand-pointer me-1"></i>
+                                    Haz clic en el mapa: 1° origen (rojo), 2° destino (verde)
+                                </small>
+                            </div>
+                            
+                            <div id="map" style="height: 350px; margin-bottom: 1rem;"></div>
+                            
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <label class="form-label">Origen</label>
+                                    <input class="form-control" id="of" placeholder="Click en mapa" readonly>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Destino</label>
+                                    <input class="form-control" id="ot2" placeholder="Click en mapa" readonly>
+                                </div>
                             </div>
                         </div>
                         
-                        <textarea class="form-control" id="oi" rows="2" placeholder="Instrucciones especiales"></textarea>
+                        <!-- PRECIO Y TIPO DE ENTREGA -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-dollar-sign me-2"></i>Precio y Tipo de Entrega
+                            </div>
+                            
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <label class="form-label">Precio ($)</label>
+                                    <input class="form-control" id="op" value="10" type="number" min="5">
+                                    <small class="help-text">Precio calculado automáticamente</small>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Tipo de entrega</label>
+                                    <select class="form-select" id="tipoEntrega">
+                                        <option value="standard">Normal</option>
+                                        <option value="express">Express (+30%)</option>
+                                        <option value="urgent">Urgente (+50%)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- INSTRUCCIONES ADICIONALES -->
+                        <div class="form-section">
+                            <label class="form-label">Instrucciones adicionales (opcional)</label>
+                            <textarea class="form-control" id="oi" rows="2" placeholder="Cualquier indicación especial para el repartidor"></textarea>
+                        </div>
                     </div>
                 `,
                 width: '90%',
                 showCancelButton: true,
-                confirmButtonText: 'Crear Pedido',
+                confirmButtonText: '<i class="fas fa-paper-plane me-2"></i>Crear Pedido',
+                cancelButtonText: 'Cancelar',
                 didOpen: () => {
                     // Inicializar mapa de Leaflet
                     const map = L.map('map').setView([8.9833, -79.5167], 13);
-                    
-                    // Agregar capa de tiles
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                     
-                    // Variables para controlar clicks
                     let clickCount = 0;
                     let originMarker = null;
                     let destMarker = null;
@@ -850,9 +1232,7 @@
                         const address = `${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`;
                         
                         if (clickCount === 0) {
-                            // Primer click: origen
                             if (originMarker) map.removeLayer(originMarker);
-                            
                             originMarker = L.marker(coords, {
                                 icon: L.divIcon({
                                     html: '<div style="background: #dc143c; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white"></div>',
@@ -865,9 +1245,7 @@
                             clickCount = 1;
                             
                         } else if (clickCount === 1) {
-                            // Segundo click: destino
                             if (destMarker) map.removeLayer(destMarker);
-                            
                             destMarker = L.marker(coords, {
                                 icon: L.divIcon({
                                     html: '<div style="background: #2ecc71; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white"></div>',
@@ -878,22 +1256,15 @@
                             document.getElementById('ot2').value = address;
                             S.dest = { coords: coords, address: address };
                             
-                            // Crear ruta
                             if (routeControl) map.removeControl(routeControl);
-                            
                             routeControl = L.Routing.control({
-                                waypoints: [
-                                    L.latLng(S.o.coords),
-                                    L.latLng(coords)
-                                ],
-                                lineOptions: {
-                                    styles: [{ color: '#3498db', weight: 4 }]
-                                },
+                                waypoints: [L.latLng(S.o.coords), L.latLng(coords)],
+                                lineOptions: { styles: [{ color: '#3498db', weight: 4 }] },
                                 createMarker: () => null
                             }).addTo(map);
                             
-                            // Calcular distancia y precio estimado
-                            const R = 6371; // Radio de la Tierra en km
+                            // Calcular distancia y precio
+                            const R = 6371;
                             const dLat = (coords[0] - S.o.coords[0]) * Math.PI / 180;
                             const dLon = (coords[1] - S.o.coords[1]) * Math.PI / 180;
                             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -909,7 +1280,15 @@
                         }
                     });
                     
-                    // Obtener ubicación actual del usuario
+                    // Mostrar campos de medicamento si se selecciona
+                    if (!esInstitucion) {
+                        document.getElementById('tipoContenido').addEventListener('change', (e) => {
+                            const medFields = document.getElementById('medicamentoFields');
+                            medFields.style.display = e.target.value === 'medicamento' ? 'block' : 'none';
+                        });
+                    }
+                    
+                    // Obtener ubicación actual
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition((position) => {
                             map.setView([position.coords.latitude, position.coords.longitude], 15);
@@ -924,30 +1303,42 @@
                         return false;
                     }
                     
-                    return {
+                    const data = {
                         desc: descripcion,
                         from: S.o.address,
                         to: S.dest.address,
                         oc: S.o.coords,
                         dc: S.dest.coords,
                         price: document.getElementById('op').value,
-                        urg: document.getElementById('ou2').value,
+                        tipoEntrega: document.getElementById('tipoEntrega').value,
                         inst: document.getElementById('oi').value,
-                        tipo: document.getElementById('ot').value,
-                        niv: document.getElementById('ou').value
+                        nivelUrgencia: document.getElementById('nivelUrgencia').value
                     };
+                    
+                    if (esInstitucion) {
+                        data.tipoInsumo = document.getElementById('tipoInsumo').value;
+                        data.manejoEspecial = document.getElementById('manejoEspecial').checked;
+                        data.instruccionesTransporte = document.getElementById('instruccionesTransporte').value;
+                    } else {
+                        data.tipoContenido = document.getElementById('tipoContenido').value;
+                        if (data.tipoContenido === 'medicamento') {
+                            data.requiereReceta = document.getElementById('requiereReceta').checked;
+                            data.descripcionMedicamento = document.getElementById('descripcionMed').value;
+                        }
+                    }
+                    
+                    return data;
                 }
             });
             
             if (formValues) {
-                // Mostrar loading
                 Swal.fire({
                     title: 'Creando pedido...',
                     allowOutsideClick: false,
                     didOpen: () => Swal.showLoading()
                 });
                 
-                // Crear documento en Firebase
+                // Crear pedido en Firebase
                 await fb.fs.addDoc(fb.fs.collection(fb.db, 'pedidos'), {
                     clienteId: S.u.uid,
                     clienteNombre: S.d?.nombre,
@@ -964,13 +1355,26 @@
                         lat: formValues.dc[0],
                         lng: formValues.dc[1]
                     },
-                    urgencia: formValues.urg,
+                    tipoEntrega: formValues.tipoEntrega,
+                    nivelUrgencia: formValues.nivelUrgencia,
                     precio: parseFloat(formValues.price),
                     instrucciones: formValues.inst,
                     metodoPago: 'efectivo',
                     status: 'pending',
-                    tipoPedido: formValues.tipo,
-                    nivelUrgencia: formValues.niv,
+                    
+                    // Campos específicos por tipo de usuario
+                    ...(esInstitucion ? {
+                        tipoInsumo: formValues.tipoInsumo,
+                        manejoEspecial: formValues.manejoEspecial,
+                        instruccionesTransporte: formValues.instruccionesTransporte,
+                        esSensible: true
+                    } : {
+                        tipoContenido: formValues.tipoContenido,
+                        requiereReceta: formValues.requiereReceta || false,
+                        descripcionMedicamento: formValues.descripcionMedicamento || '',
+                        esSensible: formValues.tipoContenido === 'medicamento'
+                    }),
+                    
                     precioInicial: parseFloat(formValues.price),
                     precioFinal: null,
                     estadoNegociacion: 'abierta',
@@ -986,6 +1390,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Pedido creado exitosamente',
+                    text: 'Los repartidores podrán verlo y ofertarlo',
                     timer: 2000,
                     showConfirmButton: false
                 });
@@ -995,17 +1400,57 @@
         };
         
         /**
-         * Ver mis pedidos (cliente/institución)
+         * Ver mis pedidos activos (cliente/institución)
          */
         window.myOrders = () => {
             document.getElementById('content').innerHTML = `
                 <div class="card-main p-4">
-                    <h2>Mis Pedidos</h2>
-                    <div id="ol">Cargando...</div>
+                    <h2>
+                        <i class="fas fa-list me-2"></i>Mis Pedidos
+                    </h2>
+                    <p class="text-muted">Pedidos activos y en proceso</p>
+                    <div id="ol"><div class="loading-spinner"></div></div>
                 </div>
             `;
             
-            // Query en tiempo real
+            const q = fb.fs.query(
+                fb.fs.collection(fb.db, 'pedidos'),
+                fb.fs.where('clienteId', '==', S.u.uid),
+                fb.fs.where('status', 'in', ['pending', 'accepted', 'picked']),
+                fb.fs.orderBy('createdAt', 'desc')
+            );
+            
+            fb.fs.onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    document.getElementById('ol').innerHTML = '<p class="text-center text-muted">No tienes pedidos activos</p>';
+                } else {
+                    let html = '';
+                    
+                    snapshot.forEach((doc) => {
+                        const order = doc.data();
+                        const id = doc.id;
+                        html += generateOrderCard(order, id, true);
+                    });
+                    
+                    document.getElementById('ol').innerHTML = html;
+                }
+            });
+        };
+        
+        /**
+         * Ver historial completo de pedidos
+         */
+        window.orderHistory = () => {
+            document.getElementById('content').innerHTML = `
+                <div class="card-main p-4">
+                    <h2>
+                        <i class="fas fa-history me-2"></i>Historial de Pedidos
+                    </h2>
+                    <p class="text-muted">Todos tus pedidos anteriores</p>
+                    <div id="ol"><div class="loading-spinner"></div></div>
+                </div>
+            `;
+            
             const q = fb.fs.query(
                 fb.fs.collection(fb.db, 'pedidos'),
                 fb.fs.where('clienteId', '==', S.u.uid),
@@ -1014,68 +1459,119 @@
             
             fb.fs.onSnapshot(q, (snapshot) => {
                 if (snapshot.empty) {
-                    document.getElementById('ol').innerHTML = '<p class="text-center text-muted">No tienes pedidos todavía</p>';
+                    document.getElementById('ol').innerHTML = '<p class="text-center text-muted">No tienes historial de pedidos</p>';
                 } else {
                     let html = '';
                     
                     snapshot.forEach((doc) => {
                         const order = doc.data();
                         const id = doc.id;
-                        const statusBadge = order.status === 'pending' ? 'warning' :
-                                          order.status === 'delivered' ? 'success' : 'info';
-                        const precioFinal = order.precioFinal || order.precioInicial || order.precio;
-                        
-                        html += `
-                            <div class="order-card ${order.nivelUrgencia === 'alta' ? 'urgent' : ''}">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <div>
-                                        <h6>${order.descripcion}</h6>
-                                        <small>#${id.substring(0, 8)}</small>
-                                    </div>
-                                    <span class="badge bg-${statusBadge}">${order.status}</span>
-                                </div>
-                                
-                                <small>
-                                    <i class="fas fa-map-marker-alt text-danger me-1"></i>
-                                    ${order.origen.substring(0, 25)}
-                                </small><br>
-                                
-                                <small>
-                                    <i class="fas fa-flag-checkered text-success me-1"></i>
-                                    ${order.destino.substring(0, 25)}
-                                </small>
-                                
-                                <div class="mt-2">
-                                    ${order.tipoPedido !== 'normal' ? `
-                                        <span class="badge bg-info">${order.tipoPedido}</span>
-                                    ` : ''}
-                                    <span class="badge bg-dark">${precioFinal}</span>
-                                </div>
-                                
-                                ${order.repartidorId && order.status !== 'delivered' ? `
-                                    <button class="btn btn-sm btn-whatsapp w-100 mt-2" onclick="wa('${order.repartidorTelefono}', '${id}')">
-                                        <i class="fab fa-whatsapp me-1"></i>Contactar Repartidor
-                                    </button>
-                                ` : ''}
-                                
-                                ${order.status === 'pending' && order.estadoNegociacion === 'contraoferta' ? `
-                                    <button class="btn btn-sm btn-warning w-100 mt-2" onclick="viewOffers('${id}')">
-                                        Ver Ofertas Recibidas
-                                    </button>
-                                ` : ''}
-                                
-                                ${order.repartidorId && order.status !== 'delivered' ? `
-                                    <button class="btn btn-sm btn-primary w-100 mt-2" onclick="trackOrder('${id}')">
-                                        <i class="fas fa-map-marked-alt me-1"></i>Rastrear Pedido
-                                    </button>
-                                ` : ''}
-                            </div>
-                        `;
+                        html += generateOrderCard(order, id, false);
                     });
                     
                     document.getElementById('ol').innerHTML = html;
                 }
             });
+        };
+        
+        /**
+         * Generar HTML de tarjeta de pedido
+         */
+        function generateOrderCard(order, id, showActions = true) {
+            const statusConfig = {
+                pending: { badge: 'warning', text: 'Pendiente', icon: 'clock' },
+                accepted: { badge: 'info', text: 'Aceptado', icon: 'check' },
+                picked: { badge: 'primary', text: 'En camino', icon: 'truck' },
+                delivered: { badge: 'success', text: 'Entregado', icon: 'check-circle' },
+                cancelled: { badge: 'danger', text: 'Cancelado', icon: 'times-circle' }
+            };
+            
+            const status = statusConfig[order.status] || statusConfig.pending;
+            const precioFinal = order.precioFinal || order.precioInicial || order.precio;
+            
+            return `
+                <div class="order-card ${order.nivelUrgencia === 'alta' ? 'urgent' : ''} ${order.esSensible ? 'sensitive' : ''}">
+                    <span class="status-badge badge bg-${status.badge}">
+                        <i class="fas fa-${status.icon} me-1"></i>${status.text}
+                    </span>
+                    
+                    <div class="mb-2">
+                        <h6 class="mb-1">${order.descripcion}</h6>
+                        <small class="text-muted">#${id.substring(0, 8)}</small>
+                    </div>
+                    
+                    ${order.esSensible ? '<span class="sensitive-badge"><i class="fas fa-exclamation-circle me-1"></i>Pedido Sensible</span>' : ''}
+                    
+                    <div class="mt-2">
+                        <small>
+                            <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                            ${order.origen.substring(0, 30)}
+                        </small><br>
+                        <small>
+                            <i class="fas fa-flag-checkered text-success me-1"></i>
+                            ${order.destino.substring(0, 30)}
+                        </small>
+                    </div>
+                    
+                    <div class="mt-2">
+                        ${order.nivelUrgencia ? `<span class="badge bg-${order.nivelUrgencia === 'alta' ? 'danger' : order.nivelUrgencia === 'media' ? 'warning' : 'secondary'}">${order.nivelUrgencia}</span> ` : ''}
+                        ${order.tipoContenido ? `<span class="badge bg-info">${order.tipoContenido}</span> ` : ''}
+                        ${order.tipoInsumo ? `<span class="badge bg-info">${order.tipoInsumo}</span> ` : ''}
+                        <span class="badge bg-dark">${precioFinal}</span>
+                    </div>
+                    
+                    ${showActions && order.repartidorId && order.status !== 'delivered' ? `
+                        <button class="btn btn-sm btn-whatsapp w-100 mt-2" onclick="wa('${order.repartidorTelefono}', '${id}')">
+                            <i class="fab fa-whatsapp me-1"></i>Contactar Repartidor
+                        </button>
+                    ` : ''}
+                    
+                    ${showActions && order.status === 'pending' && order.estadoNegociacion === 'contraoferta' ? `
+                        <button class="btn btn-sm btn-warning w-100 mt-2" onclick="viewOffers('${id}')">
+                            <i class="fas fa-envelope me-1"></i>Ver Ofertas Recibidas
+                        </button>
+                    ` : ''}
+                    
+                    ${showActions && order.repartidorId && order.status !== 'delivered' ? `
+                        <button class="btn btn-sm btn-primary w-100 mt-2" onclick="trackOrder('${id}')">
+                            <i class="fas fa-map-marked-alt me-1"></i>Rastrear Pedido
+                        </button>
+                    ` : ''}
+                    
+                    ${showActions && order.status === 'pending' ? `
+                        <button class="btn btn-sm btn-danger w-100 mt-2" onclick="cancelOrder('${id}')">
+                            <i class="fas fa-times me-1"></i>Cancelar Pedido
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        /**
+         * Cancelar un pedido
+         */
+        window.cancelOrder = async (orderId) => {
+            const { isConfirmed } = await Swal.fire({
+                title: '¿Cancelar pedido?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cancelar',
+                cancelButtonText: 'No'
+            });
+            
+            if (isConfirmed) {
+                await fb.fs.updateDoc(
+                    fb.fs.doc(fb.db, 'pedidos', orderId),
+                    {
+                        status: 'cancelled',
+                        cancelledAt: fb.fs.serverTimestamp(),
+                        updatedAt: fb.fs.serverTimestamp()
+                    }
+                );
+                
+                Swal.fire('Cancelado', 'El pedido ha sido cancelado', 'success');
+            }
         };
         
         /**
@@ -1092,9 +1588,10 @@
                 title: 'Rastreando Pedido',
                 html: `
                     <div id="trackMap" style="height: 400px"></div>
-                    <div class="mt-3">
+                    <div class="mt-3 text-start">
                         <strong>Estado:</strong> ${order.status}<br>
-                        <strong>Repartidor:</strong> ${order.repartidorNombre || 'N/A'}
+                        <strong>Repartidor:</strong> ${order.repartidorNombre || 'N/A'}<br>
+                        ${order.repartidorTelefono ? `<strong>Teléfono:</strong> ${order.repartidorTelefono}` : ''}
                     </div>
                 `,
                 width: '90%',
@@ -1102,24 +1599,20 @@
                 showCloseButton: true,
                 didOpen: () => {
                     const map = L.map('trackMap').setView([order.origenCoords.lat, order.origenCoords.lng], 13);
-                    
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                     
-                    // Marcador de origen
                     L.marker([order.origenCoords.lat, order.origenCoords.lng], {
                         icon: L.divIcon({
-                            html: '<div style="background: #dc143c; width: 30px; height: 30px; border-radius: 50%"></div>'
+                            html: '<div style="background: #dc143c; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white"></div>'
                         })
                     }).addTo(map).bindPopup('Origen');
                     
-                    // Marcador de destino
                     L.marker([order.destinoCoords.lat, order.destinoCoords.lng], {
                         icon: L.divIcon({
-                            html: '<div style="background: #2ecc71; width: 30px; height: 30px; border-radius: 50%"></div>'
+                            html: '<div style="background: #2ecc71; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white"></div>'
                         })
                     }).addTo(map).bindPopup('Destino');
                     
-                    // Ruta
                     L.Routing.control({
                         waypoints: [
                             L.latLng(order.origenCoords.lat, order.origenCoords.lng),
@@ -1145,8 +1638,11 @@
         window.availOrders = () => {
             document.getElementById('content').innerHTML = `
                 <div class="card-main p-4">
-                    <h2>Pedidos Disponibles</h2>
-                    <div id="al">Cargando...</div>
+                    <h2>
+                        <i class="fas fa-search me-2"></i>Pedidos Disponibles
+                    </h2>
+                    <p class="text-muted">Pedidos que puedes aceptar u ofertar</p>
+                    <div id="al"><div class="loading-spinner"></div></div>
                 </div>
             `;
             
@@ -1157,7 +1653,7 @@
             
             fb.fs.onSnapshot(q, (snapshot) => {
                 if (snapshot.empty) {
-                    document.getElementById('al').innerHTML = '<p class="text-center text-muted">No hay pedidos disponibles</p>';
+                    document.getElementById('al').innerHTML = '<p class="text-center text-muted">No hay pedidos disponibles en este momento</p>';
                 } else {
                     let html = '';
                     
@@ -1166,40 +1662,58 @@
                         const id = doc.id;
                         const precioInicial = order.precioInicial || order.precio;
                         
-                        // Verificar si puede aceptar (certificación médica)
-                        const canAccept = order.tipoPedido === 'insumo_medico' ? 
-                                        S.d?.certificadoMedico : true;
+                        // Verificar si puede aceptar el pedido
+                        const requiereCert = order.esSensible && (order.tipoInsumo === 'reactivo' || order.tipoInsumo === 'insumo_medico' || order.tipoInsumo === 'muestra');
+                        const puedAceptar = !requiereCert || S.d?.certificadoMedico;
+                        const requiereCapacitacion = order.esSensible && !S.d?.capacitacionCompletada;
                         
                         html += `
-                            <div class="order-card ${order.nivelUrgencia === 'alta' ? 'urgent' : ''}">
+                            <div class="order-card ${order.nivelUrgencia === 'alta' ? 'urgent' : ''} ${order.esSensible ? 'sensitive' : ''}">
                                 <h6>${order.descripcion}</h6>
                                 <small>Cliente: ${order.clienteNombre}</small>
+                                
+                                ${order.esSensible ? `
+                                    <div class="warning-box mt-2">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        <strong>Pedido sensible</strong> - Requiere manejo cuidadoso
+                                    </div>
+                                ` : ''}
+                                
+                                ${order.instruccionesTransporte ? `
+                                    <div class="info-box mt-2">
+                                        <small><strong>Instrucciones:</strong> ${order.instruccionesTransporte}</small>
+                                    </div>
+                                ` : ''}
                                 
                                 <div class="mt-2">
                                     <small>
                                         <i class="fas fa-map-marker-alt text-danger"></i> 
-                                        ${order.origen.substring(0, 20)}
+                                        ${order.origen.substring(0, 25)}
                                     </small><br>
                                     <small>
                                         <i class="fas fa-flag-checkered text-success"></i> 
-                                        ${order.destino.substring(0, 20)}
+                                        ${order.destino.substring(0, 25)}
                                     </small>
                                 </div>
                                 
                                 <div class="mt-2">
-                                    ${order.tipoPedido !== 'normal' ? `
-                                        <span class="badge bg-info">${order.tipoPedido}</span>
-                                    ` : ''}
+                                    ${order.nivelUrgencia ? `<span class="badge bg-${order.nivelUrgencia === 'alta' ? 'danger' : order.nivelUrgencia === 'media' ? 'warning' : 'secondary'}">${order.nivelUrgencia}</span> ` : ''}
+                                    ${order.tipoContenido ? `<span class="badge bg-info">${order.tipoContenido}</span> ` : ''}
+                                    ${order.tipoInsumo ? `<span class="badge bg-info">${order.tipoInsumo}</span> ` : ''}
                                     <span class="badge bg-dark">${precioInicial}</span>
                                 </div>
                                 
                                 <div class="btn-group w-100 mt-2">
-                                    ${canAccept ? `
-                                        <button class="btn btn-success btn-sm" onclick="acceptDirect('${id}')">
+                                    ${puedAceptar && !requiereCapacitacion ? `
+                                        <button class="btn btn-success btn-sm" onclick="acceptDirect('${id}', ${order.esSensible})">
                                             Aceptar
                                         </button>
                                         <button class="btn btn-warning btn-sm" onclick="sendOffer('${id}', ${precioInicial})">
                                             Ofertar
+                                        </button>
+                                    ` : requiereCapacitacion ? `
+                                        <button class="btn btn-secondary btn-sm" disabled>
+                                            Requiere Capacitación
                                         </button>
                                     ` : `
                                         <button class="btn btn-secondary btn-sm" disabled>
@@ -1209,7 +1723,7 @@
                                 </div>
                                 
                                 <button class="btn btn-sm btn-primary w-100 mt-2" onclick="viewRoute('${id}')">
-                                    <i class="fas fa-route me-1"></i>Ver Ruta
+                                    <i class="fas fa-route me-1"></i>Ver Ruta Completa
                                 </button>
                             </div>
                         `;
@@ -1234,33 +1748,31 @@
                 title: 'Ruta del Pedido',
                 html: `
                     <div id="routeMap" class="map"></div>
-                    <div class="mt-3">
+                    <div class="mt-3 text-start">
+                        <strong>Descripción:</strong> ${order.descripcion}<br>
                         <strong>Distancia estimada:</strong> <span id="dist">Calculando...</span><br>
-                        <strong>Tiempo estimado:</strong> <span id="time">Calculando...</span>
+                        <strong>Tiempo estimado:</strong> <span id="time">Calculando...</span><br>
+                        ${order.instrucciones ? `<strong>Instrucciones:</strong> ${order.instrucciones}<br>` : ''}
                     </div>
                 `,
                 width: '90%',
                 showCloseButton: true,
                 didOpen: () => {
                     const map = L.map('routeMap').setView([order.origenCoords.lat, order.origenCoords.lng], 13);
-                    
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                     
-                    // Origen
                     L.marker([order.origenCoords.lat, order.origenCoords.lng], {
                         icon: L.divIcon({
-                            html: '<div style="background: #dc143c; width: 30px; height: 30px; border-radius: 50%"></div>'
+                            html: '<div style="background: #dc143c; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white"></div>'
                         })
                     }).addTo(map).bindPopup('Origen');
                     
-                    // Destino
                     L.marker([order.destinoCoords.lat, order.destinoCoords.lng], {
                         icon: L.divIcon({
-                            html: '<div style="background: #2ecc71; width: 30px; height: 30px; border-radius: 50%"></div>'
+                            html: '<div style="background: #2ecc71; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white"></div>'
                         })
                     }).addTo(map).bindPopup('Destino');
                     
-                    // Crear ruta y calcular distancia/tiempo
                     const routeControl = L.Routing.control({
                         waypoints: [
                             L.latLng(order.origenCoords.lat, order.origenCoords.lng),
@@ -1289,19 +1801,23 @@
         window.myDelivs = () => {
             document.getElementById('content').innerHTML = `
                 <div class="card-main p-4">
-                    <h2>Mis Entregas</h2>
-                    <div id="dl">Cargando...</div>
+                    <h2>
+                        <i class="fas fa-motorcycle me-2"></i>Mis Entregas
+                    </h2>
+                    <p class="text-muted">Entregas asignadas y en proceso</p>
+                    <div id="dl"><div class="loading-spinner"></div></div>
                 </div>
             `;
             
             const q = fb.fs.query(
                 fb.fs.collection(fb.db, 'pedidos'),
-                fb.fs.where('repartidorId', '==', S.u.uid)
+                fb.fs.where('repartidorId', '==', S.u.uid),
+                fb.fs.where('status', 'in', ['accepted', 'picked'])
             );
             
             fb.fs.onSnapshot(q, (snapshot) => {
                 if (snapshot.empty) {
-                    document.getElementById('dl').innerHTML = '<p class="text-center text-muted">No tienes entregas asignadas</p>';
+                    document.getElementById('dl').innerHTML = '<p class="text-center text-muted">No tienes entregas activas</p>';
                 } else {
                     let html = '';
                     
@@ -1311,18 +1827,26 @@
                         const precioFinal = order.precioFinal || order.precioInicial || order.precio;
                         
                         html += `
-                            <div class="order-card">
+                            <div class="order-card ${order.esSensible ? 'sensitive' : ''}">
                                 <h6>${order.descripcion}</h6>
                                 <small>Cliente: ${order.clienteNombre}</small>
+                                
+                                ${order.esSensible ? '<span class="sensitive-badge mt-2"><i class="fas fa-exclamation-circle me-1"></i>Manejo Cuidadoso</span>' : ''}
+                                
+                                ${order.instrucciones || order.instruccionesTransporte ? `
+                                    <div class="warning-box mt-2">
+                                        <small><strong>Instrucciones:</strong> ${order.instrucciones || order.instruccionesTransporte}</small>
+                                    </div>
+                                ` : ''}
                                 
                                 <div class="mt-2">
                                     <small>
                                         <i class="fas fa-map-marker-alt text-danger"></i> 
-                                        ${order.origen.substring(0, 20)}
+                                        ${order.origen.substring(0, 25)}
                                     </small><br>
                                     <small>
                                         <i class="fas fa-flag-checkered text-success"></i> 
-                                        ${order.destino.substring(0, 20)}
+                                        ${order.destino.substring(0, 25)}
                                     </small>
                                 </div>
                                 
@@ -1333,23 +1857,23 @@
                                 <div class="btn-group-vertical w-100 gap-2 mt-2">
                                     ${order.status === 'accepted' ? `
                                         <button class="btn btn-primary btn-sm" onclick="updateSt('${id}', 'picked')">
-                                            Marcar como Recogido
+                                            <i class="fas fa-box me-1"></i>Marcar como Recogido
                                         </button>
                                     ` : ''}
                                     
                                     ${order.status === 'picked' ? `
                                         <button class="btn btn-success btn-sm" onclick="updateSt('${id}', 'delivered')">
-                                            Marcar como Entregado
+                                            <i class="fas fa-check-circle me-1"></i>Marcar como Entregado
                                         </button>
                                     ` : ''}
                                     
                                     ${order.destinoCoords ? `
                                         <div class="btn-group">
                                             <button class="btn btn-info btn-sm" onclick="openWaze(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
-                                                Abrir Waze
+                                                <i class="fab fa-waze me-1"></i>Waze
                                             </button>
                                             <button class="btn btn-primary btn-sm" onclick="openMaps(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
-                                                Google Maps
+                                                <i class="fas fa-map me-1"></i>Maps
                                             </button>
                                         </div>
                                     ` : ''}
@@ -1365,6 +1889,67 @@
                     });
                     
                     document.getElementById('dl').innerHTML = html;
+                }
+            });
+        };
+        
+        /**
+         * Ver historial de entregas (repartidor)
+         */
+        window.deliveryHistory = () => {
+            document.getElementById('content').innerHTML = `
+                <div class="card-main p-4">
+                    <h2>
+                        <i class="fas fa-history me-2"></i>Historial de Entregas
+                    </h2>
+                    <p class="text-muted">Todas tus entregas completadas</p>
+                    <div id="dl"><div class="loading-spinner"></div></div>
+                </div>
+            `;
+            
+            const q = fb.fs.query(
+                fb.fs.collection(fb.db, 'pedidos'),
+                fb.fs.where('repartidorId', '==', S.u.uid),
+                fb.fs.orderBy('createdAt', 'desc')
+            );
+            
+            fb.fs.onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    document.getElementById('dl').innerHTML = '<p class="text-center text-muted">No tienes historial de entregas</p>';
+                } else {
+                    let html = '';
+                    let totalGanado = 0;
+                    let entregasCompletadas = 0;
+                    
+                    snapshot.forEach((doc) => {
+                        const order = doc.data();
+                        const precioFinal = order.precioFinal || order.precioInicial || order.precio;
+                        
+                        if (order.status === 'delivered') {
+                            totalGanado += parseFloat(precioFinal);
+                            entregasCompletadas++;
+                        }
+                        
+                        html += generateOrderCard(order, doc.id, false);
+                    });
+                    
+                    document.getElementById('dl').innerHTML = `
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="card text-center p-3">
+                                    <h3 class="text-success">${totalGanado.toFixed(2)}</h3>
+                                    <small class="text-muted">Total Ganado</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card text-center p-3">
+                                    <h3 class="text-info">${entregasCompletadas}</h3>
+                                    <small class="text-muted">Entregas Completadas</small>
+                                </div>
+                            </div>
+                        </div>
+                        ${html}
+                    `;
                 }
             });
         };
@@ -1391,7 +1976,7 @@
             
             Swal.fire({
                 icon: 'success',
-                title: 'Estado actualizado',
+                title: newStatus === 'picked' ? 'Marcado como Recogido' : 'Entrega Completada',
                 timer: 1500,
                 showConfirmButton: false
             });
@@ -1409,20 +1994,39 @@
             const { value: formValues } = await Swal.fire({
                 title: 'Enviar Contraoferta',
                 html: `
-                    <p>Precio inicial: <strong>${precioInicial}</strong></p>
-                    <input class="form-control mb-2" id="po" value="${(precioInicial * 0.85).toFixed(2)}" type="number" placeholder="Tu precio">
-                    <select class="form-select mb-2" id="pt">
-                        <option value="15 min">15 minutos</option>
-                        <option value="30 min">30 minutos</option>
-                        <option value="45 min">45 minutos</option>
-                    </select>
-                    <textarea class="form-control" id="pm" placeholder="Mensaje opcional"></textarea>
+                    <div class="text-start">
+                        <div class="info-box mb-3">
+                            <strong>Precio inicial:</strong> ${precioInicial}
+                        </div>
+                        
+                        <label class="form-label">Tu precio ofertado</label>
+                        <input class="form-control mb-3" id="po" value="${(precioInicial * 0.85).toFixed(2)}" type="number" min="1" step="0.01">
+                        <small class="help-text">Puedes ofrecer un precio menor para ser más competitivo</small>
+                        
+                        <label class="form-label mt-3">Tiempo estimado de entrega</label>
+                        <select class="form-select mb-3" id="pt">
+                            <option value="15 min">15 minutos</option>
+                            <option value="30 min">30 minutos</option>
+                            <option value="45 min">45 minutos</option>
+                            <option value="1 hora">1 hora</option>
+                        </select>
+                        
+                        <label class="form-label">Mensaje para el cliente (opcional)</label>
+                        <textarea class="form-control" id="pm" rows="3" placeholder="Ej: Tengo experiencia en entregas rápidas..."></textarea>
+                    </div>
                 `,
+                width: '600px',
                 showCancelButton: true,
-                confirmButtonText: 'Enviar Oferta',
+                confirmButtonText: '<i class="fas fa-paper-plane me-2"></i>Enviar Oferta',
+                cancelButtonText: 'Cancelar',
                 preConfirm: () => {
+                    const precio = parseFloat(document.getElementById('po').value);
+                    if (precio <= 0) {
+                        Swal.showValidationMessage('El precio debe ser mayor a 0');
+                        return false;
+                    }
                     return {
-                        p: parseFloat(document.getElementById('po').value),
+                        p: precio,
                         t: document.getElementById('pt').value,
                         m: document.getElementById('pm').value
                     };
@@ -1457,6 +2061,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Oferta enviada',
+                    text: 'El cliente recibirá tu oferta',
                     timer: 2000,
                     showConfirmButton: false
                 });
@@ -1477,7 +2082,11 @@
             const snapshot = await fb.fs.getDocs(q);
             
             if (snapshot.empty) {
-                return Swal.fire('Sin ofertas', 'Aún no has recibido ofertas para este pedido', 'info');
+                return Swal.fire({
+                    title: 'Sin ofertas',
+                    text: 'Aún no has recibido ofertas para este pedido',
+                    icon: 'info'
+                });
             }
             
             let html = '';
@@ -1486,23 +2095,33 @@
                 const oferta = doc.data();
                 
                 html += `
-                    <div class="border rounded p-3 mb-2" style="background: #f8f9fa">
-                        <div class="d-flex justify-content-between mb-2">
-                            <strong>${oferta.repartidorNombre}</strong>
-                            <span class="text-warning">⭐ ${oferta.repartidorCalificacion || 5}</span>
+                    <div class="border rounded p-3 mb-3" style="background: #f8f9fa">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <strong>${oferta.repartidorNombre}</strong><br>
+                                <small class="text-muted">${oferta.repartidorTelefono}</small>
+                            </div>
+                            <span class="text-warning">
+                                <i class="fas fa-star"></i> ${oferta.repartidorCalificacion || 5}
+                            </span>
                         </div>
                         
-                        <h4 class="text-danger">${oferta.precioOfertado}</h4>
-                        <small>⏱️ ${oferta.tiempoEstimado}</small>
+                        <h4 class="text-danger mb-0">${oferta.precioOfertado}</h4>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>${oferta.tiempoEstimado}
+                        </small>
                         
                         ${oferta.mensaje ? `
-                            <p class="mt-2">
-                                <small>💬 ${oferta.mensaje}</small>
-                            </p>
+                            <div class="mt-2 p-2" style="background: white; border-radius: 5px;">
+                                <small>
+                                    <i class="fas fa-comment me-1"></i>
+                                    "${oferta.mensaje}"
+                                </small>
+                            </div>
                         ` : ''}
                         
-                        <button class="btn btn-success btn-sm w-100" onclick="acceptOffer('${doc.id}', '${pedidoId}')">
-                            Aceptar Oferta
+                        <button class="btn btn-success btn-sm w-100 mt-3" onclick="acceptOffer('${doc.id}', '${pedidoId}')">
+                            <i class="fas fa-check me-1"></i>Aceptar esta Oferta
                         </button>
                     </div>
                 `;
@@ -1511,8 +2130,9 @@
             Swal.fire({
                 title: 'Ofertas Recibidas',
                 html: html,
-                width: 600,
-                showCloseButton: true
+                width: 700,
+                showCloseButton: true,
+                showConfirmButton: false
             });
         };
         
@@ -1522,10 +2142,11 @@
         window.acceptOffer = async (contraofertaId, pedidoId) => {
             const { isConfirmed } = await Swal.fire({
                 title: '¿Aceptar esta oferta?',
+                text: 'Se asignará el repartidor a tu pedido',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, aceptar',
-                cancelButtonText: 'Cancelar'
+                cancelButtonText: 'No'
             });
             
             if (!isConfirmed) return;
@@ -1536,20 +2157,19 @@
                 didOpen: () => Swal.showLoading()
             });
             
-            // Obtener datos de la contraoferta
             const contraofertaDoc = await fb.fs.getDoc(fb.fs.doc(fb.db, 'contraofertas', contraofertaId));
             
             if (!contraofertaDoc.exists()) return;
             
             const contraoferta = contraofertaDoc.data();
             
-            // Actualizar contraoferta como aceptada
+            // Actualizar contraoferta
             await fb.fs.updateDoc(
                 fb.fs.doc(fb.db, 'contraofertas', contraofertaId),
                 { estado: 'aceptada' }
             );
             
-            // Actualizar pedido con repartidor asignado
+            // Actualizar pedido
             await fb.fs.updateDoc(
                 fb.fs.doc(fb.db, 'pedidos', pedidoId),
                 {
@@ -1565,30 +2185,70 @@
             
             Swal.fire({
                 icon: 'success',
-                title: 'Oferta aceptada',
-                html: `<p>Precio acordado: ${contraoferta.precioOfertado}</p>`,
-                timer: 2000
+                title: '¡Oferta aceptada!',
+                html: `
+                    <p>Repartidor: <strong>${contraoferta.repartidorNombre}</strong></p>
+                    <p>Precio acordado: <strong>${contraoferta.precioOfertado}</strong></p>
+                `,
+                timer: 3000
             });
             
             myOrders();
         };
         
         /**
-         * Aceptar pedido directamente al precio inicial (repartidor)
+         * Aceptar pedido directamente (repartidor)
          */
-        window.acceptDirect = async (orderId) => {
-            const { isConfirmed } = await Swal.fire({
-                title: '¿Aceptar este pedido?',
-                text: 'Se aceptará al precio inicial',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, aceptar',
-                cancelButtonText: 'Cancelar'
-            });
+        window.acceptDirect = async (orderId, esSensible) => {
+            // Si es sensible, mostrar confirmación especial
+            if (esSensible) {
+                const { isConfirmed } = await Swal.fire({
+                    title: '¿Aceptar este pedido sensible?',
+                    html: `
+                        <div class="warning-box text-start">
+                            <strong>Este pedido requiere manejo cuidadoso</strong>
+                            <ul class="mt-2 mb-2">
+                                <li>No abrir el paquete</li>
+                                <li>Mantener estabilidad durante el transporte</li>
+                                <li>Evitar calor excesivo</li>
+                                <li>Entrega directa sin desvíos</li>
+                            </ul>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-check">
+                                <input class="form-check-input" type="checkbox" id="confirmSensible">
+                                <span class="form-check-label">
+                                    Confirmo que puedo manejar este pedido con cuidado
+                                </span>
+                            </label>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Aceptar Pedido',
+                    cancelButtonText: 'Cancelar',
+                    preConfirm: () => {
+                        if (!document.getElementById('confirmSensible').checked) {
+                            Swal.showValidationMessage('Debes confirmar que puedes manejar el pedido');
+                        }
+                    }
+                });
+                
+                if (!isConfirmed) return;
+            } else {
+                const { isConfirmed } = await Swal.fire({
+                    title: '¿Aceptar este pedido?',
+                    text: 'Se aceptará al precio inicial',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, aceptar',
+                    cancelButtonText: 'No'
+                });
+                
+                if (!isConfirmed) return;
+            }
             
-            if (!isConfirmed) return;
-            
-            // Verificar que el pedido sigue disponible
+            // Verificar disponibilidad
             const orderDoc = await fb.fs.getDoc(fb.fs.doc(fb.db, 'pedidos', orderId));
             
             if (!orderDoc.exists() || orderDoc.data().status !== 'pending') {
@@ -1613,6 +2273,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Pedido aceptado',
+                text: 'Puedes verlo en "Mis Entregas"',
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -1622,13 +2283,11 @@
     </script>
     
     <!-- ============================================
-         SECCIÓN 7: UTILIDADES Y MAPAS
+         SECCIÓN 7: UTILIDADES Y FUNCIONES AUXILIARES
          ============================================ -->
     <script>
         /**
          * Abrir WhatsApp con mensaje predefinido
-         * @param {string} telefono - Número de teléfono
-         * @param {string} orderId - ID del pedido
          */
         window.wa = (telefono, orderId) => {
             const numeroLimpio = telefono.replace(/\D/g, '');
@@ -1638,8 +2297,6 @@
         
         /**
          * Abrir Waze con coordenadas
-         * @param {number} lat - Latitud
-         * @param {number} lng - Longitud
          */
         window.openWaze = (lat, lng) => {
             window.open(`https://waze.com/ul?ll=${lat},${lng}&navigate=yes`, '_blank');
@@ -1647,8 +2304,6 @@
         
         /**
          * Abrir Google Maps con coordenadas
-         * @param {number} lat - Latitud
-         * @param {number} lng - Longitud
          */
         window.openMaps = (lat, lng) => {
             window.open(
@@ -1658,7 +2313,8 @@
         };
         
         // Log de confirmación
-        console.log('✅ RapidSend FULL - Firebase 12.8.0 - Código refactorizado');
+        console.log('✅ RapidSend Sistema Completo - Firebase 12.8.0');
+        console.log('📦 Funcionalidades: Pedidos, Ofertas, Tracking, Historial, Capacitación');
     </script>
 </body>
 </html>
