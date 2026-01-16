@@ -391,7 +391,9 @@
             onAuthStateChanged,
             updateProfile,
             GoogleAuthProvider,
-            signInWithPopup
+            signInWithPopup,
+            signInWithRedirect,
+            getRedirectResult
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
         
         // Importar módulos de Firestore
@@ -455,7 +457,9 @@
                 signOut: signOut,
                 onAuthStateChanged: onAuthStateChanged,
                 updateProfile: updateProfile,
-                signInWithPopup: signInWithPopup
+                signInWithPopup: signInWithPopup,
+                signInWithRedirect: signInWithRedirect,
+                getRedirectResult: getRedirectResult
             }
         };
         
@@ -468,45 +472,51 @@
             dest: null,        // Destino temporal
             map: null          // Mapa temporal
         };
-        // Manejador de redirect
-(async () => {
-    try {
-        const result = await fb.am.getRedirectResult(fb.auth);
-        if (result && result.user) {
-            const userDoc = await fb.fs.getDoc(fb.fs.doc(fb.db, 'usuarios', result.user.uid));
-            if (!userDoc.exists()) {
-                const { value: rol } = await Swal.fire({
-                    title: 'Selecciona tu tipo de cuenta',
-                    input: 'select',
-                    inputOptions: {
-                        cliente: 'Cliente - Persona Natural',
-                        repartidor: 'Repartidor',
-                        institucion: 'Institución Médica'
-                    },
-                    inputPlaceholder: 'Selecciona una opción',
-                    showCancelButton: false,
-                    allowOutsideClick: false
-                });
-                await fb.fs.setDoc(fb.fs.doc(fb.db, 'usuarios', result.user.uid), {
-                    nombre: result.user.displayName,
-                    email: result.user.email,
-                    rol: rol,
-                    telefono: '',
-                    fechaRegistro: fb.fs.serverTimestamp(),
-                    activo: false,
-                    calificacion: 5,
-                    entregasCompletadas: 0,
-                    certificadoMedico: false,
-                    capacitacionCompletada: false
-                });
+        
+        // ============================================
+        // MANEJADOR DE REDIRECT DE GOOGLE
+        // ============================================
+        (async () => {
+            try {
+                const result = await getRedirectResult(auth);
+                
+                if (result && result.user) {
+                    const userDoc = await getDoc(doc(db, 'usuarios', result.user.uid));
+                    
+                    if (!userDoc.exists()) {
+                        const { value: rol } = await Swal.fire({
+                            title: 'Selecciona tu tipo de cuenta',
+                            input: 'select',
+                            inputOptions: {
+                                cliente: 'Cliente - Persona Natural',
+                                repartidor: 'Repartidor',
+                                institucion: 'Institución Médica'
+                            },
+                            inputPlaceholder: 'Selecciona una opción',
+                            showCancelButton: false,
+                            allowOutsideClick: false
+                        });
+                        
+                        await setDoc(doc(db, 'usuarios', result.user.uid), {
+                            nombre: result.user.displayName,
+                            email: result.user.email,
+                            rol: rol,
+                            telefono: '',
+                            fechaRegistro: serverTimestamp(),
+                            activo: false,
+                            calificacion: 5,
+                            entregasCompletadas: 0,
+                            certificadoMedico: false,
+                            capacitacionCompletada: false
+                        });
+                    }
+                }
+            } catch (error) {
+                if (error.code !== 'auth/popup-closed-by-user') {
+                    console.error('Redirect error:', error);
+                }
             }
-        }
-    } catch (error) {
-        if (error.code !== 'auth/popup-closed-by-user') {
-            console.error('Redirect error:', error);
-        }
-    }
-})();
+        })();
         
         // ============================================
         // LISTENER DE AUTENTICACIÓN
@@ -686,19 +696,22 @@
                 Swal.fire('Error', error.message, 'error');
             }
         };
+        
+        /**
+         * Iniciar sesión con Google
+         */
         window.gLogin = async () => {
-    try {
-        fb.gp.setCustomParameters({
-            prompt: 'select_account'
-        });
-        await fb.am.signInWithRedirect(fb.auth, fb.gp);
-    } catch (error) {
-        console.error('Google Auth Error:', error);
-        Swal.fire('Error', 'No se pudo iniciar sesión: ' + error.message, 'error');
-    }
-};
-        
-        
+            try {
+                fb.gp.setCustomParameters({
+                    prompt: 'select_account'
+                });
+                
+                await fb.am.signInWithRedirect(fb.auth, fb.gp);
+            } catch (error) {
+                console.error('Google Auth Error:', error);
+                Swal.fire('Error', 'No se pudo iniciar sesión: ' + error.message, 'error');
+            }
+        };
     </script>
     
     <!-- ============================================
