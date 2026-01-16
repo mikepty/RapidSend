@@ -4,107 +4,1661 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RapidSend</title>
+    
+    <!-- ============================================
+         LIBRERÍAS EXTERNAS
+         ============================================ -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"/>
+    
+    <!-- ============================================
+         ESTILOS PERSONALIZADOS
+         ============================================ -->
     <style>
-        :root{--red:#dc143c;--dark:#1a1a1a;--white:#fff}
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Segoe UI',sans-serif;background:#f5f5f5;color:var(--dark)}
-        .navbar-main{background:linear-gradient(135deg,var(--red),#8b0000)!important;box-shadow:0 4px 20px rgba(220,20,60,.4);padding:1rem 0}
-        .navbar-brand{font-size:1.8rem;font-weight:800}
-        .sidebar{background:var(--white);border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.1)}
-        .sidebar-header{background:linear-gradient(135deg,var(--dark),#333);color:var(--white);padding:1.5rem;text-align:center}
-        .user-avatar{width:80px;height:80px;border-radius:50%;background:var(--red);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1rem;border:4px solid var(--white)}
-        .list-group-item{border:none;border-left:4px solid transparent;transition:all .3s}
-        .list-group-item:hover{background:#f5f5f5;border-left-color:var(--red);transform:translateX(5px)}
-        .card-main{background:var(--white);border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.08);border-top:5px solid var(--red)}
-        .order-card{background:var(--white);border-left:5px solid var(--red);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;transition:all .3s}
-        .order-card:hover{transform:translateX(8px);box-shadow:0 8px 25px rgba(0,0,0,.12)}
-        .order-card.urgent{border-left-color:#8b0000;background:linear-gradient(to right,rgba(220,20,60,.08),var(--white));animation:pulse 2s infinite}
-        @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,20,60,.4)}50%{box-shadow:0 0 0 10px rgba(220,20,60,0)}}
-        .btn-primary{background:linear-gradient(135deg,var(--red),#8b0000);border:none;font-weight:700;padding:.75rem 2rem;border-radius:30px}
-        .btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(220,20,60,.4)}
-        .btn-whatsapp{background:#25D366;color:var(--white);border:none;font-weight:600;border-radius:30px}
-        #map,#trackMap,.map{height:500px;border-radius:15px;border:3px solid var(--red);box-shadow:0 5px 20px rgba(0,0,0,.1)}
-        .badge-custom{padding:.5rem 1rem;border-radius:20px;font-weight:700}
-        .cert-badge{background:linear-gradient(135deg,#FFD700,#FFA500);color:var(--dark);padding:1rem;border-radius:10px;font-weight:700}
-        @media(max-width:768px){#map,#trackMap,.map{height:350px}.navbar-brand{font-size:1.3rem}.user-avatar{width:60px;height:60px}}
+        /* Variables CSS */
+        :root {
+            --red: #dc143c;
+            --dark: #1a1a1a;
+            --white: #fff;
+        }
+        
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Body principal */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            color: var(--dark);
+        }
+        
+        /* ============================================
+           NAVBAR
+           ============================================ */
+        .navbar-main {
+            background: linear-gradient(135deg, var(--red), #8b0000) !important;
+            box-shadow: 0 4px 20px rgba(220, 20, 60, 0.4);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+        
+        /* ============================================
+           SIDEBAR
+           ============================================ */
+        .sidebar {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-header {
+            background: linear-gradient(135deg, var(--dark), #333);
+            color: var(--white);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--red);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            border: 4px solid var(--white);
+        }
+        
+        .list-group-item {
+            border: none;
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .list-group-item:hover {
+            background: #f5f5f5;
+            border-left-color: var(--red);
+            transform: translateX(5px);
+        }
+        
+        /* ============================================
+           TARJETAS
+           ============================================ */
+        .card-main {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-top: 5px solid var(--red);
+        }
+        
+        .order-card {
+            background: var(--white);
+            border-left: 5px solid var(--red);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .order-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .order-card.urgent {
+            border-left-color: #8b0000;
+            background: linear-gradient(to right, rgba(220, 20, 60, 0.08), var(--white));
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(220, 20, 60, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(220, 20, 60, 0);
+            }
+        }
+        
+        /* ============================================
+           BOTONES
+           ============================================ */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--red), #8b0000);
+            border: none;
+            font-weight: 700;
+            padding: 0.75rem 2rem;
+            border-radius: 30px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 20, 60, 0.4);
+        }
+        
+        .btn-whatsapp {
+            background: #25D366;
+            color: var(--white);
+            border: none;
+            font-weight: 600;
+            border-radius: 30px;
+        }
+        
+        /* ============================================
+           MAPAS
+           ============================================ */
+        #map, 
+        #trackMap, 
+        .map {
+            height: 500px;
+            border-radius: 15px;
+            border: 3px solid var(--red);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* ============================================
+           BADGES
+           ============================================ */
+        .badge-custom {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+        
+        .cert-badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: var(--dark);
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+        
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            #map, 
+            #trackMap, 
+            .map {
+                height: 350px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+            
+            .user-avatar {
+                width: 60px;
+                height: 60px;
+            }
+        }
+        
+        /* ============================================
+           ANIMACIÓN DE CARGA
+           ============================================ */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
+
 <body>
+    <!-- ============================================
+         CONTENEDOR PRINCIPAL DE LA APP
+         ============================================ -->
     <div id="app">
-        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--red),#8b0000)">
-            <div style="background:white;padding:40px;border-radius:20px;text-align:center">
-                <h1 style="color:var(--red)">RapidSend</h1>
-                <div style="margin:20px auto;width:50px;height:50px;border:4px solid #f3f3f3;border-top:4px solid var(--red);border-radius:50%;animation:spin 1s linear infinite"></div>
+        <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--red), #8b0000)">
+            <div style="background: white; padding: 40px; border-radius: 20px; text-align: center">
+                <h1 style="color: var(--red)">RapidSend</h1>
+                <div style="margin: 20px auto; width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid var(--red); border-radius: 50%; animation: spin 1s linear infinite"></div>
             </div>
         </div>
     </div>
+    
+    <!-- ============================================
+         SCRIPTS EXTERNOS
+         ============================================ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-    <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+    
+    <!-- ============================================
+         SECCIÓN 1: CONFIGURACIÓN DE FIREBASE
+         ============================================ -->
     <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile,GoogleAuthProvider,signInWithPopup}from"https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import{getFirestore,collection,addDoc,getDocs,doc,getDoc,setDoc,updateDoc,query,where,orderBy,serverTimestamp,onSnapshot}from"https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-const app=initializeApp({apiKey:"AIzaSyDxD4g_uYEUKB37uNHvDWus_NQHoSAMK_8",authDomain:"rapidsend-1f640.firebaseapp.com",projectId:"rapidsend-1f640",storageBucket:"rapidsend-1f640.firebasestorage.app",messagingSenderId:"249514582496",appId:"1:249514582496:web:cafcc8760282983f24cb85"});
-const auth=getAuth(app),db=getFirestore(app),gp=new GoogleAuthProvider();
-window.fb={app,auth,db,gp,fs:{collection,addDoc,getDocs,doc,getDoc,setDoc,updateDoc,query,where,orderBy,serverTimestamp,onSnapshot},am:{createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile,signInWithPopup}};
-window.S={u:null,d:null,r:null,o:null,dest:null,map:null};
-onAuthStateChanged(auth,async u=>{S.u=u;if(u){const d=await getDoc(doc(db,'usuarios',u.uid));if(d.exists()){S.d=d.data();S.r=d.data().rol}else{await setDoc(doc(db,'usuarios',u.uid),{nombre:u.displayName||'Usuario',email:u.email,rol:'cliente',telefono:'',fechaRegistro:serverTimestamp(),activo:false,calificacion:5,entregasCompletadas:0,certificadoMedico:false});S.d={nombre:u.displayName,email:u.email,rol:'cliente',certificadoMedico:false};S.r='cliente'}renderMain()}else renderLogin()});
-
-window.renderLogin=()=>document.getElementById('app').innerHTML=`<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--red),#8b0000);padding:20px"><div style="background:white;padding:40px;border-radius:20px;max-width:500px;width:100%"><h1 style="color:var(--red);text-align:center">RapidSend</h1><div class="mb-3"><input type="email"class="form-control"id="le"placeholder="Email"></div><div class="mb-3"><input type="password"class="form-control"id="lp"placeholder="Contraseña"></div><button onclick="login()"class="btn btn-primary w-100 mb-3">Ingresar</button><button onclick="gLogin()"class="btn btn-outline-dark w-100 mb-3">Google</button><hr><div class="mb-3"><input type="text"class="form-control"id="rn"placeholder="Nombre"></div><div class="mb-3"><input type="email"class="form-control"id="re"placeholder="Email"></div><div class="mb-3"><input type="password"class="form-control"id="rp"placeholder="Contraseña"></div><div class="mb-3"><input type="tel"class="form-control"id="rt"placeholder="Teléfono"></div><div class="mb-3"><select class="form-select"id="rr"><option value="cliente">Cliente</option><option value="repartidor">Repartidor</option><option value="institucion">Institución</option></select></div><button onclick="register()"class="btn btn-dark w-100">Registrar</button></div></div>`;
-
-window.login=async()=>{const e=document.getElementById('le').value,p=document.getElementById('lp').value;if(!e||!p)return Swal.fire('Error','Completa campos','error');try{await signInWithEmailAndPassword(auth,e,p);Swal.fire({icon:'success',title:'Bienvenido',timer:1500,showConfirmButton:false})}catch(er){Swal.fire('Error','Credenciales incorrectas','error')}};
-
-window.register=async()=>{const n=document.getElementById('rn').value,e=document.getElementById('re').value,p=document.getElementById('rp').value,t=document.getElementById('rt').value,r=document.getElementById('rr').value;if(!n||!e||!p)return Swal.fire('Error','Completa campos','error');try{const res=await createUserWithEmailAndPassword(auth,e,p);await updateProfile(res.user,{displayName:n});await setDoc(doc(db,'usuarios',res.user.uid),{nombre:n,email:e,rol:r,telefono:t,fechaRegistro:serverTimestamp(),activo:false,calificacion:5,entregasCompletadas:0,certificadoMedico:false});Swal.fire({icon:'success',title:'Cuenta creada',timer:2000,showConfirmButton:false})}catch(er){Swal.fire('Error',er.message,'error')}};
-
-window.gLogin=async()=>{try{const res=await signInWithPopup(auth,gp),ud=await getDoc(doc(db,'usuarios',res.user.uid));if(!ud.exists()){const{value:r}=await Swal.fire({title:'Rol',input:'select',inputOptions:{cliente:'Cliente',repartidor:'Repartidor',institucion:'Institución'},showCancelButton:false});await setDoc(doc(db,'usuarios',res.user.uid),{nombre:res.user.displayName,email:res.user.email,rol:r,telefono:'',fechaRegistro:serverTimestamp(),activo:false,calificacion:5,entregasCompletadas:0,certificadoMedico:false})}}catch(er){if(er.code!=='auth/popup-closed-by-user')Swal.fire('Error',er.message,'error')}};
+        // Importar módulos de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        
+        // Importar módulos de autenticación
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged,
+            updateProfile,
+            GoogleAuthProvider,
+            signInWithPopup
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        
+        // Importar módulos de Firestore
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            getDocs,
+            doc,
+            getDoc,
+            setDoc,
+            updateDoc,
+            query,
+            where,
+            orderBy,
+            serverTimestamp,
+            onSnapshot
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxD4g_uYEUKB37uNHvDWus_NQHoSAMK_8",
+            authDomain: "rapidsend-1f640.firebaseapp.com",
+            projectId: "rapidsend-1f640",
+            storageBucket: "rapidsend-1f640.firebasestorage.app",
+            messagingSenderId: "249514582496",
+            appId: "1:249514582496:web:cafcc8760282983f24cb85"
+        };
+        
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+        
+        // Exponer Firebase globalmente para uso en otros scripts
+        window.fb = {
+            app: app,
+            auth: auth,
+            db: db,
+            gp: googleProvider,
+            fs: {
+                collection: collection,
+                addDoc: addDoc,
+                getDocs: getDocs,
+                doc: doc,
+                getDoc: getDoc,
+                setDoc: setDoc,
+                updateDoc: updateDoc,
+                query: query,
+                where: where,
+                orderBy: orderBy,
+                serverTimestamp: serverTimestamp,
+                onSnapshot: onSnapshot
+            },
+            am: {
+                createUserWithEmailAndPassword: createUserWithEmailAndPassword,
+                signInWithEmailAndPassword: signInWithEmailAndPassword,
+                signOut: signOut,
+                onAuthStateChanged: onAuthStateChanged,
+                updateProfile: updateProfile,
+                signInWithPopup: signInWithPopup
+            }
+        };
+        
+        // Estado global de la aplicación
+        window.S = {
+            u: null,           // Usuario actual
+            d: null,           // Datos del usuario
+            r: null,           // Rol del usuario
+            o: null,           // Origen temporal
+            dest: null,        // Destino temporal
+            map: null          // Mapa temporal
+        };
+        
+        // ============================================
+        // LISTENER DE AUTENTICACIÓN
+        // ============================================
+        onAuthStateChanged(auth, async (user) => {
+            S.u = user;
+            
+            if (user) {
+                // Usuario autenticado
+                const docRef = doc(db, 'usuarios', user.uid);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    // Usuario existente
+                    S.d = docSnap.data();
+                    S.r = docSnap.data().rol;
+                } else {
+                    // Crear perfil de usuario nuevo
+                    await setDoc(docRef, {
+                        nombre: user.displayName || 'Usuario',
+                        email: user.email,
+                        rol: 'cliente',
+                        telefono: '',
+                        fechaRegistro: serverTimestamp(),
+                        activo: false,
+                        calificacion: 5,
+                        entregasCompletadas: 0,
+                        certificadoMedico: false
+                    });
+                    
+                    S.d = {
+                        nombre: user.displayName,
+                        email: user.email,
+                        rol: 'cliente',
+                        certificadoMedico: false
+                    };
+                    S.r = 'cliente';
+                }
+                
+                renderMain();
+            } else {
+                // No hay usuario autenticado
+                renderLogin();
+            }
+        });
     </script>
+    
+    <!-- ============================================
+         SECCIÓN 2: AUTENTICACIÓN Y REGISTRO
+         ============================================ -->
     <script>
-window.renderMain=()=>{const r=S.r,rt=r==='repartidor'?'Repartidor':r==='institucion'?'Institución':'Cliente';document.getElementById('app').innerHTML=`<nav class="navbar navbar-main"><div class="container-fluid"><a class="navbar-brand text-white"href="#"onclick="home()"><i class="fas fa-bolt me-2"></i>RapidSend <span class="badge bg-light text-dark">${rt}</span></a><button class="btn btn-light btn-sm"onclick="signOut(fb.auth)"><i class="fas fa-sign-out-alt"></i></button></div></nav><div class="container py-4"><div class="row"><div class="col-md-3 mb-4"><div class="sidebar"><div class="sidebar-header"><div class="user-avatar">${S.d?.nombre?.charAt(0)||'U'}</div><h6>${S.d?.nombre||'Usuario'}</h6><small>${S.d?.email||''}</small></div><div class="list-group list-group-flush"><button class="list-group-item list-group-item-action"onclick="home()"><i class="fas fa-home me-2"></i>Inicio</button>${r==='cliente'||r==='institucion'?`<button class="list-group-item list-group-item-action"onclick="newOrder()"><i class="fas fa-plus me-2"></i>Nuevo</button><button class="list-group-item list-group-item-action"onclick="myOrders()"><i class="fas fa-list me-2"></i>Pedidos</button>`:''} ${r==='repartidor'?`<button class="list-group-item list-group-item-action"onclick="availOrders()"><i class="fas fa-search me-2"></i>Disponibles</button><button class="list-group-item list-group-item-action"onclick="myDelivs()"><i class="fas fa-motorcycle me-2"></i>Entregas</button><button class="list-group-item list-group-item-action"onclick="toggleOnline()"><i class="fas fa-toggle-on me-2"></i>${S.d?.activo?'Offline':'Online'}</button><button class="list-group-item list-group-item-action"onclick="certify()"><i class="fas fa-certificate me-2"></i>Certificación</button>`:''}<button class="list-group-item list-group-item-action"onclick="editProf()"><i class="fas fa-user-edit me-2"></i>Perfil</button></div></div></div><div class="col-md-9"><div id="content"></div></div></div></div>`;home()};
-
-window.home=()=>document.getElementById('content').innerHTML=`<div class="card-main p-4"><h2>Bienvenido, ${S.d?.nombre}</h2><div class="row mt-4">${S.r==='cliente'||S.r==='institucion'?`<div class="col-md-6 mb-3"><div class="card text-center p-4"><i class="fas fa-box fa-3x text-danger mb-3"></i><h5>Crear Pedido</h5><button class="btn btn-primary mt-2"onclick="newOrder()">Nuevo</button></div></div>`:''} ${S.r==='repartidor'?`<div class="col-md-6 mb-3"><div class="card text-center p-4"><i class="fas fa-search fa-3x text-danger mb-3"></i><h5>Buscar</h5><button class="btn btn-primary mt-2"onclick="availOrders()">Ver</button></div></div>${S.d?.certificadoMedico?'<div class="col-12"><div class="cert-badge"><i class="fas fa-check-circle me-2"></i>Certificado Médico Activo</div></div>':''}`:''}</div></div>`;
-
-window.editProf=async()=>{const{value:v}=await Swal.fire({title:'Editar Perfil',html:`<input class="form-control mb-3"id="pn"value="${S.d?.nombre||''}"placeholder="Nombre"><input class="form-control mb-3"id="pt"value="${S.d?.telefono||''}"placeholder="Teléfono">`,showCancelButton:true,confirmButtonText:'Guardar',preConfirm:()=>({nombre:document.getElementById('pn').value,telefono:document.getElementById('pt').value})});if(v){await fb.fs.updateDoc(fb.fs.doc(fb.db,'usuarios',S.u.uid),v);S.d={...S.d,...v};Swal.fire('Guardado','Perfil actualizado','success');renderMain()}};
-
-window.certify=async()=>{const{isConfirmed}=await Swal.fire({title:'Certificación Médica',html:'<p>Para transportar insumos médicos necesitas certificación.</p><p>¿Deseas solicitar certificación?</p>',icon:'info',showCancelButton:true,confirmButtonText:'Solicitar'});if(isConfirmed){await fb.fs.updateDoc(fb.fs.doc(fb.db,'usuarios',S.u.uid),{certificadoMedico:true});S.d.certificadoMedico=true;Swal.fire('Aprobado','Certificación activada','success');renderMain()}};
-
-window.toggleOnline=async()=>{const ns=!S.d?.activo;await fb.fs.updateDoc(fb.fs.doc(fb.db,'usuarios',S.u.uid),{activo:ns});S.d.activo=ns;Swal.fire({icon:'success',title:ns?'En línea':'Offline',timer:1500,showConfirmButton:false});renderMain()};
+        /**
+         * Renderizar pantalla de login/registro
+         */
+        window.renderLogin = () => {
+            document.getElementById('app').innerHTML = `
+                <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--red), #8b0000); padding: 20px">
+                    <div style="background: white; padding: 40px; border-radius: 20px; max-width: 500px; width: 100%">
+                        <h1 style="color: var(--red); text-align: center">RapidSend</h1>
+                        
+                        <!-- LOGIN -->
+                        <h5 class="mt-4">Iniciar Sesión</h5>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" id="le" placeholder="Email">
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" id="lp" placeholder="Contraseña">
+                        </div>
+                        <button onclick="login()" class="btn btn-primary w-100 mb-3">
+                            Ingresar
+                        </button>
+                        <button onclick="gLogin()" class="btn btn-outline-dark w-100 mb-3">
+                            <i class="fab fa-google me-2"></i>Ingresar con Google
+                        </button>
+                        
+                        <hr>
+                        
+                        <!-- REGISTRO -->
+                        <h5>Crear Cuenta</h5>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="rn" placeholder="Nombre">
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" id="re" placeholder="Email">
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" id="rp" placeholder="Contraseña">
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" class="form-control" id="rt" placeholder="Teléfono">
+                        </div>
+                        <div class="mb-3">
+                            <select class="form-select" id="rr">
+                                <option value="cliente">Cliente</option>
+                                <option value="repartidor">Repartidor</option>
+                                <option value="institucion">Institución</option>
+                            </select>
+                        </div>
+                        <button onclick="register()" class="btn btn-dark w-100">
+                            Registrar
+                        </button>
+                    </div>
+                </div>
+            `;
+        };
+        
+        /**
+         * Iniciar sesión con email y contraseña
+         */
+        window.login = async () => {
+            const email = document.getElementById('le').value;
+            const password = document.getElementById('lp').value;
+            
+            if (!email || !password) {
+                return Swal.fire('Error', 'Completa todos los campos', 'error');
+            }
+            
+            try {
+                await fb.am.signInWithEmailAndPassword(fb.auth, email, password);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Bienvenido',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } catch (error) {
+                Swal.fire('Error', 'Credenciales incorrectas', 'error');
+            }
+        };
+        
+        /**
+         * Registrar nuevo usuario
+         */
+        window.register = async () => {
+            const nombre = document.getElementById('rn').value;
+            const email = document.getElementById('re').value;
+            const password = document.getElementById('rp').value;
+            const telefono = document.getElementById('rt').value;
+            const rol = document.getElementById('rr').value;
+            
+            if (!nombre || !email || !password) {
+                return Swal.fire('Error', 'Completa los campos obligatorios', 'error');
+            }
+            
+            try {
+                const result = await fb.am.createUserWithEmailAndPassword(fb.auth, email, password);
+                await fb.am.updateProfile(result.user, { displayName: nombre });
+                
+                await fb.fs.setDoc(fb.fs.doc(fb.db, 'usuarios', result.user.uid), {
+                    nombre: nombre,
+                    email: email,
+                    rol: rol,
+                    telefono: telefono,
+                    fechaRegistro: fb.fs.serverTimestamp(),
+                    activo: false,
+                    calificacion: 5,
+                    entregasCompletadas: 0,
+                    certificadoMedico: false
+                });
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Cuenta creada exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        };
+        
+        /**
+         * Iniciar sesión con Google
+         */
+        window.gLogin = async () => {
+            try {
+                const result = await fb.am.signInWithPopup(fb.auth, fb.gp);
+                const userDoc = await fb.fs.getDoc(fb.fs.doc(fb.db, 'usuarios', result.user.uid));
+                
+                if (!userDoc.exists()) {
+                    // Usuario nuevo con Google
+                    const { value: rol } = await Swal.fire({
+                        title: 'Selecciona tu rol',
+                        input: 'select',
+                        inputOptions: {
+                            cliente: 'Cliente',
+                            repartidor: 'Repartidor',
+                            institucion: 'Institución'
+                        },
+                        showCancelButton: false
+                    });
+                    
+                    await fb.fs.setDoc(fb.fs.doc(fb.db, 'usuarios', result.user.uid), {
+                        nombre: result.user.displayName,
+                        email: result.user.email,
+                        rol: rol,
+                        telefono: '',
+                        fechaRegistro: fb.fs.serverTimestamp(),
+                        activo: false,
+                        calificacion: 5,
+                        entregasCompletadas: 0,
+                        certificadoMedico: false
+                    });
+                }
+            } catch (error) {
+                if (error.code !== 'auth/popup-closed-by-user') {
+                    Swal.fire('Error', error.message, 'error');
+                }
+            }
+        };
     </script>
+    
+    <!-- ============================================
+         SECCIÓN 3: INTERFAZ PRINCIPAL
+         ============================================ -->
     <script>
-window.newOrder=async()=>{S.o=null;S.dest=null;const{value:v}=await Swal.fire({title:'Nuevo Pedido',html:`<div class="text-start"><input class="form-control mb-2"id="od"placeholder="Descripción"><select class="form-select mb-2"id="ot"><option value="normal">Normal</option><option value="medicamento">Medicamento</option><option value="insumo_medico">Insumo Médico</option></select><select class="form-select mb-2"id="ou"><option value="baja">Baja</option><option value="media">Media</option><option value="alta">Alta</option></select><div class="alert alert-info py-2 mb-2"><small>Click: origen(rojo), destino(verde)</small></div><div id="map"style="height:350px"></div><div class="row mb-2"><div class="col-6"><input class="form-control"id="of"placeholder="Origen"readonly></div><div class="col-6"><input class="form-control"id="ot2"placeholder="Destino"readonly></div></div><div class="row mb-2"><div class="col-6"><input class="form-control"id="op"value="10"type="number"min="5"></div><div class="col-6"><select class="form-select"id="ou2"><option value="standard">Normal</option><option value="express">Express</option><option value="urgent">Urgente</option></select></div></div><textarea class="form-control"id="oi"rows="2"placeholder="Instrucciones"></textarea></div>`,width:'90%',showCancelButton:true,didOpen:()=>{const m=L.map('map').setView([8.9833,-79.5167],13);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);let c=0,om=null,dm=null,rc=null;m.on('click',e=>{const co=[e.latlng.lat,e.latlng.lng],ad=`${co[0].toFixed(4)},${co[1].toFixed(4)}`;if(c===0){if(om)m.removeLayer(om);om=L.marker(co,{icon:L.divIcon({html:'<div style="background:#dc143c;width:30px;height:30px;border-radius:50%;border:3px solid white"></div>',iconSize:[30,30]})}).addTo(m);document.getElementById('of').value=ad;S.o={coords:co,address:ad};c=1}else if(c===1){if(dm)m.removeLayer(dm);dm=L.marker(co,{icon:L.divIcon({html:'<div style="background:#2ecc71;width:30px;height:30px;border-radius:50%;border:3px solid white"></div>',iconSize:[30,30]})}).addTo(m);document.getElementById('ot2').value=ad;S.dest={coords:co,address:ad};if(rc)m.removeControl(rc);rc=L.Routing.control({waypoints:[L.latLng(S.o.coords),L.latLng(co)],lineOptions:{styles:[{color:'#3498db',weight:4}]},createMarker:()=>null}).addTo(m);const R=6371,dLat=(co[0]-S.o.coords[0])*Math.PI/180,dLon=(co[1]-S.o.coords[1])*Math.PI/180,a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(S.o.coords[0]*Math.PI/180)*Math.cos(co[0]*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2),c2=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)),d=R*c2,p=Math.max(5,Math.round(d*2));document.getElementById('op').value=p;c=2}});if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>m.setView([p.coords.latitude,p.coords.longitude],15))},preConfirm:()=>{const d=document.getElementById('od').value;if(!d||!S.o||!S.dest){Swal.showValidationMessage('Completa campos y mapa');return false}return{desc:d,from:S.o.address,to:S.dest.address,oc:S.o.coords,dc:S.dest.coords,price:document.getElementById('op').value,urg:document.getElementById('ou2').value,inst:document.getElementById('oi').value,tipo:document.getElementById('ot').value,niv:document.getElementById('ou').value}}});if(v){Swal.fire({title:'Creando...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});await fb.fs.addDoc(fb.fs.collection(fb.db,'pedidos'),{clienteId:S.u.uid,clienteNombre:S.d?.nombre,clienteTelefono:S.d?.telefono||'',clienteEmail:S.d?.email,descripcion:v.desc,origen:v.from,destino:v.to,origenCoords:{lat:v.oc[0],lng:v.oc[1]},destinoCoords:{lat:v.dc[0],lng:v.dc[1]},urgencia:v.urg,precio:parseFloat(v.price),instrucciones:v.inst,metodoPago:'efectivo',status:'pending',tipoPedido:v.tipo,nivelUrgencia:v.niv,precioInicial:parseFloat(v.price),precioFinal:null,estadoNegociacion:'abierta',creadoPorRol:S.r,institucionId:S.r==='institucion'?S.u.uid:null,repartidorId:null,repartidorNombre:null,repartidorTelefono:null,createdAt:fb.fs.serverTimestamp(),updatedAt:fb.fs.serverTimestamp()});Swal.fire({icon:'success',title:'Creado',timer:2000,showConfirmButton:false});myOrders()}};
-
-window.myOrders=()=>{document.getElementById('content').innerHTML='<div class="card-main p-4"><h2>Mis Pedidos</h2><div id="ol">Cargando...</div></div>';const q=fb.fs.query(fb.fs.collection(fb.db,'pedidos'),fb.fs.where('clienteId','==',S.u.uid),fb.fs.orderBy('createdAt','desc'));fb.fs.onSnapshot(q,s=>{if(s.empty){document.getElementById('ol').innerHTML='<p class="text-center text-muted">Sin pedidos</p>'}else{let h='';s.forEach(d=>{const o=d.data(),id=d.id,st=o.status==='pending'?'warning':o.status==='delivered'?'success':'info',pr=o.precioFinal||o.precioInicial||o.precio;h+=`<div class="order-card ${o.nivelUrgencia==='alta'?'urgent':''}"><div class="d-flex justify-content-between mb-2"><div><h6>${o.descripcion}</h6><small>#${id.substring(0,8)}</small></div><span class="badge bg-${st}">${o.status}</span></div><small><i class="fas fa-map-marker-alt text-danger me-1"></i>${o.origen.substring(0,25)}</small><br><small><i class="fas fa-flag-checkered text-success me-1"></i>${o.destino.substring(0,25)}</small><div class="mt-2">${o.tipoPedido!=='normal'?`<span class="badge bg-info">${o.tipoPedido}</span> `:''}<span class="badge bg-dark">$${pr}</span></div>${o.repartidorId&&o.status!=='delivered'?`<button class="btn btn-sm btn-whatsapp w-100 mt-2"onclick="wa('${o.repartidorTelefono}','${id}')"><i class="fab fa-whatsapp me-1"></i>Repartidor</button>`:''} ${o.status==='pending'&&o.estadoNegociacion==='contraoferta'?`<button class="btn btn-sm btn-warning w-100 mt-2"onclick="viewOffers('${id}')">Ver Ofertas</button>`:''} ${o.repartidorId&&o.status!=='delivered'?`<button class="btn btn-sm btn-primary w-100 mt-2"onclick="trackOrder('${id}')"><i class="fas fa-map-marked-alt me-1"></i>Rastrear</button>`:''}</div>`;});document.getElementById('ol').innerHTML=h}})};
-
-window.trackOrder=async id=>{const d=await fb.fs.getDoc(fb.fs.doc(fb.db,'pedidos',id));if(!d.exists())return;const o=d.data();Swal.fire({title:'Rastreando Pedido',html:`<div id="trackMap"style="height:400px"></div><div class="mt-3"><strong>Estado:</strong> ${o.status}<br><strong>Repartidor:</strong> ${o.repartidorNombre||'N/A'}</div>`,width:'90%',showConfirmButton:false,showCloseButton:true,didOpen:()=>{const m=L.map('trackMap').setView([o.origenCoords.lat,o.origenCoords.lng],13);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);L.marker([o.origenCoords.lat,o.origenCoords.lng],{icon:L.divIcon({html:'<div style="background:#dc143c;width:30px;height:30px;border-radius:50%"></div>'})}).addTo(m).bindPopup('Origen');L.marker([o.destinoCoords.lat,o.destinoCoords.lng],{icon:L.divIcon({html:'<div style="background:#2ecc71;width:30px;height:30px;border-radius:50%"></div>'})}).addTo(m).bindPopup('Destino');L.Routing.control({waypoints:[L.latLng(o.origenCoords.lat,o.origenCoords.lng),L.latLng(o.destinoCoords.lat,o.destinoCoords.lng)],lineOptions:{styles:[{color:'#3498db',weight:4}]},createMarker:()=>null}).addTo(m)}})};
+        /**
+         * Renderizar interfaz principal según el rol
+         */
+        window.renderMain = () => {
+            const rol = S.r;
+            const rolTexto = rol === 'repartidor' ? 'Repartidor' : 
+                           rol === 'institucion' ? 'Institución' : 'Cliente';
+            
+            document.getElementById('app').innerHTML = `
+                <!-- NAVBAR -->
+                <nav class="navbar navbar-main">
+                    <div class="container-fluid">
+                        <a class="navbar-brand text-white" href="#" onclick="home()">
+                            <i class="fas fa-bolt me-2"></i>RapidSend 
+                            <span class="badge bg-light text-dark">${rolTexto}</span>
+                        </a>
+                        <button class="btn btn-light btn-sm" onclick="fb.am.signOut(fb.auth)">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </button>
+                    </div>
+                </nav>
+                
+                <!-- CONTENEDOR PRINCIPAL -->
+                <div class="container py-4">
+                    <div class="row">
+                        <!-- SIDEBAR -->
+                        <div class="col-md-3 mb-4">
+                            <div class="sidebar">
+                                <div class="sidebar-header">
+                                    <div class="user-avatar">
+                                        ${S.d?.nombre?.charAt(0) || 'U'}
+                                    </div>
+                                    <h6>${S.d?.nombre || 'Usuario'}</h6>
+                                    <small>${S.d?.email || ''}</small>
+                                </div>
+                                
+                                <div class="list-group list-group-flush">
+                                    <button class="list-group-item list-group-item-action" onclick="home()">
+                                        <i class="fas fa-home me-2"></i>Inicio
+                                    </button>
+                                    
+                                    ${rol === 'cliente' || rol === 'institucion' ? `
+                                        <button class="list-group-item list-group-item-action" onclick="newOrder()">
+                                            <i class="fas fa-plus me-2"></i>Nuevo Pedido
+                                        </button>
+                                        <button class="list-group-item list-group-item-action" onclick="myOrders()">
+                                            <i class="fas fa-list me-2"></i>Mis Pedidos
+                                        </button>
+                                    ` : ''}
+                                    
+                                    ${rol === 'repartidor' ? `
+                                        <button class="list-group-item list-group-item-action" onclick="availOrders()">
+                                            <i class="fas fa-search me-2"></i>Pedidos Disponibles
+                                        </button>
+                                        <button class="list-group-item list-group-item-action" onclick="myDelivs()">
+                                            <i class="fas fa-motorcycle me-2"></i>Mis Entregas
+                                        </button>
+                                        <button class="list-group-item list-group-item-action" onclick="toggleOnline()">
+                                            <i class="fas fa-toggle-on me-2"></i>${S.d?.activo ? 'Ponerse Offline' : 'Ponerse Online'}
+                                        </button>
+                                        <button class="list-group-item list-group-item-action" onclick="certify()">
+                                            <i class="fas fa-certificate me-2"></i>Certificación Médica
+                                        </button>
+                                    ` : ''}
+                                    
+                                    <button class="list-group-item list-group-item-action" onclick="editProf()">
+                                        <i class="fas fa-user-edit me-2"></i>Editar Perfil
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CONTENIDO PRINCIPAL -->
+                        <div class="col-md-9">
+                            <div id="content"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            home();
+        };
+        
+        /**
+         * Pantalla de inicio
+         */
+        window.home = () => {
+            document.getElementById('content').innerHTML = `
+                <div class="card-main p-4">
+                    <h2>Bienvenido, ${S.d?.nombre}</h2>
+                    
+                    <div class="row mt-4">
+                        ${S.r === 'cliente' || S.r === 'institucion' ? `
+                            <div class="col-md-6 mb-3">
+                                <div class="card text-center p-4">
+                                    <i class="fas fa-box fa-3x text-danger mb-3"></i>
+                                    <h5>Crear Pedido</h5>
+                                    <button class="btn btn-primary mt-2" onclick="newOrder()">
+                                        Nuevo Pedido
+                                    </button>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${S.r === 'repartidor' ? `
+                            <div class="col-md-6 mb-3">
+                                <div class="card text-center p-4">
+                                    <i class="fas fa-search fa-3x text-danger mb-3"></i>
+                                    <h5>Buscar Pedidos</h5>
+                                    <button class="btn btn-primary mt-2" onclick="availOrders()">
+                                        Ver Disponibles
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            ${S.d?.certificadoMedico ? `
+                                <div class="col-12">
+                                    <div class="cert-badge">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        Certificado Médico Activo - Puedes transportar insumos médicos
+                                    </div>
+                                </div>
+                            ` : ''}
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        };
+        
+        /**
+         * Editar perfil de usuario
+         */
+        window.editProf = async () => {
+            const { value: formValues } = await Swal.fire({
+                title: 'Editar Perfil',
+                html: `
+                    <input class="form-control mb-3" id="pn" value="${S.d?.nombre || ''}" placeholder="Nombre">
+                    <input class="form-control mb-3" id="pt" value="${S.d?.telefono || ''}" placeholder="Teléfono">
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                preConfirm: () => {
+                    return {
+                        nombre: document.getElementById('pn').value,
+                        telefono: document.getElementById('pt').value
+                    };
+                }
+            });
+            
+            if (formValues) {
+                await fb.fs.updateDoc(
+                    fb.fs.doc(fb.db, 'usuarios', S.u.uid),
+                    formValues
+                );
+                
+                S.d = { ...S.d, ...formValues };
+                
+                Swal.fire('Guardado', 'Perfil actualizado exitosamente', 'success');
+                renderMain();
+            }
+        };
+        
+        /**
+         * Solicitar certificación médica (solo repartidores)
+         */
+        window.certify = async () => {
+            const { isConfirmed } = await Swal.fire({
+                title: 'Certificación Médica',
+                html: `
+                    <p>Para transportar insumos médicos necesitas certificación especial.</p>
+                    <p>¿Deseas solicitar la certificación?</p>
+                `,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Solicitar'
+            });
+            
+            if (isConfirmed) {
+                await fb.fs.updateDoc(
+                    fb.fs.doc(fb.db, 'usuarios', S.u.uid),
+                    { certificadoMedico: true }
+                );
+                
+                S.d.certificadoMedico = true;
+                
+                Swal.fire('Aprobado', 'Certificación activada exitosamente', 'success');
+                renderMain();
+            }
+        };
+        
+        /**
+         * Cambiar estado online/offline (solo repartidores)
+         */
+        window.toggleOnline = async () => {
+            const nuevoEstado = !S.d?.activo;
+            
+            await fb.fs.updateDoc(
+                fb.fs.doc(fb.db, 'usuarios', S.u.uid),
+                { activo: nuevoEstado }
+            );
+            
+            S.d.activo = nuevoEstado;
+            
+            Swal.fire({
+                icon: 'success',
+                title: nuevoEstado ? 'Ahora estás En línea' : 'Ahora estás Offline',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            
+            renderMain();
+        };
     </script>
+    
+    <!-- ============================================
+         SECCIÓN 4: GESTIÓN DE PEDIDOS (CLIENTE)
+         ============================================ -->
     <script>
-window.availOrders=()=>{document.getElementById('content').innerHTML='<div class="card-main p-4"><h2>Disponibles</h2><div id="al">Cargando...</div></div>';const q=fb.fs.query(fb.fs.collection(fb.db,'pedidos'),fb.fs.where('status','==','pending'));fb.fs.onSnapshot(q,s=>{if(s.empty){document.getElementById('al').innerHTML='<p class="text-center text-muted">Sin pedidos</p>'}else{let h='';s.forEach(d=>{const o=d.data(),id=d.id,pi=o.precioInicial||o.precio,canAccept=o.tipoPedido==='insumo_medico'?S.d?.certificadoMedico:true;h+=`<div class="order-card ${o.nivelUrgencia==='alta'?'urgent':''}"><h6>${o.descripcion}</h6><small>Cliente: ${o.clienteNombre}</small><div class="mt-2"><small><i class="fas fa-map-marker-alt text-danger"></i> ${o.origen.substring(0,20)}</small><br><small><i class="fas fa-flag-checkered text-success"></i> ${o.destino.substring(0,20)}</small></div><div class="mt-2">${o.tipoPedido!=='normal'?`<span class="badge bg-info">${o.tipoPedido}</span> `:''}<span class="badge bg-dark">$${pi}</span></div><div class="btn-group w-100 mt-2">${canAccept?`<button class="btn btn-success btn-sm"onclick="acceptDirect('${id}')">Aceptar</button><button class="btn btn-warning btn-sm"onclick="sendOffer('${id}',${pi})">Ofertar</button>`:`<button class="btn btn-secondary btn-sm"disabled>Requiere Certificación</button>`}</div><button class="btn btn-sm btn-primary w-100 mt-2"onclick="viewRoute('${id}')"><i class="fas fa-route me-1"></i>Ver Ruta</button></div>`;});document.getElementById('al').innerHTML=h}})};
-
-window.viewRoute=async id=>{const d=await fb.fs.getDoc(fb.fs.doc(fb.db,'pedidos',id));if(!d.exists())return;const o=d.data();Swal.fire({title:'Ruta del Pedido',html:`<div id="routeMap"class="map"></div><div class="mt-3"><strong>Distancia estimada:</strong> <span id="dist">Calculando...</span><br><strong>Tiempo estimado:</strong> <span id="time">Calculando...</span></div>`,width:'90%',showCloseButton:true,didOpen:()=>{const m=L.map('routeMap').setView([o.origenCoords.lat,o.origenCoords.lng],13);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);L.marker([o.origenCoords.lat,o.origenCoords.lng],{icon:L.divIcon({html:'<div style="background:#dc143c;width:30px;height:30px;border-radius:50%"></div>'})}).addTo(m).bindPopup('Origen');L.marker([o.destinoCoords.lat,o.destinoCoords.lng],{icon:L.divIcon({html:'<div style="background:#2ecc71;width:30px;height:30px;border-radius:50%"></div>'})}).addTo(m).bindPopup('Destino');const rc=L.Routing.control({waypoints:[L.latLng(o.origenCoords.lat,o.origenCoords.lng),L.latLng(o.destinoCoords.lat,o.destinoCoords.lng)],lineOptions:{styles:[{color:'#dc143c',weight:5}]},createMarker:()=>null}).addTo(m);rc.on('routesfound',e=>{const r=e.routes[0];document.getElementById('dist').textContent=`${(r.summary.totalDistance/1000).toFixed(2)} km`;document.getElementById('time').textContent=`${Math.round(r.summary.totalTime/60)} min`})}})};
-
-window.myDelivs=()=>{document.getElementById('content').innerHTML='<div class="card-main p-4"><h2>Entregas</h2><div id="dl">Cargando...</div></div>';const q=fb.fs.query(fb.fs.collection(fb.db,'pedidos'),fb.fs.where('repartidorId','==',S.u.uid));fb.fs.onSnapshot(q,s=>{if(s.empty){document.getElementById('dl').innerHTML='<p class="text-center text-muted">Sin entregas</p>'}else{let h='';s.forEach(d=>{const o=d.data(),id=d.id,pf=o.precioFinal||o.precioInicial||o.precio;h+=`<div class="order-card"><h6>${o.descripcion}</h6><small>Cliente: ${o.clienteNombre}</small><div class="mt-2"><small><i class="fas fa-map-marker-alt text-danger"></i> ${o.origen.substring(0,20)}</small><br><small><i class="fas fa-flag-checkered text-success"></i> ${o.destino.substring(0,20)}</small></div><div class="mt-2"><span class="badge bg-dark">$${pf}</span></div><div class="btn-group-vertical w-100 gap-2 mt-2">${o.status==='accepted'?`<button class="btn btn-primary btn-sm"onclick="updateSt('${id}','picked')">Recogido</button>`:''}${o.status==='picked'?`<button class="btn btn-success btn-sm"onclick="updateSt('${id}','delivered')">Entregado</button>`:''}${o.destinoCoords?`<div class="btn-group"><button class="btn btn-info btn-sm"onclick="openWaze(${o.destinoCoords.lat},${o.destinoCoords.lng})">Waze</button><button class="btn btn-primary btn-sm"onclick="openMaps(${o.destinoCoords.lat},${o.destinoCoords.lng})">Maps</button></div>`:''} ${o.clienteTelefono?`<button class="btn btn-whatsapp btn-sm"onclick="wa('${o.clienteTelefono}','${id}')"><i class="fab fa-whatsapp me-1"></i>Cliente</button>`:''}</div></div>`;});document.getElementById('dl').innerHTML=h}})};
-
-window.updateSt=async(id,ns)=>{await fb.fs.updateDoc(fb.fs.doc(fb.db,'pedidos',id),{status:ns,updatedAt:fb.fs.serverTimestamp(),...(ns==='picked'?{pickedAt:fb.fs.serverTimestamp()}:{}), ...(ns==='delivered'?{deliveredAt:fb.fs.serverTimestamp()}:{})});Swal.fire({icon:'success',title:'Actualizado',timer:1500,showConfirmButton:false})};
-
-window.sendOffer=async(pid,pi)=>{const{value:v}=await Swal.fire({title:'Contraoferta',html:`<p>Precio inicial: <strong>$${pi}</strong></p><input class="form-control mb-2"id="po"value="${(pi*.85).toFixed(2)}"type="number"><select class="form-select mb-2"id="pt"><option value="15 min">15 min</option><option value="30 min">30 min</option><option value="45 min">45 min</option></select><textarea class="form-control"id="pm"placeholder="Mensaje"></textarea>`,showCancelButton:true,preConfirm:()=>({p:parseFloat(document.getElementById('po').value),t:document.getElementById('pt').value,m:document.getElementById('pm').value})});if(v){Swal.fire({title:'Enviando...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});await fb.fs.addDoc(fb.fs.collection(fb.db,'contraofertas'),{pedidoId:pid,repartidorId:S.u.uid,repartidorNombre:S.d?.nombre,repartidorTelefono:S.d?.telefono,repartidorCalificacion:S.d?.calificacion||5,precioOfertado:v.p,tiempoEstimado:v.t,mensaje:v.m,estado:'pendiente',createdAt:fb.fs.serverTimestamp()});await fb.fs.updateDoc(fb.fs.doc(fb.db,'pedidos',pid),{estadoNegociacion:'contraoferta'});Swal.fire({icon:'success',title:'Enviada',timer:2000,showConfirmButton:false})}};
-
-window.viewOffers=async pid=>{const q=fb.fs.query(fb.fs.collection(fb.db,'contraofertas'),fb.fs.where('pedidoId','==',pid),fb.fs.where('estado','==','pendiente'),fb.fs.orderBy('precioOfertado','asc')),s=await fb.fs.getDocs(q);if(s.empty)return Swal.fire('Sin ofertas','Aún no hay ofertas','info');let h='';s.forEach(d=>{const o=d.data();h+=`<div class="border rounded p-3 mb-2"style="background:#f8f9fa"><div class="d-flex justify-content-between mb-2"><strong>${o.repartidorNombre}</strong><span class="text-warning">⭐${o.repartidorCalificacion||5}</span></div><h4 class="text-danger">$${o.precioOfertado}</h4><small>⏱️${o.tiempoEstimado}</small>${o.mensaje?`<p class="mt-2"><small>💬${o.mensaje}</small></p>`:''}<button class="btn btn-success btn-sm w-100"onclick="acceptOffer('${d.id}','${pid}')">Aceptar</button></div>`});Swal.fire({title:'Ofertas',html:h,width:600,showCloseButton:true})};
-
-window.acceptOffer=async(cid,pid)=>{const{isConfirmed}=await Swal.fire({title:'¿Aceptar?',icon:'question',showCancelButton:true});if(!isConfirmed)return;Swal.fire({title:'Procesando...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});const cd=await fb.fs.getDoc(fb.fs.doc(fb.db,'contraofertas',cid));if(!cd.exists())return;const c=cd.data();await fb.fs.updateDoc(fb.fs.doc(fb.db,'contraofertas',cid),{estado:'aceptada'});await fb.fs.updateDoc(fb.fs.doc(fb.db,'pedidos',pid),{status:'accepted',repartidorId:c.repartidorId,repartidorNombre:c.repartidorNombre,repartidorTelefono:c.repartidorTelefono,precioFinal:c.precioOfertado,estadoNegociacion:'aceptada',acceptedAt:fb.fs.serverTimestamp()});Swal.fire({icon:'success',title:'Aceptada',html:`<p>$${c.precioOfertado}</p>`,timer:2000});myOrders()};
-
-window.acceptDirect=async oid=>{const{isConfirmed}=await Swal.fire({title:'¿Aceptar?',text:'Al precio inicial',icon:'question',showCancelButton:true});if(!isConfirmed)return;const od=await fb.fs.getDoc(fb.fs.doc(fb.db,'pedidos',oid));if(!od.exists()||od.data().status!=='pending')return Swal.fire('Error','No disponible','error');const o=od.data();await fb.fs.updateDoc(fb.fs.doc(fb.db,'pedidos',oid),{status:'accepted',repartidorId:S.u.uid,repartidorNombre:S.d?.nombre,repartidorTelefono:S.d?.telefono,precioFinal:o.precioInicial||o.precio,estadoNegociacion:'aceptada',acceptedAt:fb.fs.serverTimestamp()});Swal.fire({icon:'success',title:'Aceptado',timer:2000,showConfirmButton:false});myDelivs()};
-
-window.wa=(p,id)=>window.open(`https://wa.me/${p.replace(/\D/g,'')}?text=${encodeURIComponent(`Hola! Pedido #${id.substring(0,8)}`)}`,`_blank`);
-window.openWaze=(lat,lng)=>window.open(`https://waze.com/ul?ll=${lat},${lng}&navigate=yes`,'_blank');
-window.openMaps=(lat,lng)=>window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`,'_blank');
-console.log('✅ RapidSend FULL (Firebase 12.8.0)');
+        /**
+         * Crear nuevo pedido con mapa interactivo
+         */
+        window.newOrder = async () => {
+            // Reset de variables temporales
+            S.o = null;
+            S.dest = null;
+            
+            const { value: formValues } = await Swal.fire({
+                title: 'Nuevo Pedido',
+                html: `
+                    <div class="text-start">
+                        <input class="form-control mb-2" id="od" placeholder="Descripción del pedido">
+                        
+                        <select class="form-select mb-2" id="ot">
+                            <option value="normal">Normal</option>
+                            <option value="medicamento">Medicamento</option>
+                            <option value="insumo_medico">Insumo Médico</option>
+                        </select>
+                        
+                        <select class="form-select mb-2" id="ou">
+                            <option value="baja">Urgencia Baja</option>
+                            <option value="media">Urgencia Media</option>
+                            <option value="alta">Urgencia Alta</option>
+                        </select>
+                        
+                        <div class="alert alert-info py-2 mb-2">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                Click en el mapa: 1° origen (rojo), 2° destino (verde)
+                            </small>
+                        </div>
+                        
+                        <!-- Mapa interactivo -->
+                        <div id="map" style="height: 350px"></div>
+                        
+                        <div class="row mb-2 mt-2">
+                            <div class="col-6">
+                                <input class="form-control" id="of" placeholder="Origen" readonly>
+                            </div>
+                            <div class="col-6">
+                                <input class="form-control" id="ot2" placeholder="Destino" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <input class="form-control" id="op" value="10" type="number" min="5" placeholder="Precio $">
+                            </div>
+                            <div class="col-6">
+                                <select class="form-select" id="ou2">
+                                    <option value="standard">Entrega Normal</option>
+                                    <option value="express">Express</option>
+                                    <option value="urgent">Urgente</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <textarea class="form-control" id="oi" rows="2" placeholder="Instrucciones especiales"></textarea>
+                    </div>
+                `,
+                width: '90%',
+                showCancelButton: true,
+                confirmButtonText: 'Crear Pedido',
+                didOpen: () => {
+                    // Inicializar mapa de Leaflet
+                    const map = L.map('map').setView([8.9833, -79.5167], 13);
+                    
+                    // Agregar capa de tiles
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                    
+                    // Variables para controlar clicks
+                    let clickCount = 0;
+                    let originMarker = null;
+                    let destMarker = null;
+                    let routeControl = null;
+                    
+                    // Listener de clicks en el mapa
+                    map.on('click', (e) => {
+                        const coords = [e.latlng.lat, e.latlng.lng];
+                        const address = `${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`;
+                        
+                        if (clickCount === 0) {
+                            // Primer click: origen
+                            if (originMarker) map.removeLayer(originMarker);
+                            
+                            originMarker = L.marker(coords, {
+                                icon: L.divIcon({
+                                    html: '<div style="background: #dc143c; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white"></div>',
+                                    iconSize: [30, 30]
+                                })
+                            }).addTo(map);
+                            
+                            document.getElementById('of').value = address;
+                            S.o = { coords: coords, address: address };
+                            clickCount = 1;
+                            
+                        } else if (clickCount === 1) {
+                            // Segundo click: destino
+                            if (destMarker) map.removeLayer(destMarker);
+                            
+                            destMarker = L.marker(coords, {
+                                icon: L.divIcon({
+                                    html: '<div style="background: #2ecc71; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white"></div>',
+                                    iconSize: [30, 30]
+                                })
+                            }).addTo(map);
+                            
+                            document.getElementById('ot2').value = address;
+                            S.dest = { coords: coords, address: address };
+                            
+                            // Crear ruta
+                            if (routeControl) map.removeControl(routeControl);
+                            
+                            routeControl = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(S.o.coords),
+                                    L.latLng(coords)
+                                ],
+                                lineOptions: {
+                                    styles: [{ color: '#3498db', weight: 4 }]
+                                },
+                                createMarker: () => null
+                            }).addTo(map);
+                            
+                            // Calcular distancia y precio estimado
+                            const R = 6371; // Radio de la Tierra en km
+                            const dLat = (coords[0] - S.o.coords[0]) * Math.PI / 180;
+                            const dLon = (coords[1] - S.o.coords[1]) * Math.PI / 180;
+                            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                                    Math.cos(S.o.coords[0] * Math.PI / 180) * 
+                                    Math.cos(coords[0] * Math.PI / 180) *
+                                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                            const distancia = R * c;
+                            const precioEstimado = Math.max(5, Math.round(distancia * 2));
+                            
+                            document.getElementById('op').value = precioEstimado;
+                            clickCount = 2;
+                        }
+                    });
+                    
+                    // Obtener ubicación actual del usuario
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition((position) => {
+                            map.setView([position.coords.latitude, position.coords.longitude], 15);
+                        });
+                    }
+                },
+                preConfirm: () => {
+                    const descripcion = document.getElementById('od').value;
+                    
+                    if (!descripcion || !S.o || !S.dest) {
+                        Swal.showValidationMessage('Completa todos los campos y selecciona origen y destino en el mapa');
+                        return false;
+                    }
+                    
+                    return {
+                        desc: descripcion,
+                        from: S.o.address,
+                        to: S.dest.address,
+                        oc: S.o.coords,
+                        dc: S.dest.coords,
+                        price: document.getElementById('op').value,
+                        urg: document.getElementById('ou2').value,
+                        inst: document.getElementById('oi').value,
+                        tipo: document.getElementById('ot').value,
+                        niv: document.getElementById('ou').value
+                    };
+                }
+            });
+            
+            if (formValues) {
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Creando pedido...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+                
+                // Crear documento en Firebase
+                await fb.fs.addDoc(fb.fs.collection(fb.db, 'pedidos'), {
+                    clienteId: S.u.uid,
+                    clienteNombre: S.d?.nombre,
+                    clienteTelefono: S.d?.telefono || '',
+                    clienteEmail: S.d?.email,
+                    descripcion: formValues.desc,
+                    origen: formValues.from,
+                    destino: formValues.to,
+                    origenCoords: {
+                        lat: formValues.oc[0],
+                        lng: formValues.oc[1]
+                    },
+                    destinoCoords: {
+                        lat: formValues.dc[0],
+                        lng: formValues.dc[1]
+                    },
+                    urgencia: formValues.urg,
+                    precio: parseFloat(formValues.price),
+                    instrucciones: formValues.inst,
+                    metodoPago: 'efectivo',
+                    status: 'pending',
+                    tipoPedido: formValues.tipo,
+                    nivelUrgencia: formValues.niv,
+                    precioInicial: parseFloat(formValues.price),
+                    precioFinal: null,
+                    estadoNegociacion: 'abierta',
+                    creadoPorRol: S.r,
+                    institucionId: S.r === 'institucion' ? S.u.uid : null,
+                    repartidorId: null,
+                    repartidorNombre: null,
+                    repartidorTelefono: null,
+                    createdAt: fb.fs.serverTimestamp(),
+                    updatedAt: fb.fs.serverTimestamp()
+                });
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Pedido creado exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                myOrders();
+            }
+        };
+        
+        /**
+         * Ver mis pedidos (cliente/institución)
+         */
+        window.myOrders = () => {
+            document.getElementById('content').innerHTML = `
+                <div class="card-main p-4">
+                    <h2>Mis Pedidos</h2>
+                    <div id="ol">Cargando...</div>
+                </div>
+            `;
+            
+            // Query en tiempo real
+            const q = fb.fs.query(
+                fb.fs.collection(fb.db, 'pedidos'),
+                fb.fs.where('clienteId', '==', S.u.uid),
+                fb.fs.orderBy('createdAt', 'desc')
+            );
+            
+            fb.fs.onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    document.getElementById('ol').innerHTML = '<p class="text-center text-muted">No tienes pedidos todavía</p>';
+                } else {
+                    let html = '';
+                    
+                    snapshot.forEach((doc) => {
+                        const order = doc.data();
+                        const id = doc.id;
+                        const statusBadge = order.status === 'pending' ? 'warning' :
+                                          order.status === 'delivered' ? 'success' : 'info';
+                        const precioFinal = order.precioFinal || order.precioInicial || order.precio;
+                        
+                        html += `
+                            <div class="order-card ${order.nivelUrgencia === 'alta' ? 'urgent' : ''}">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div>
+                                        <h6>${order.descripcion}</h6>
+                                        <small>#${id.substring(0, 8)}</small>
+                                    </div>
+                                    <span class="badge bg-${statusBadge}">${order.status}</span>
+                                </div>
+                                
+                                <small>
+                                    <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                                    ${order.origen.substring(0, 25)}
+                                </small><br>
+                                
+                                <small>
+                                    <i class="fas fa-flag-checkered text-success me-1"></i>
+                                    ${order.destino.substring(0, 25)}
+                                </small>
+                                
+                                <div class="mt-2">
+                                    ${order.tipoPedido !== 'normal' ? `
+                                        <span class="badge bg-info">${order.tipoPedido}</span>
+                                    ` : ''}
+                                    <span class="badge bg-dark">${precioFinal}</span>
+                                </div>
+                                
+                                ${order.repartidorId && order.status !== 'delivered' ? `
+                                    <button class="btn btn-sm btn-whatsapp w-100 mt-2" onclick="wa('${order.repartidorTelefono}', '${id}')">
+                                        <i class="fab fa-whatsapp me-1"></i>Contactar Repartidor
+                                    </button>
+                                ` : ''}
+                                
+                                ${order.status === 'pending' && order.estadoNegociacion === 'contraoferta' ? `
+                                    <button class="btn btn-sm btn-warning w-100 mt-2" onclick="viewOffers('${id}')">
+                                        Ver Ofertas Recibidas
+                                    </button>
+                                ` : ''}
+                                
+                                ${order.repartidorId && order.status !== 'delivered' ? `
+                                    <button class="btn btn-sm btn-primary w-100 mt-2" onclick="trackOrder('${id}')">
+                                        <i class="fas fa-map-marked-alt me-1"></i>Rastrear Pedido
+                                    </button>
+                                ` : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    document.getElementById('ol').innerHTML = html;
+                }
+            });
+        };
+        
+        /**
+         * Rastrear pedido en mapa
+         */
+        window.trackOrder = async (orderId) => {
+            const docSnap = await fb.fs.getDoc(fb.fs.doc(fb.db, 'pedidos', orderId));
+            
+            if (!docSnap.exists()) return;
+            
+            const order = docSnap.data();
+            
+            Swal.fire({
+                title: 'Rastreando Pedido',
+                html: `
+                    <div id="trackMap" style="height: 400px"></div>
+                    <div class="mt-3">
+                        <strong>Estado:</strong> ${order.status}<br>
+                        <strong>Repartidor:</strong> ${order.repartidorNombre || 'N/A'}
+                    </div>
+                `,
+                width: '90%',
+                showConfirmButton: false,
+                showCloseButton: true,
+                didOpen: () => {
+                    const map = L.map('trackMap').setView([order.origenCoords.lat, order.origenCoords.lng], 13);
+                    
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                    
+                    // Marcador de origen
+                    L.marker([order.origenCoords.lat, order.origenCoords.lng], {
+                        icon: L.divIcon({
+                            html: '<div style="background: #dc143c; width: 30px; height: 30px; border-radius: 50%"></div>'
+                        })
+                    }).addTo(map).bindPopup('Origen');
+                    
+                    // Marcador de destino
+                    L.marker([order.destinoCoords.lat, order.destinoCoords.lng], {
+                        icon: L.divIcon({
+                            html: '<div style="background: #2ecc71; width: 30px; height: 30px; border-radius: 50%"></div>'
+                        })
+                    }).addTo(map).bindPopup('Destino');
+                    
+                    // Ruta
+                    L.Routing.control({
+                        waypoints: [
+                            L.latLng(order.origenCoords.lat, order.origenCoords.lng),
+                            L.latLng(order.destinoCoords.lat, order.destinoCoords.lng)
+                        ],
+                        lineOptions: {
+                            styles: [{ color: '#3498db', weight: 4 }]
+                        },
+                        createMarker: () => null
+                    }).addTo(map);
+                }
+            });
+        };
+    </script>
+    
+    <!-- ============================================
+         SECCIÓN 5: SISTEMA DE REPARTIDORES
+         ============================================ -->
+    <script>
+        /**
+         * Ver pedidos disponibles (repartidor)
+         */
+        window.availOrders = () => {
+            document.getElementById('content').innerHTML = `
+                <div class="card-main p-4">
+                    <h2>Pedidos Disponibles</h2>
+                    <div id="al">Cargando...</div>
+                </div>
+            `;
+            
+            const q = fb.fs.query(
+                fb.fs.collection(fb.db, 'pedidos'),
+                fb.fs.where('status', '==', 'pending')
+            );
+            
+            fb.fs.onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    document.getElementById('al').innerHTML = '<p class="text-center text-muted">No hay pedidos disponibles</p>';
+                } else {
+                    let html = '';
+                    
+                    snapshot.forEach((doc) => {
+                        const order = doc.data();
+                        const id = doc.id;
+                        const precioInicial = order.precioInicial || order.precio;
+                        
+                        // Verificar si puede aceptar (certificación médica)
+                        const canAccept = order.tipoPedido === 'insumo_medico' ? 
+                                        S.d?.certificadoMedico : true;
+                        
+                        html += `
+                            <div class="order-card ${order.nivelUrgencia === 'alta' ? 'urgent' : ''}">
+                                <h6>${order.descripcion}</h6>
+                                <small>Cliente: ${order.clienteNombre}</small>
+                                
+                                <div class="mt-2">
+                                    <small>
+                                        <i class="fas fa-map-marker-alt text-danger"></i> 
+                                        ${order.origen.substring(0, 20)}
+                                    </small><br>
+                                    <small>
+                                        <i class="fas fa-flag-checkered text-success"></i> 
+                                        ${order.destino.substring(0, 20)}
+                                    </small>
+                                </div>
+                                
+                                <div class="mt-2">
+                                    ${order.tipoPedido !== 'normal' ? `
+                                        <span class="badge bg-info">${order.tipoPedido}</span>
+                                    ` : ''}
+                                    <span class="badge bg-dark">${precioInicial}</span>
+                                </div>
+                                
+                                <div class="btn-group w-100 mt-2">
+                                    ${canAccept ? `
+                                        <button class="btn btn-success btn-sm" onclick="acceptDirect('${id}')">
+                                            Aceptar
+                                        </button>
+                                        <button class="btn btn-warning btn-sm" onclick="sendOffer('${id}', ${precioInicial})">
+                                            Ofertar
+                                        </button>
+                                    ` : `
+                                        <button class="btn btn-secondary btn-sm" disabled>
+                                            Requiere Certificación Médica
+                                        </button>
+                                    `}
+                                </div>
+                                
+                                <button class="btn btn-sm btn-primary w-100 mt-2" onclick="viewRoute('${id}')">
+                                    <i class="fas fa-route me-1"></i>Ver Ruta
+                                </button>
+                            </div>
+                        `;
+                    });
+                    
+                    document.getElementById('al').innerHTML = html;
+                }
+            });
+        };
+        
+        /**
+         * Ver ruta de un pedido
+         */
+        window.viewRoute = async (orderId) => {
+            const docSnap = await fb.fs.getDoc(fb.fs.doc(fb.db, 'pedidos', orderId));
+            
+            if (!docSnap.exists()) return;
+            
+            const order = docSnap.data();
+            
+            Swal.fire({
+                title: 'Ruta del Pedido',
+                html: `
+                    <div id="routeMap" class="map"></div>
+                    <div class="mt-3">
+                        <strong>Distancia estimada:</strong> <span id="dist">Calculando...</span><br>
+                        <strong>Tiempo estimado:</strong> <span id="time">Calculando...</span>
+                    </div>
+                `,
+                width: '90%',
+                showCloseButton: true,
+                didOpen: () => {
+                    const map = L.map('routeMap').setView([order.origenCoords.lat, order.origenCoords.lng], 13);
+                    
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                    
+                    // Origen
+                    L.marker([order.origenCoords.lat, order.origenCoords.lng], {
+                        icon: L.divIcon({
+                            html: '<div style="background: #dc143c; width: 30px; height: 30px; border-radius: 50%"></div>'
+                        })
+                    }).addTo(map).bindPopup('Origen');
+                    
+                    // Destino
+                    L.marker([order.destinoCoords.lat, order.destinoCoords.lng], {
+                        icon: L.divIcon({
+                            html: '<div style="background: #2ecc71; width: 30px; height: 30px; border-radius: 50%"></div>'
+                        })
+                    }).addTo(map).bindPopup('Destino');
+                    
+                    // Crear ruta y calcular distancia/tiempo
+                    const routeControl = L.Routing.control({
+                        waypoints: [
+                            L.latLng(order.origenCoords.lat, order.origenCoords.lng),
+                            L.latLng(order.destinoCoords.lat, order.destinoCoords.lng)
+                        ],
+                        lineOptions: {
+                            styles: [{ color: '#dc143c', weight: 5 }]
+                        },
+                        createMarker: () => null
+                    }).addTo(map);
+                    
+                    routeControl.on('routesfound', (e) => {
+                        const route = e.routes[0];
+                        document.getElementById('dist').textContent = 
+                            `${(route.summary.totalDistance / 1000).toFixed(2)} km`;
+                        document.getElementById('time').textContent = 
+                            `${Math.round(route.summary.totalTime / 60)} min`;
+                    });
+                }
+            });
+        };
+        
+        /**
+         * Ver mis entregas activas (repartidor)
+         */
+        window.myDelivs = () => {
+            document.getElementById('content').innerHTML = `
+                <div class="card-main p-4">
+                    <h2>Mis Entregas</h2>
+                    <div id="dl">Cargando...</div>
+                </div>
+            `;
+            
+            const q = fb.fs.query(
+                fb.fs.collection(fb.db, 'pedidos'),
+                fb.fs.where('repartidorId', '==', S.u.uid)
+            );
+            
+            fb.fs.onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    document.getElementById('dl').innerHTML = '<p class="text-center text-muted">No tienes entregas asignadas</p>';
+                } else {
+                    let html = '';
+                    
+                    snapshot.forEach((doc) => {
+                        const order = doc.data();
+                        const id = doc.id;
+                        const precioFinal = order.precioFinal || order.precioInicial || order.precio;
+                        
+                        html += `
+                            <div class="order-card">
+                                <h6>${order.descripcion}</h6>
+                                <small>Cliente: ${order.clienteNombre}</small>
+                                
+                                <div class="mt-2">
+                                    <small>
+                                        <i class="fas fa-map-marker-alt text-danger"></i> 
+                                        ${order.origen.substring(0, 20)}
+                                    </small><br>
+                                    <small>
+                                        <i class="fas fa-flag-checkered text-success"></i> 
+                                        ${order.destino.substring(0, 20)}
+                                    </small>
+                                </div>
+                                
+                                <div class="mt-2">
+                                    <span class="badge bg-dark">${precioFinal}</span>
+                                </div>
+                                
+                                <div class="btn-group-vertical w-100 gap-2 mt-2">
+                                    ${order.status === 'accepted' ? `
+                                        <button class="btn btn-primary btn-sm" onclick="updateSt('${id}', 'picked')">
+                                            Marcar como Recogido
+                                        </button>
+                                    ` : ''}
+                                    
+                                    ${order.status === 'picked' ? `
+                                        <button class="btn btn-success btn-sm" onclick="updateSt('${id}', 'delivered')">
+                                            Marcar como Entregado
+                                        </button>
+                                    ` : ''}
+                                    
+                                    ${order.destinoCoords ? `
+                                        <div class="btn-group">
+                                            <button class="btn btn-info btn-sm" onclick="openWaze(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
+                                                Abrir Waze
+                                            </button>
+                                            <button class="btn btn-primary btn-sm" onclick="openMaps(${order.destinoCoords.lat}, ${order.destinoCoords.lng})">
+                                                Google Maps
+                                            </button>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${order.clienteTelefono ? `
+                                        <button class="btn btn-whatsapp btn-sm" onclick="wa('${order.clienteTelefono}', '${id}')">
+                                            <i class="fab fa-whatsapp me-1"></i>Contactar Cliente
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    document.getElementById('dl').innerHTML = html;
+                }
+            });
+        };
+        
+        /**
+         * Actualizar estado de entrega
+         */
+        window.updateSt = async (orderId, newStatus) => {
+            const updates = {
+                status: newStatus,
+                updatedAt: fb.fs.serverTimestamp()
+            };
+            
+            if (newStatus === 'picked') {
+                updates.pickedAt = fb.fs.serverTimestamp();
+            } else if (newStatus === 'delivered') {
+                updates.deliveredAt = fb.fs.serverTimestamp();
+            }
+            
+            await fb.fs.updateDoc(
+                fb.fs.doc(fb.db, 'pedidos', orderId),
+                updates
+            );
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Estado actualizado',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        };
+    </script>
+    
+    <!-- ============================================
+         SECCIÓN 6: SISTEMA DE OFERTAS
+         ============================================ -->
+    <script>
+        /**
+         * Enviar contraoferta a un pedido
+         */
+        window.sendOffer = async (pedidoId, precioInicial) => {
+            const { value: formValues } = await Swal.fire({
+                title: 'Enviar Contraoferta',
+                html: `
+                    <p>Precio inicial: <strong>${precioInicial}</strong></p>
+                    <input class="form-control mb-2" id="po" value="${(precioInicial * 0.85).toFixed(2)}" type="number" placeholder="Tu precio">
+                    <select class="form-select mb-2" id="pt">
+                        <option value="15 min">15 minutos</option>
+                        <option value="30 min">30 minutos</option>
+                        <option value="45 min">45 minutos</option>
+                    </select>
+                    <textarea class="form-control" id="pm" placeholder="Mensaje opcional"></textarea>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Enviar Oferta',
+                preConfirm: () => {
+                    return {
+                        p: parseFloat(document.getElementById('po').value),
+                        t: document.getElementById('pt').value,
+                        m: document.getElementById('pm').value
+                    };
+                }
+            });
+            
+            if (formValues) {
+                Swal.fire({
+                    title: 'Enviando oferta...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+                
+                await fb.fs.addDoc(fb.fs.collection(fb.db, 'contraofertas'), {
+                    pedidoId: pedidoId,
+                    repartidorId: S.u.uid,
+                    repartidorNombre: S.d?.nombre,
+                    repartidorTelefono: S.d?.telefono,
+                    repartidorCalificacion: S.d?.calificacion || 5,
+                    precioOfertado: formValues.p,
+                    tiempoEstimado: formValues.t,
+                    mensaje: formValues.m,
+                    estado: 'pendiente',
+                    createdAt: fb.fs.serverTimestamp()
+                });
+                
+                await fb.fs.updateDoc(
+                    fb.fs.doc(fb.db, 'pedidos', pedidoId),
+                    { estadoNegociacion: 'contraoferta' }
+                );
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Oferta enviada',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        };
+        
+        /**
+         * Ver ofertas recibidas de un pedido (cliente)
+         */
+        window.viewOffers = async (pedidoId) => {
+            const q = fb.fs.query(
+                fb.fs.collection(fb.db, 'contraofertas'),
+                fb.fs.where('pedidoId', '==', pedidoId),
+                fb.fs.where('estado', '==', 'pendiente'),
+                fb.fs.orderBy('precioOfertado', 'asc')
+            );
+            
+            const snapshot = await fb.fs.getDocs(q);
+            
+            if (snapshot.empty) {
+                return Swal.fire('Sin ofertas', 'Aún no has recibido ofertas para este pedido', 'info');
+            }
+            
+            let html = '';
+            
+            snapshot.forEach((doc) => {
+                const oferta = doc.data();
+                
+                html += `
+                    <div class="border rounded p-3 mb-2" style="background: #f8f9fa">
+                        <div class="d-flex justify-content-between mb-2">
+                            <strong>${oferta.repartidorNombre}</strong>
+                            <span class="text-warning">⭐ ${oferta.repartidorCalificacion || 5}</span>
+                        </div>
+                        
+                        <h4 class="text-danger">${oferta.precioOfertado}</h4>
+                        <small>⏱️ ${oferta.tiempoEstimado}</small>
+                        
+                        ${oferta.mensaje ? `
+                            <p class="mt-2">
+                                <small>💬 ${oferta.mensaje}</small>
+                            </p>
+                        ` : ''}
+                        
+                        <button class="btn btn-success btn-sm w-100" onclick="acceptOffer('${doc.id}', '${pedidoId}')">
+                            Aceptar Oferta
+                        </button>
+                    </div>
+                `;
+            });
+            
+            Swal.fire({
+                title: 'Ofertas Recibidas',
+                html: html,
+                width: 600,
+                showCloseButton: true
+            });
+        };
+        
+        /**
+         * Aceptar una contraoferta (cliente)
+         */
+        window.acceptOffer = async (contraofertaId, pedidoId) => {
+            const { isConfirmed } = await Swal.fire({
+                title: '¿Aceptar esta oferta?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, aceptar',
+                cancelButtonText: 'Cancelar'
+            });
+            
+            if (!isConfirmed) return;
+            
+            Swal.fire({
+                title: 'Procesando...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            
+            // Obtener datos de la contraoferta
+            const contraofertaDoc = await fb.fs.getDoc(fb.fs.doc(fb.db, 'contraofertas', contraofertaId));
+            
+            if (!contraofertaDoc.exists()) return;
+            
+            const contraoferta = contraofertaDoc.data();
+            
+            // Actualizar contraoferta como aceptada
+            await fb.fs.updateDoc(
+                fb.fs.doc(fb.db, 'contraofertas', contraofertaId),
+                { estado: 'aceptada' }
+            );
+            
+            // Actualizar pedido con repartidor asignado
+            await fb.fs.updateDoc(
+                fb.fs.doc(fb.db, 'pedidos', pedidoId),
+                {
+                    status: 'accepted',
+                    repartidorId: contraoferta.repartidorId,
+                    repartidorNombre: contraoferta.repartidorNombre,
+                    repartidorTelefono: contraoferta.repartidorTelefono,
+                    precioFinal: contraoferta.precioOfertado,
+                    estadoNegociacion: 'aceptada',
+                    acceptedAt: fb.fs.serverTimestamp()
+                }
+            );
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Oferta aceptada',
+                html: `<p>Precio acordado: ${contraoferta.precioOfertado}</p>`,
+                timer: 2000
+            });
+            
+            myOrders();
+        };
+        
+        /**
+         * Aceptar pedido directamente al precio inicial (repartidor)
+         */
+        window.acceptDirect = async (orderId) => {
+            const { isConfirmed } = await Swal.fire({
+                title: '¿Aceptar este pedido?',
+                text: 'Se aceptará al precio inicial',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, aceptar',
+                cancelButtonText: 'Cancelar'
+            });
+            
+            if (!isConfirmed) return;
+            
+            // Verificar que el pedido sigue disponible
+            const orderDoc = await fb.fs.getDoc(fb.fs.doc(fb.db, 'pedidos', orderId));
+            
+            if (!orderDoc.exists() || orderDoc.data().status !== 'pending') {
+                return Swal.fire('Error', 'Este pedido ya no está disponible', 'error');
+            }
+            
+            const order = orderDoc.data();
+            
+            await fb.fs.updateDoc(
+                fb.fs.doc(fb.db, 'pedidos', orderId),
+                {
+                    status: 'accepted',
+                    repartidorId: S.u.uid,
+                    repartidorNombre: S.d?.nombre,
+                    repartidorTelefono: S.d?.telefono,
+                    precioFinal: order.precioInicial || order.precio,
+                    estadoNegociacion: 'aceptada',
+                    acceptedAt: fb.fs.serverTimestamp()
+                }
+            );
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Pedido aceptado',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            
+            myDelivs();
+        };
+    </script>
+    
+    <!-- ============================================
+         SECCIÓN 7: UTILIDADES Y MAPAS
+         ============================================ -->
+    <script>
+        /**
+         * Abrir WhatsApp con mensaje predefinido
+         * @param {string} telefono - Número de teléfono
+         * @param {string} orderId - ID del pedido
+         */
+        window.wa = (telefono, orderId) => {
+            const numeroLimpio = telefono.replace(/\D/g, '');
+            const mensaje = encodeURIComponent(`Hola! Referente al pedido #${orderId.substring(0, 8)}`);
+            window.open(`https://wa.me/${numeroLimpio}?text=${mensaje}`, '_blank');
+        };
+        
+        /**
+         * Abrir Waze con coordenadas
+         * @param {number} lat - Latitud
+         * @param {number} lng - Longitud
+         */
+        window.openWaze = (lat, lng) => {
+            window.open(`https://waze.com/ul?ll=${lat},${lng}&navigate=yes`, '_blank');
+        };
+        
+        /**
+         * Abrir Google Maps con coordenadas
+         * @param {number} lat - Latitud
+         * @param {number} lng - Longitud
+         */
+        window.openMaps = (lat, lng) => {
+            window.open(
+                `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`,
+                '_blank'
+            );
+        };
+        
+        // Log de confirmación
+        console.log('✅ RapidSend FULL - Firebase 12.8.0 - Código refactorizado');
     </script>
 </body>
 </html>
